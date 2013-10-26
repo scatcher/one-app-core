@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('OneApp')
-    .factory('modelFactory', ['$q', '$timeout', 'config','utility','dataService', function($q, $timeout, config, utility, dataService) {
+    .factory('modelFactory', ['$q', '$timeout', 'config','utility','dataService',
+        function($q, $timeout, config, utility, dataService) {
         /**
          * Decorates field with optional defaults
          * @param definition
