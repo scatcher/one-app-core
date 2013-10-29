@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('dataService', ['$q', '$timeout', 'config','queue','utility',
-        function($q, $timeout, config, queue, utility) {
+    .service('dataService', ['$q', '$timeout', 'config','queue','utility','angularSP',
+        function($q, $timeout, config, queue, utility, angularSP) {
             var self = this;
             var dataService = {};
             console.log("DataService Loaded");
@@ -687,6 +687,74 @@ angular.module('OneApp')
 //
 //                return deferredObj.promise;
 //            };
+            /**
+             *
+             * @param pairOptions.list Object (Need either list or list name)
+             * @param pairOptions.listName String
+             * @param pairOptions.definition Object from fields in store array
+             * @param pairOptions.propertyName
+             * @param pairOptions.value (Required)
+             *
+             */
+
+            var createValuePair = function(field, value){
+                var valuePair = [];
+
+                var stringifyArray = function(idProperty) {
+                    if (value.length)
+                    {
+                        var arrayValue = '';
+                        _.each(value, function (value, i)
+                        {
+                            //Need to format string of id's in following format [ID0];#;#[ID1];#;#[ID1]
+                            arrayValue += value[idProperty];
+                            if (i < value.length)
+                            {
+                                arrayValue += ';#;#';
+                            }
+                        });
+                        valuePair = [field.internalName, arrayValue];
+                    } else {
+                        //Array is empty
+                        valuePair = [field.internalName, ''];
+                    }
+                };
+
+                var internalName = field.internalName;
+
+                if( _.isUndefined(value) || value === ''){
+                    //Create empty value pair if blank or undefined
+                    valuePair = [internalName, ''];
+                } else {
+                    console.log("Populated: " + JSON.stringify(field.objectType) + " : " + JSON.stringify(value));
+                    switch(field.objectType) {
+                        case "Lookup":
+                        case "User":
+                            if(_.isUndefined(value.lookupId)) {
+                                valuePair = [internalName, ''];
+                            } else {
+                                valuePair = [internalName, value.lookupId];
+                            }
+                            break;
+                        case "LookupMulti":
+                        case "UserMulti":
+                            stringifyArray('lookupId');
+                            break;
+                        case "DateTime":
+                            valuePair = [internalName, moment(value).format()];
+                            break;
+                        case "Note":
+                            valuePair = [internalName, _.escape(value)];
+                            break;
+                        case "JSON":
+                            valuePair = [internalName, JSON.stringify(value)];
+                            break;
+                        default:
+                            valuePair = [internalName, value];
+                    }
+                }
+                return valuePair;
+            };
 
             var addUpdateItemModel = function(model, item, options) {
                 var defaults = {
@@ -707,7 +775,7 @@ angular.module('OneApp')
                         //Check to see if item contains data for this field
                         if( _.has(item, field.mappedName ) ) {
                             settings.valuePairs.push(
-                                createValuePairModel(field, item[field.mappedName])
+                                createValuePair(field, item[field.mappedName])
                             );
                         }
                     });
@@ -878,6 +946,7 @@ angular.module('OneApp')
 
             _.extend(dataService, {
                 addUpdateItemModel:addUpdateItemModel,
+                createValuePair: createValuePair,
                 deleteItemModel:deleteItemModel,
                 getAttachmentCollectionModel: getAttachmentCollectionModel,
                 getList: getList,
