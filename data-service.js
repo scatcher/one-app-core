@@ -607,7 +607,7 @@ angular.module('OneApp')
                 if(config.offline) {
                     //Get offline data
                     $.ajax( 'dev/' + model.list.title + '.xml').then(function(offlineData) {
-                        processListItems(model, offlineData);
+                        processListItems(model, offlineData, options);
                         //Set date time to allow for time based updates
                         query.lastRun = new Date();
                         queue.decrease();
@@ -741,7 +741,11 @@ angular.module('OneApp')
                             stringifyArray('lookupId');
                             break;
                         case "DateTime":
-                            valuePair = [internalName, moment(value).format()];
+                            if(moment(value).isValid()) {
+                                valuePair = [internalName, moment(value).format()];
+                            } else {
+                                valuePair = [internalName, ''];
+                            }
                             break;
                         case "Note":
                             valuePair = [internalName, _.escape(value)];
@@ -895,54 +899,61 @@ angular.module('OneApp')
                 return deferred.promise;
             };
 
-//            var getUserGroupCollection = function (user)
-//            {
-//                var deferred = $q.defer();
-//                user.groupCollection = user.groupCollection || {};
-//
-//                if(config.offline) {
-//                    return;
-//                }
-//                queue.increase();
-//                var webServiceCall = $().SPServices({
-//                    webURL: config.defaultUrl,
-//                    operation: "GetGroupCollectionFromUser",
-//                    userLoginName: store.user.accountRef
-//                });
-//
-//                webServiceCall.then(function ()
-//                {
-//                    user.groupCollection.groups = [];
-//                    $(user.groupCollection.responseXML).find("Group").each(function (index)
-//                    {
-//                        var self = $(this);
-//                        user.groupCollection.groups.push({
-//                            id: self.attr('ID'),
-//                            name: self.attr('Name')
-//                        });
-//                    });
-//
-//                    /**Can pass in either a group name or id**/
-//                    /**Returns true/false**/
-//                    user.groupCollection.isMemberOf = function(groupNameOrId)
-//                    {
-//                        var match = _.find(user.groupCollection.groups, function (group)
-//                        {
-//                            return group.name === groupNameOrId || group.id === groupNameOrId;
-//                        });
-//
-//                        return typeof match !== 'undefined' ? true : false;
-//                    };
-//                    deferred.resolve(user.groupCollection);
-//                }, function (outcome) {
-//                    //In the event of an error, display toast
-//                    toastr.error("There was an error retrieving user group collection information.");
-//                    deferred.reject(outcome);
-//                }).always(function() {
-//                        queue.decrease();
-//                    });
-//                return deferred.promise;
-//            };
+            var getUserGroupCollection = function (user)
+            {
+
+                var deferred = $q.defer();
+
+                if(config.offline) {
+                    //Get offline data
+                    $.ajax( 'dev/usergroupcollection.xml').then(function(offlineData) {
+                        processListItems(model, offlineData, filter);
+                        //Set date time to allow for time based updates
+                        query.lastRun = new Date();
+                        queue.decrease();
+                        deferredObj.resolve(model);
+                    });
+                }
+                queue.increase();
+                var webServiceCall = $().SPServices({
+                    webURL: config.defaultUrl,
+                    operation: "GetGroupCollectionFromUser",
+                    userLoginName: store.user.accountRef
+                });
+
+                webServiceCall.then(function ()
+                {
+                    user.groupCollection.groups = [];
+                    $(user.groupCollection.responseXML).find("Group").each(function (index)
+                    {
+                        var self = $(this);
+                        user.groupCollection.groups.push({
+                            id: self.attr('ID'),
+                            name: self.attr('Name')
+                        });
+                    });
+
+                    /**Can pass in either a group name or id**/
+                    /**Returns true/false**/
+                    user.groupCollection.isMemberOf = function(groupNameOrId)
+                    {
+                        var match = _.find(user.groupCollection.groups, function (group)
+                        {
+                            return group.name === groupNameOrId || group.id === groupNameOrId;
+                        });
+
+                        return typeof match !== 'undefined' ? true : false;
+                    };
+                    deferred.resolve(user.groupCollection);
+                }, function (outcome) {
+                    //In the event of an error, display toast
+                    toastr.error("There was an error retrieving user group collection information.");
+                    deferred.reject(outcome);
+                }).always(function() {
+                        queue.decrease();
+                    });
+                return deferred.promise;
+            };
 
             _.extend(dataService, {
                 addUpdateItemModel:addUpdateItemModel,
@@ -951,6 +962,7 @@ angular.module('OneApp')
                 getAttachmentCollectionModel: getAttachmentCollectionModel,
                 getList: getList,
                 getListCollection: getListCollection,
+                getUserGroupCollection: getUserGroupCollection,
                 getView: getView,
                 getViewCollection: getViewCollection,
                 initializeModel: initializeModel,
