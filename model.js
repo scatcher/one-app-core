@@ -226,121 +226,109 @@ angular.module('OneApp')
          * @see http://sympmarc.com/2009/02/03/permmask-in-sharepoint-dvwps/
          */
         function resolvePermissions(listItem) {
-            //Ensure an object is passed in and it has a permMask property
-            if(!_.isObject(listItem) || !listItem.permMask) {
-                console.log("Error: An object with a permMask property wasn't found.");
-            }
             var resolvedPermissions = {};
             var listPermissions = {
                 //Allow viewing of list items in lists, documents in document libraries, and Web discussion comments.
                 viewListItems: {
                     mask: '0x0000000000000001',
-                    check: function() {
-                        //If user is here they can view
-                        return true;
-                    }
+                    significantDigit: 17
                 },
                 //Allow addition of list items to lists, documents to document libraries, and Web discussion comments.
                 addListItems: {
                     mask: '0x0000000000000002',
-                    check: function() {
-                        return parseInt(listItem.permMask[17]) >= 2;
-                    }
+                    significantDigit: 17
                 },
                 //Allow editing of list items in lists, documents in document libraries, Web discussion comments, and
                 // to customize Web part pages in document libraries.
                 editListItems: {
                     mask: '0x0000000000000004',
-                    check: function() {
-                        return parseInt(listItem.permMask[17]) >= 4;
-                    }
+                    significantDigit: 17
                 },
                 //Allow deletion of list items from lists, documents from document libraries, and Web discussion comments.
                 deleteListItems: {
                     mask: '0x0000000000000008',
-                    check: function() {
-                        return parseInt(listItem.permMask[17]) >= 8;
-                    }
+                    significantDigit: 17
                 },
                 //Allow approval of minor versions of a list item or document.
                 approveItems: {
                     mask: '0x0000000000000010',
-                    check: function() {
-                        return parseInt(listItem.permMask[16]) >= 1;
-                    }
+                    significantDigit: 16
                 },
                 //Allow viewing the source of documents with server-side file handlers.
                 openItems: {
                     mask: '0x0000000000000020',
-                    check: function() {
-                        return parseInt(listItem.permMask[16]) >= 2;
-                    }
+                    significantDigit: 16
                 },
                 //Allow viewing of past versions of a list item or document.
                 viewVersions: {
                     mask: '0x0000000000000040',
-                    check: function() {
-                        return parseInt(listItem.permMask[16]) >= 4;
-                    }
+                    significantDigit: 16
                 },
                 //Allow deletion of past versions of a list item or document.
                 deleteVersions: {
                     mask: '0x0000000000000080',
-                    check: function() {
-                        return parseInt(listItem.permMask[16]) >= 8;
-                    }
+                    significantDigit: 16
                 },
                 //Allow discard or check in of a document that is checked out to another user.
                 cancelCheckout: {
                     mask: '0x0000000000000100',
-                    check: function() {
-                        return parseInt(listItem.permMask[15]) >= 1;
-                    }
+                    significantDigit: 15
                 },
                 //Allow creation, change, and deletion of personal views of lists.
                 managePersonalViews: {
                     mask: '0x0000000000000200',
-                    check: function() {
-                        return parseInt(listItem.permMask[15]) >= 2;
-                    }
+                    significantDigit: 15
                 },
                 //Allow creation and deletion of lists, addition or removal of fields to the schema of a list, and
                 // addition or removal of personal views of a list.
                 manageLists: {
                     mask: '0x0000000000000800',
-                    check: function() {
-                        return parseInt(listItem.permMask[15]) >= 8;
-                    }
+                    significantDigit: 15
                 },
                 //Allow viewing of forms, views, and application pages, and enumerate lists.
                 viewFormPages: {
                     mask: '0x0000000000001000',
-                    check: function() {
-                        return parseInt(listItem.permMask[14]) >= 1;
-                    }
+                    significantDigit: 14
                 },
                 //You own the world!!!
                 fullControl: {
                     mask: '0x7FFFFFFFFFFFFFFF',
-                    check: function() {
-                        //User doesn't have full rights because the below statement would have returned true for all
-                        // before getting to this point
-                        return false;
-                    }
+                    significantDigit: 17
                 }
             };
 
+            //Ensure an object is passed in and it has a permMask property
+            if(!_.isObject(listItem) || !listItem.permMask) {
+                console.log("Error: An object with a permMask property wasn't found.");
+                _.each(listPermissions, function(value, key) {
+                    resolvedPermissions[key] = false;
+                });
+                //Return an obejct with all permissions set to false: break
+                return resolvedPermissions;
+            }
+
             //Check first to see if user has full rights
-            if(listItem.permMask[17] === 'F') {
+            if(listItem.permMask[17] === 'F' || listItem.permMask[17] === 'f') {
                 //User has full permissions so return true for all
                 _.each(listPermissions, function(value, key) {
                     resolvedPermissions[key] = true;
                 });
+                //No need to go further, break
                 return resolvedPermissions;
             }
 
             _.each(listPermissions, function(perm, key) {
-                resolvedPermissions[key] = perm.check();
+                //Get the digit at the index set in significant digit
+                var significantDigitValue = parseInt(listItem.permMask[perm.significantDigit]);
+                //Get the digit in the mask to compare to the value passed in
+                var maskValue = parseInt(perm.mask[perm.significantDigit]);
+                if(maskValue === 'F' || maskValue === 'f') {
+                    //User doesn't have full rights because they wouldn't have made it this far
+                    resolvedPermissions[key] = false;
+                } else {
+                    //set property to output of evaluation
+                    resolvedPermissions[key] = significantDigitValue >= parseInt(perm.mask[perm.significantDigit]);
+                }
             });
             return resolvedPermissions;
 
