@@ -34,6 +34,16 @@
 .loader.active {
     visibility: visible;
 }
+/*------------------------------------------------------------------
+[ Bootstrap Additions ]
+*/
+.modal-dialog.full-screen {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    top: 0;
+    left: 0;
+}
 
 /*------------------------------------------------------------------
 [ Bootstrap Overides ]
@@ -44,14 +54,7 @@
     /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4C6A8C', endColorstr='#385A7F', GradientType=0);*/
 /*}*/
 
-/*div.navbar-inverse {*/
-    /*background: #292929;*/
-    /*filter: none;*/
-    /*border-bottom: 1px solid #121212;*/
-    /*-moz-border-radius: 0;*/
-    /*-webkit-border-radius: 0;*/
-    /*border-radius: 0;*/
-/*}*/
+
 .list-group-item-sm {
     padding-bottom: 5px;
     padding-top: 5px;
@@ -60,14 +63,9 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
-/*Remove dotted line when selected in IE*/
-/*.nav-tabs > .active > a, .nav-tabs > .active > a:hover,*/
-/*.nav-pills > .active > a, .nav-pills > .active > a:focus{*/
-    /*outline: 0;*/
-/*}*/
 
 .panel > .alert-panel{
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 /*------------------------------------------------------------------
 [ Temp fix for modals in Angular UI because they don't currently support bootstrap 3 ]
@@ -122,7 +120,7 @@
 @media print
 {
     .application-content{
-        margin-top: 0px;
+        margin-top: 0;
     }
     .btn, .toast-container, .no-print{
         display:none;
