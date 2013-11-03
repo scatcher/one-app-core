@@ -150,7 +150,7 @@ angular.module('OneApp')
 //                queue.increase();
 //                var settings = {};
 //                _.extend(settings, defaults, obj);
-//                //Check to see if custom camlQuery is specified
+//                //Check to see if custom query is specified
 //                if (_.isUndefined(settings.list))
 //                {
 //                    settings.list = store.lists[settings.listName];
@@ -404,8 +404,8 @@ angular.module('OneApp')
             /**
              * Use SOAP web service to request list data
              * @param options.listName || options.list - One of the two is required
-             * @param options.camlQuery - Optionally provide custom CAML Query
-             * @param options.camlRowLimit - Limit the number of rows returned (defaults to no limit)
+             * @param options.query - Optionally provide custom Query
+             * @param options.rowLimit - Limit the number of rows returned (defaults to no limit)
              * @param options.queryIndex - Defaults to the first query object for the list
              * @param options.webURL - Optionally pull list data from another site
              * @param options.allFields - If true, all fields are returned
@@ -423,7 +423,7 @@ angular.module('OneApp')
 //                //Default options
 //                var defaults = {
 //                    mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
-//                    camlRowLimit: 0, //Return all matching list items
+//                    rowLimit: 0, //Return all matching list items
 //                    list: list,
 //                    ignoreCache: false, //Can optionally ignore cache and pull fresh data
 //                    queryIndex: 0, //First query attached to the specified list
@@ -434,9 +434,9 @@ angular.module('OneApp')
 //                var settings = _.extend({}, defaults, options);
 //
 //                //Check CAML Query Scenarios
-//                if(_.isUndefined(options.camlQuery)) {
+//                if(_.isUndefined(options.query)) {
 //                    //Use preset query (defaults to first query for list)
-//                    settings.camlQuery = settings.list.queries[settings.queryIndex].camlQuery;
+//                    settings.query = settings.list.queries[settings.queryIndex].query;
 //                    //Check if already cached
 //                    if(_.isObject(list.queries[settings.queryIndex].promise) && !settings.ignoreCache) {
 //                        console.log("Data for " + list.name + "already cached.");
@@ -469,23 +469,23 @@ angular.module('OneApp')
 //                        deferred.resolve(list.data);
 //                    });
 //                } else {
-//                    if(_.isNumber(options.camlRowLimit)) settings.camlRowLimit = options.camlRowLimit;
+//                    if(_.isNumber(options.rowLimit)) settings.rowLimit = options.rowLimit;
 //
 //                    //SPServices payload
 //                    var payload = {
 //                        operation: "GetListItems",
 //                        webURL: settings.webURL,
 //                        listName: settings.list.guid,
-//                        CAMLQuery: settings.camlQuery,
-//                        CAMLQueryOptions: '<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>',
-//                        CAMLRowLimit: settings.camlRowLimit
+//                        query: settings.query,
+//                        queryOptions: '<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>',
+//                        rowLimit: settings.rowLimit
 //                    };
 //
 //                    if (settings.allFields !== true)
 //                    {
 //                        //Set standard fields mapped in store
 //                        //Otherwise all fields are returned
-//                        payload.CAMLViewFields = settings.list.camlViewFields;
+//                        payload.viewFields = settings.list.viewFields;
 //                    }
 //
 //                    //SPServices returns a promise

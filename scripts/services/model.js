@@ -45,7 +45,7 @@ angular.module('OneApp')
             model.queries.allListItems = new Query({
                 operation: "GetListItems",
                 listName: model.list.guid,
-                CAMLViewFields: model.list.camlViewFields
+                viewFields: model.list.viewFields
             });
 
             /**
@@ -130,7 +130,7 @@ angular.module('OneApp')
          */
         function List(obj) {
             var defaults = {
-                camlViewFields: '',
+                viewFields: '',
                 customFields: [],
                 isReady: false,
                 fields: [],
@@ -157,19 +157,19 @@ angular.module('OneApp')
 
             /**
              * Constructs the field
-             * - adds to camlViewField
+             * - adds to viewField
              * - create ows_ mapping
              * @param fieldDefinition
              */
             var buildField = function(fieldDefinition) {
                 var field = new Field(fieldDefinition);
                 list.fields.push(field);
-                list.camlViewFields += '<FieldRef Name="' + field.internalName + '"/>';
+                list.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
                 list.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
             };
 
-            /** Open camlViewFields */
-            list.camlViewFields += '<ViewFields>';
+            /** Open viewFields */
+            list.viewFields += '<ViewFields>';
 
             /** Add the default fields */
             _.each(defaultFields,  function(field) {
@@ -181,8 +181,8 @@ angular.module('OneApp')
                 buildField(field);
             });
 
-            /** Close camlViewFields */
-            list.camlViewFields += '</ViewFields>';
+            /** Close viewFields */
+            list.viewFields += '</ViewFields>';
 
             return list;
         }
@@ -198,14 +198,14 @@ angular.module('OneApp')
             var defaults = {
                 lastRun: null,              // the date/time last run
                 webURL: config.defaultUrl,
-                CAMLQueryOptions: '' +
+                queryOptions: '' +
                     '<QueryOptions>' +
                         '<IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
                         '<IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
                         '<IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
                         '<ExpandUserField>FALSE</ExpandUserField>' +
                     '</QueryOptions>',
-                CAMLQuery: '' +
+                query: '' +
                     '<Query>' +
                         '<OrderBy>' +
                             '<FieldRef Name="ID" Ascending="TRUE"/>' +
