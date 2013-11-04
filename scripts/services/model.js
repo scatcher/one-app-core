@@ -212,11 +212,19 @@ angular.module('OneApp')
                         '</OrderBy>' +
                     '</Query>'
             };
-
             var query = _.extend({}, defaults, obj);
 
-            return query;
+            //Mapping of SharePoint properties to SPServices properties
+            var mapping = [["query", "CAMLQuery"], ["viewFields", "CAMLViewFields"], ["rowLimit", "CAMLRowLimit"], ["queryOptions", "CAMLQueryOptions"],["listItemID", "ID"]];
 
+            _.each(mapping, function(map) {
+                if(query[map[0]] && !query[map[1]]) {
+                    //Ensure SPServices properties are added in the event the true property name is used
+                    query[map[1]] = query[map[0]];
+                }
+            });
+
+            return query;
         }
 
         /**
