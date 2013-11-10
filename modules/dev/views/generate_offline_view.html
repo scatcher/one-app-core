@@ -1,0 +1,44 @@
+<div class="container">
+    <h3>Offline XML Generator</h3>
+    <p>Fill in the basic information for a list and make the request to SharePoint.  The xml
+        response will appear at the bottom of the page where you can then copy by Ctrl + A.</p>
+    <hr/>
+    <form role="form">
+        <div class="form-group">
+            <label>Site URL</label>
+            <input type="url" class="form-control" ng-model="state.siteUrl"/>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label>List Name or GUID</label>
+                    <input type="text" class="form-control" ng-model="state.listName"/>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label>Number of Items to Return (Optional) [0 = All Items]</label>
+                    <input type="number" class="form-control" ng-model="state.itemLimit"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>CAML Query (Optional)</label>
+            <textarea  class="form-control" ng-model="state.query" rows="3"></textarea>
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-primary" ng-click="getXML()">Make Request</button>
+        <hr/>
+        <h4>XML Response</h4>
+        <ol>
+            <li>Create a new offline file under "app/dev" in OneApp.</li>
+            <li>Use the same name as found in the model at "model.list.title" + .xml</li>
+            <li>Select the returned XML below (Ctrl+A)</li>
+            <li>Add the XML to the newly created offline .xml file.</li>
+        </ol>
+        <div class="well well-sm">
+            <textarea name="xmlResponse" class="form-control" cols="30" rows="10"
+                      ng-model="state.xmlResponse"></textarea>
+        </div>
+    </form>
+</div>
