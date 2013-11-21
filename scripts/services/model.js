@@ -232,113 +232,56 @@ angular.module('OneApp')
          * @param {object} listItem (needs a permMask property)
          * @returns {object} property for each permission level identifying if current user has rights (true || false)
          * @see http://sympmarc.com/2009/02/03/permmask-in-sharepoint-dvwps/
+         * @see http://spservices.codeplex.com/discussions/208708
          */
         function resolvePermissions(listItem) {
-            var resolvedPermissions = {};
-            var listPermissions = {
-                //Allow viewing of list items in lists, documents in document libraries, and Web discussion comments.
-                viewListItems: {
-                    mask: '0x0000000000000001',
-                    significantDigit: 17
-                },
-                //Allow addition of list items to lists, documents to document libraries, and Web discussion comments.
-                addListItems: {
-                    mask: '0x0000000000000002',
-                    significantDigit: 17
-                },
-                //Allow editing of list items in lists, documents in document libraries, Web discussion comments, and
-                // to customize Web part pages in document libraries.
-                editListItems: {
-                    mask: '0x0000000000000004',
-                    significantDigit: 17
-                },
-                //Allow deletion of list items from lists, documents from document libraries, and Web discussion comments.
-                deleteListItems: {
-                    mask: '0x0000000000000008',
-                    significantDigit: 17
-                },
-                //Allow approval of minor versions of a list item or document.
-                approveItems: {
-                    mask: '0x0000000000000010',
-                    significantDigit: 16
-                },
-                //Allow viewing the source of documents with server-side file handlers.
-                openItems: {
-                    mask: '0x0000000000000020',
-                    significantDigit: 16
-                },
-                //Allow viewing of past versions of a list item or document.
-                viewVersions: {
-                    mask: '0x0000000000000040',
-                    significantDigit: 16
-                },
-                //Allow deletion of past versions of a list item or document.
-                deleteVersions: {
-                    mask: '0x0000000000000080',
-                    significantDigit: 16
-                },
-                //Allow discard or check in of a document that is checked out to another user.
-                cancelCheckout: {
-                    mask: '0x0000000000000100',
-                    significantDigit: 15
-                },
-                //Allow creation, change, and deletion of personal views of lists.
-                managePersonalViews: {
-                    mask: '0x0000000000000200',
-                    significantDigit: 15
-                },
-                //Allow creation and deletion of lists, addition or removal of fields to the schema of a list, and
-                // addition or removal of personal views of a list.
-                manageLists: {
-                    mask: '0x0000000000000800',
-                    significantDigit: 15
-                },
-                //Allow viewing of forms, views, and application pages, and enumerate lists.
-                viewFormPages: {
-                    mask: '0x0000000000001000',
-                    significantDigit: 14
-                },
-                //You own the world!!!
-                fullControl: {
-                    mask: '0x7FFFFFFFFFFFFFFF',
-                    significantDigit: 17
-                }
-            };
+            var permissionsMask = listItem.permMask;
+            var permissionSet = {};
+            permissionSet.ViewListItems = (1 & permissionsMask) > 0;
+            permissionSet.AddListItems = (2 & permissionsMask) > 0;
+            permissionSet.EditListItems = (4 & permissionsMask) > 0;
+            permissionSet.DeleteListITems = (8 & permissionsMask) > 0;
+            permissionSet.ApproveItems = (16 & permissionsMask) > 0;
+            permissionSet.OpenItems = (32 & permissionsMask) > 0;
+            permissionSet.ViewVersions = (64 & permissionsMask) > 0;
+            permissionSet.DeleteVersions = (128 & permissionsMask) > 0;
+            permissionSet.CancelCheckout = (256 & permissionsMask) > 0;
+            permissionSet.PersonalViews = (512 & permissionsMask) > 0;
 
-            //Ensure an object is passed in and it has a permMask property
-            if(!_.isObject(listItem) || !listItem.permMask) {
-                console.log("Error: An object with a permMask property wasn't found.");
-                _.each(listPermissions, function(value, key) {
-                    resolvedPermissions[key] = false;
-                });
-                //Return an obejct with all permissions set to false: break
-                return resolvedPermissions;
+            permissionSet.ManageLists = (2048 & permissionsMask) > 0;
+            permissionSet.ViewFormPages = (4096 & permissionsMask) > 0;
+
+            permissionSet.Open = (permissionsMask & 65536) > 0;
+            permissionSet.ViewPages = (permissionsMask & 131072) > 0;
+            permissionSet.AddAndCustomizePages = (permissionsMask & 262144) > 0;
+            permissionSet.ApplyThemeAndBorder = (permissionsMask & 524288) > 0;
+            permissionSet.ApplyStyleSheets = (1048576 & permissionsMask) > 0;
+            permissionSet.ViewUsageData = (permissionsMask & 2097152) > 0;
+            permissionSet.CreateSSCSite = (permissionsMask & 4194314) > 0;
+            permissionSet.ManageSubwebs = (permissionsMask & 8388608) > 0;
+            permissionSet.CreateGroups = (permissionsMask & 16777216) > 0;
+            permissionSet.ManagePermissions = (permissionsMask & 33554432) > 0;
+            permissionSet.BrowseDirectories = (permissionsMask & 67108864) > 0;
+            permissionSet.BrowseUserInfo = (permissionsMask & 134217728) > 0;
+            permissionSet.AddDelPrivateWebParts = (permissionsMask & 268435456) > 0;
+            permissionSet.UpdatePersonalWebParts = (permissionsMask & 536870912) > 0;
+            permissionSet.ManageWeb = (permissionsMask & 1073741824) > 0;
+            permissionSet.UseRemoteAPIs = (permissionsMask & 137438953472) > 0;
+            permissionSet.ManageAlerts = (permissionsMask & 274877906944) > 0;
+            permissionSet.CreateAlerts = (permissionsMask & 549755813888) > 0;
+            permissionSet.EditMyUserInfo = (permissionsMask & 1099511627776) > 0;
+            permissionSet.EnumeratePermissions = (permissionsMask & 4611686018427387904) > 0;
+            permissionSet.FullMask = (permissionsMask == 9223372036854775807) ;
+
+            //Full Mask only resolves correctly for the Full Mask level because so in that case
+            //set everything to true
+            if(permissionSet.FullMask) {
+                _.each(permissionSet, function(perm) {
+                    permissionSet = true;
+                })
             }
 
-            //Check first to see if user has full rights
-            if(listItem.permMask[17] === 'F' || listItem.permMask[17] === 'f') {
-                //User has full permissions so return true for all
-                _.each(listPermissions, function(value, key) {
-                    resolvedPermissions[key] = true;
-                });
-                //No need to go further, break
-                return resolvedPermissions;
-            }
-
-            _.each(listPermissions, function(perm, key) {
-                //Get the digit at the index set in significant digit
-                var significantDigitValue = parseInt(listItem.permMask[perm.significantDigit]);
-                //Get the digit in the mask to compare to the value passed in
-                var maskValue = parseInt(perm.mask[perm.significantDigit]);
-                if(maskValue === 'F' || maskValue === 'f') {
-                    //User doesn't have full rights because they wouldn't have made it this far
-                    resolvedPermissions[key] = false;
-                } else {
-                    //set property to output of evaluation
-                    resolvedPermissions[key] = significantDigitValue >= parseInt(perm.mask[perm.significantDigit]);
-                }
-            });
-            return resolvedPermissions;
+            return permissionSet;
 
         }
 
