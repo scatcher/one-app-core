@@ -277,8 +277,8 @@ angular.module('OneApp')
             //set everything to true
             if(permissionSet.FullMask) {
                 _.each(permissionSet, function(perm) {
-                    permissionSet = true;
-                })
+                    perm = true;
+                });
             }
 
             return permissionSet;
