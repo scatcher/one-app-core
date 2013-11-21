@@ -273,11 +273,11 @@ angular.module('OneApp')
             permissionSet.EnumeratePermissions = (permissionsMask & 4611686018427387904) > 0;
             permissionSet.FullMask = (permissionsMask == 9223372036854775807) ;
 
-            //Full Mask only resolves correctly for the Full Mask level because so in that case
-            //set everything to true
+            //Full Mask only resolves correctly for the Full Mask level
+            // because so in that case set everything to true
             if(permissionSet.FullMask) {
-                _.each(permissionSet, function(perm) {
-                    perm = true;
+                _.each(permissionSet, function(perm, key) {
+                    permissionSet[key] = true;
                 });
             }
 
