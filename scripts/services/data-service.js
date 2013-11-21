@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('dataService', ['$q', '$timeout', 'config','queue','utility','angularSP',
-        function($q, $timeout, config, queue, utility, angularSP) {
+    .service('dataService', ['$q', '$timeout', 'config','queue','utility',
+        function($q, $timeout, config, queue, utility) {
             var self = this;
             var dataService = {};
             console.log("DataService Loaded");
