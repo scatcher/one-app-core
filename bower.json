@@ -1,0 +1,51 @@
+{
+  "name": "one-app-core",
+  "version": "0.0.1",
+  "homepage": "https://github.com/scatcher/one-app-core",
+  "authors": [
+    "Scott <github@scotthatcher.com>"
+  ],
+  "description": "Shared components of OneApp.",
+  "license": "MIT",
+  "private": true,
+    "dependencies": {
+        "angular": "latest",
+        "angular-animate": "latest",
+        "angular-bootstrap": "latest",
+        "angular-cookies": "latest",
+        "angular-google-chart": "latest",
+        "angular-resource": "latest",
+        "angular-route": "latest",
+        "angular-sanitize": "latest",
+        "angular-spinner": "latest",
+        "angular-ui-calendar": "latest",
+        "angular-ui-date": "latest",
+        "angular-ui-router": "latest",
+        "angular-ui-select2": "latest",
+        "angular-ui-tinymce": "latest",
+        "angular-ui-utils": "latest",
+        "angularjs-file-upload": "latest",
+        "bootstrap": "latest",
+        "es5-shim": "latest",
+        "font-awesome": "~4",
+        "fullcalendar": "latest",
+        "jquery": "1.10.2",
+        "jquery-ui": "latest",
+        "json3": "latest",
+        "moment": "latest",
+        "ng-ckeditor": "latest",
+        "ng-table": "master",
+        "ng-table-export": "latest",
+        "respond": "latest",
+        "select2": "latest",
+        "toastr": "latest",
+        "underscore": "latest"
+    },
+    "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
