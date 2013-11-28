@@ -13,7 +13,7 @@
         "angular-animate": "latest",
         "angular-bootstrap": "latest",
         "angular-cookies": "latest",
-        "angular-google-chart": "latest",
+        "angular-google-chart": "gh-pages",
         "angular-resource": "latest",
         "angular-route": "latest",
         "angular-sanitize": "latest",
