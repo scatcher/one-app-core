@@ -6,19 +6,41 @@
     <form role="form">
         <div class="form-group">
             <label>Site URL</label>
-            <input type="url" class="form-control" ng-model="state.siteUrl"/>
+            <div class="input-group">
+                <input type="url" class="form-control" ng-model="state.siteUrl">
+                  <span class="input-group-btn">
+                    <button title="Refresh list/libraries" class="btn btn-success btn-sm"
+                            type="button" ng-click="getLists()">
+                        <i class="fa fa-refresh"></i> </button>
+                  </span>
+            </div>
         </div>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
                     <label>List Name or GUID</label>
-                    <input type="text" class="form-control" ng-model="state.listName"/>
+                    <select ng-model="state.selectedList"
+                            ng-options="list.Title for list in listCollection"
+                            class="form-control"></select>
                 </div>
             </div>
             <div class="col-xs-6">
                 <div class="form-group">
                     <label>Number of Items to Return (Optional) [0 = All Items]</label>
                     <input type="number" class="form-control" ng-model="state.itemLimit"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label>Selected Fields</label>
+                    <select multiple ui-select2 ng-model="state.selectedListFields"
+                            style="width: 100%;"
+                            ng-disabled="listCollection.length < 1">
+                        <option ng-repeat="field in state.availableListFields"
+                                value="{{field.Name}}">{{ field.Name }}</option>
+                    </select>
                 </div>
             </div>
         </div>
