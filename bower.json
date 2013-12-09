@@ -34,7 +34,7 @@
         "json3": "latest",
         "moment": "latest",
         "ng-ckeditor": "latest",
-        "ng-table": "master",
+        "ng-table": "latest",
         "ng-table-export": "latest",
         "respond": "latest",
         "select2": "latest",
