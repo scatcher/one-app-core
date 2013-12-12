@@ -594,6 +594,7 @@ angular.module('OneApp')
              * @param {object} model
              * @param {object} query
              * @param options.deferred //Optionally pass in another deferred object to resolve(default: model.ready)
+             * @param options.offlineXML //Alternate location to XML data file
              * @returns {promise} - Returns reference to model
              */
             var initializeModel = function (model, query, options)
@@ -605,8 +606,11 @@ angular.module('OneApp')
                 var deferredObj = options.deferred || model.ready;
 
                 if(config.offline) {
+                    //Optionally set alternate offline XML location but default to value in model
+                    var offlineData = options.offlineXML || 'dev/' + model.list.title + '.xml';
+
                     //Get offline data
-                    $.ajax( 'dev/' + model.list.title + '.xml').then(function(offlineData) {
+                    $.ajax( offlineData ).then(function(offlineData) {
                         processListItems(model, offlineData, options);
                         //Set date time to allow for time based updates
                         query.lastRun = new Date();
