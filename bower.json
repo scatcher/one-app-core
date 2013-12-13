@@ -33,7 +33,7 @@
         "json3": "latest",
         "moment": "latest",
         "ng-ckeditor": "latest",
-        "ng-table": "git://github.com/scatcher/ng-table.git#f13b3a1e13",
+        "ng-table": "git://github.com/scatcher/ng-table.git#f13b3a1",
         "ng-table-export": "latest",
         "respond": "latest",
         "select2": "latest",
