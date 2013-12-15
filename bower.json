@@ -9,7 +9,7 @@
   "license": "MIT",
   "private": true,
     "dependencies": {
-        "angular": "1.2.5",
+        "angular": "latest",
         "angular-animate": "latest",
         "angular-bootstrap": "latest",
         "angular-cookies": "latest",
