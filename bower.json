@@ -30,7 +30,7 @@
         "fullcalendar": "latest",
         "jquery": "1.10.2",
         "jquery-ui": "latest",
-        "jquery.easy-pie-chart":"2.1.3",
+        "jquery.easy-pie-chart":"83e959751571d479dada8e83f92bb6f589396b57",
         "json3": "latest",
         "moment": "latest",
         "ng-ckeditor": "latest",
