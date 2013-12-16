@@ -30,7 +30,7 @@
         "fullcalendar": "latest",
         "jquery": "1.10.2",
         "jquery-ui": "latest",
-        "jquery.easy-pie-chart":"https://github.com/scatcher/easy-pie-chart.git#ca6e5eab3486c5dd4d7440865af99aba0fadae7b",
+        "jquery.easy-pie-chart":"https://github.com/scatcher/easy-pie-chart.git#e15292d37d69d1645ae10276a5cb0d9200acc28a",
         "json3": "latest",
         "moment": "latest",
         "ng-ckeditor": "latest",
