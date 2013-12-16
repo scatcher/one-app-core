@@ -22,10 +22,10 @@ angular.module('OneApp')
                 '</span>\n' +
                 '',
             scope: {
-                bindedField: '=',         //The field on the model to bind to
+                bindedField: '=',   //The field on the model to bind to
                 multi: '=',         //Single select if not set or set to false
                 arr: '=',           //Array of lookup options
-                lookupValue: '=',   //Field name to map the lookupValue to (ex: 'title')
+                lookupValue: '=',   //Field name to map the lookupValue to (default: 'title')
                 ngDisabled: '='     //Pass through to disable control using ng-disabled on element if set
             },
             link: function (scope, element, attrs) {
@@ -53,9 +53,23 @@ angular.module('OneApp')
                 }, 0);
 
                 var buildLookupObject = function(stringId) {
-                    var intID = parseInt(stringId, 10)
+                    var intID = parseInt(stringId, 10);
                     var match = _.findWhere(scope.arr, {id: intID});
                     return { lookupId: intID, lookupValue: match[scope.lookupValue] };
+                };
+
+                //Todo: Get this hooked up to allow custom function to be passed in instead of property name
+                scope.generateDisplayText = function(item) {
+                    if(_.isFunction(scope.lookupValue)) {
+                        //Passed in a reference to a function to generate the select display text
+                        return scope.lookupValue(item);
+                    } else if(_.isString(scope.lookupValue)){
+                        //Passed in a property name on the item to use
+                        return item[scope.lookupValue];
+                    } else {
+                        //Default to the title property of the object
+                        return item.title;
+                    }
                 };
 
                 scope.updateMultiModel = function () {
