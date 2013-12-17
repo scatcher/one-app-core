@@ -15,6 +15,7 @@
         "angular-cookies": "1.2.5",
         "angular-google-chart": "gh-pages",
         "angular-resource": "1.2.5",
+        "angular-round-progress": "git://github.com/scatcher/angular-round-progress.git",
         "angular-route": "1.2.5",
         "angular-sanitize": "1.2.5",
         "angular-spinner": "latest",
