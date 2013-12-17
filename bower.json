@@ -27,6 +27,7 @@
         "angular-ui-utils": "latest",
         "bootstrap": "latest",
         "es5-shim": "latest",
+        "explorer-canvas": "git://github.com/arv/ExplorerCanvas.git",
         "font-awesome": "~4",
         "fullcalendar": "latest",
         "jquery": "1.10.2",
