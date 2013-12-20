@@ -150,7 +150,7 @@ angular.module('OneApp')
 
         function userMultiToJsonObject(s) {
             if (s.length === 0) {
-                return null;
+                return [];
             } else {
                 var thisUserMultiObject = [];
                 var thisUserMulti = s.split(";#");
