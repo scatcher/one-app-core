@@ -730,8 +730,11 @@ angular.module('OneApp')
                     //Create empty value pair if blank or undefined
                     valuePair = [internalName, ''];
                 } else {
-                    console.log("Populated: " + JSON.stringify(field.objectType) + " : " + JSON.stringify(value));
+                    console.log("Populated: " + internalName + ' (' + JSON.stringify(field.objectType) + ") : " + JSON.stringify(value));
                     switch(field.objectType) {
+                        case "Boolean":
+                            //1 = TRUE / 0 = FALSE
+                            valuePair = [internalName, value ? 1 : 0];
                         case "Lookup":
                         case "User":
                             if(_.isUndefined(value.lookupId)) {
