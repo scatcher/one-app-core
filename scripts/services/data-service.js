@@ -749,7 +749,7 @@ angular.module('OneApp')
                             break;
                         case "DateTime":
                             if(moment(value).isValid()) {
-                                valuePair = [internalName, moment(value).format()];
+                                valuePair = [internalName, moment(value).format('YYYY-MM-DD[T]HH:mm:ss[Z]Z')];
                             } else {
                                 valuePair = [internalName, ''];
                             }
