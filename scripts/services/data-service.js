@@ -1,15 +1,15 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('dataService', ['$q', '$timeout', 'config','queue','utility',
-        function($q, $timeout, config, queue, utility) {
+    .service('dataService', ['$q', '$timeout', 'config', 'queue', 'utility',
+        function ($q, $timeout, config, queue, utility) {
             var self = this;
             var dataService = {};
             console.log("DataService Loaded");
 
-            var addAttachment = function(options) {
+            var addAttachment = function (options) {
                 var deferred = $q.defer();
-                if(config.offline) {
+                if (config.offline) {
                     //Resolve and return empty array if offline
                     deferred.resolve([]);
                     return deferred.promise;
@@ -42,7 +42,7 @@ angular.module('OneApp')
              * @param options.mode | Options for what to do with local list data array in store [replace, update, return]
              * @param options.target | Optionally pass in array to update
              */
-            var processListItems = function(model, response, options) {
+            var processListItems = function (model, response, options) {
                 queue.decrease();
 
                 var defaults = {
@@ -53,46 +53,39 @@ angular.module('OneApp')
                     target: model.data
                 };
 
-                var settings = _.extend({}, defaults,  options);
+                var settings = _.extend({}, defaults, options);
 
                 //Map returned XML to
 
                 var xml = config.offline ?
-                    $(response).SPFilterNode(settings.filter):
+                    $(response).SPFilterNode(settings.filter) :
                     $(response.responseXML).SPFilterNode(settings.filter);
                 var json = utility.xmlToJson(xml, { mapping: settings.mapping });
                 var items = [];
 
                 //Use factory to create new object for each returned item
-                _.each(json, function (item)
-                {
+                _.each(json, function (item) {
                     items.push(settings.factory(item));
                 });
 
-                if (typeof settings.mode === 'replace')
-                {
+                if (typeof settings.mode === 'replace') {
                     //Replace store data
                     settings.target = items;
                     console.log(model.list.title + ' Replaced with ' + settings.target.length + ' new records.');
-                } else if(settings.mode === 'update')
-                {
+                } else if (settings.mode === 'update') {
                     var updateCount = 0,
                         createCount = 0;
                     //Default: update any existing items in store
-                    _.each(items, function (item)
-                    {
-                        var found = _.find(settings.target, function (potentialMatch)
-                        {
+                    _.each(items, function (item) {
+                        var found = _.find(settings.target, function (potentialMatch) {
                             return potentialMatch.id === item.id;
                         });
 
-                        if (_.isUndefined(found))
-                        {
+                        if (_.isUndefined(found)) {
                             //No match found
                             settings.target.push(item);
                             createCount++;
-                        } else
-                        {
+                        } else {
                             //Replace local item with updated value
                             angular.copy(item, found);
 //                            found = item;
@@ -104,9 +97,9 @@ angular.module('OneApp')
                 return items;
             };
 
-            var getAttachmentCollectionModel = function(model, item) {
+            var getAttachmentCollectionModel = function (model, item) {
                 var deferred = $q.defer();
-                if(config.offline) {
+                if (config.offline) {
                     //Resolve and return empty array if offline
                     deferred.resolve([]);
                     return deferred.promise;
@@ -117,10 +110,10 @@ angular.module('OneApp')
                     webURL: model.list.webURL,
                     listName: model.list.guid,
                     ID: item.id
-                }).done(function(response) {
+                }).done(function (response) {
                         var attachments = [];
                         //Push each of the attachment URL's to the above array
-                        $(response).SPFilterNode("Attachment").each(function() {
+                        $(response).SPFilterNode("Attachment").each(function () {
                             attachments.push($(this).text());
                         });
                         //Resolve and return attachments
@@ -211,47 +204,70 @@ angular.module('OneApp')
 //                return deferred.promise;
 //            };
 
-            var updateStore = function (list, newDataArr, mode) //[update, replace]
-            {
-                if (typeof mode !== 'undefined' && mode === 'replace')
-                {
-                    //Replace store data
-                    list.data = newDataArr;
-                    window.console.info(list.name + ' Replaced with ' + list.data.length + 'new records.');
-                } else
-                {
-                    var updateCount = 0,
-                        createCount = 0;
-                    //Default: update any existing items in store
-                    _.each(newDataArr, function (item)
-                    {
-                        var found = _.find(list.data, function (potentialMatch)
-                        {
-                            return potentialMatch.id === item.id;
+            var getUserCollectionFromSite = function (options) {
+                queue.increase();
+                var deferred = $q.defer();
+
+                if (config.offline) {
+                    var offlineData = 'dev/Users.xml';
+
+                    //Get offline data
+                    $.ajax(offlineData).then(
+                        function (offlineData) {
+                            var users = $(offlineData).SPFilterNode("User").SPXmlToJson({
+                                includeAllAttrs: true,
+                                removeOws: false
+                            });
+
+                            queue.decrease();
+
+                            //Pass back the user array
+                            deferred.resolve(users);
+                        }, function () {
+                            toastr.error("You need to have a dev/Users.xml in order to get the user group collection in offline mode.");
+                            deferred.reject();
+                            queue.decrease();
+
+                        });
+                } else {
+                    var payload = {
+                        operation: "GetUserCollectionFromSite",
+                        webURL: options.webURL || config.defaultUrl
+                    };
+
+                    var webServiceCall = $().SPServices(payload);
+
+                    webServiceCall.then(function () {
+                        //Success
+                        //Map returned XML to JSON
+                        var users = $(webServiceCall.responseXML).SPFilterNode("User").SPXmlToJson({
+                            includeAllAttrs: true,
+                            removeOws: false
                         });
 
-                        if (typeof found === 'undefined')
-                        {
-                            //No match found
-                            list.data.push(item);
-                            createCount++;
-                        } else
-                        {
-                            //Replace local item with updated value
-                            found = item;
-                            updateCount++;
-                        }
+                        queue.decrease();
+
+                        //Pass back the user array
+                        deferred.resolve(users);
+                    }, function (outcome) {
+                        //Failure
+                        toastr.error("Failed to fetch list collection.");
+                        queue.decrease();
+                        deferred.reject(outcome);
                     });
-                    window.console.info(list.name + ' Changes (Create: ' + createCount + ' | Update: ' + updateCount + ')');
                 }
+
+                return deferred.promise;
+
             };
+
 
             /**
              * Returns all list settings for each list on the site
              * @param options.webURL returns info for specified site (optional)
              * @returns promise for json dataset
              */
-            var getListCollection = function(options) {
+            var getListCollection = function (options) {
                 options = options || {};
                 queue.increase();
                 var deferred = $q.defer();
@@ -262,7 +278,7 @@ angular.module('OneApp')
 
                 var webServiceCall = $().SPServices(payload);
 
-                webServiceCall.then(function() {
+                webServiceCall.then(function () {
                     //Success
                     //Map returned XML to JSON
                     var json = $(webServiceCall.responseXML).SPFilterNode("List").SPXmlToJson({
@@ -271,11 +287,11 @@ angular.module('OneApp')
                     });
                     //Pass back the lists array
                     deferred.resolve(json);
-                }, function(outcome) {
+                },function (outcome) {
                     //Failure
                     toastr.error("Failed to fetch list collection.");
                     deferred.reject(outcome);
-                }).always(function() {
+                }).always(function () {
                         queue.decrease();
                     });
                 return deferred.promise;
@@ -287,7 +303,7 @@ angular.module('OneApp')
              * @param options.webURL returns info for specified site (optional)
              * @returns promise for json dataset
              */
-            var getList = function(options) {
+            var getList = function (options) {
                 options = options || {};
                 queue.increase();
                 var deferred = $q.defer();
@@ -298,7 +314,7 @@ angular.module('OneApp')
                     webURL: options.webURL || config.defaultUrl
                 });
 
-                webServiceCall.then(function() {
+                webServiceCall.then(function () {
                     //Success
                     queue.decrease();
 
@@ -309,11 +325,11 @@ angular.module('OneApp')
                     });
                     //Pass back the lists array
                     deferred.resolve(json);
-                }, function(outcome) {
+                },function (outcome) {
                     //Failure
                     deferred.reject(outcome);
                     toastr.error("Failed to fetch list details.");
-                }).always(function() {
+                }).always(function () {
                         queue.decrease();
                     });
 
@@ -327,7 +343,7 @@ angular.module('OneApp')
              * @param options.webURL (optional)
              * @returns {*}
              */
-            var getViewCollection = function(options) {
+            var getViewCollection = function (options) {
                 options = options || {};
                 queue.increase();
                 var deferred = $q.defer();
@@ -338,7 +354,7 @@ angular.module('OneApp')
                     webURL: options.webURL || config.defaultUrl
                 });
 
-                webServiceCall.then(function() {
+                webServiceCall.then(function () {
                     //Success
                     //Map returned XML to JSON
                     var json = $(webServiceCall.responseXML).SPFilterNode("View").SPXmlToJson({
@@ -347,16 +363,16 @@ angular.module('OneApp')
                     });
                     //Pass back the lists array
                     deferred.resolve(json);
-                }, function(outcome) {
+                },function (outcome) {
                     //Failure
                     toastr.error("Failed to get the view collection.");
                     deferred.reject(outcome);
-                }).always(function() {
+                }).always(function () {
                         queue.decrease();
                     });
 
                 return deferred.promise;
-            }
+            };
 
             /**
              * Returns details of a SharePoint list view
@@ -365,7 +381,7 @@ angular.module('OneApp')
              * @param options.webURL (optional)
              * @returns {promise for object}
              */
-            var getView = function(options) {
+            var getView = function (options) {
                 queue.increase();
                 var deferred = $q.defer();
 
@@ -376,13 +392,13 @@ angular.module('OneApp')
                 };
 
                 //Set view name if provided in options, otherwise it returns default view
-                if(_.isDefined(options.viewName)) payload.viewName = options.viewName;
+                if (_.isDefined(options.viewName)) payload.viewName = options.viewName;
 
                 var webServiceCall = $().SPServices(payload);
 
-                webServiceCall.then(function() {
+                webServiceCall.then(function () {
                     //Success
-                    var output =  {
+                    var output = {
                         query: "<Query>" + $(webServiceCall.responseText).find("Query").html() + "</Query>",
                         viewFields: "<ViewFields>" + $(webServiceCall.responseText).find("ViewFields").html() + "</ViewFields>",
                         rowLimit: $(webServiceCall.responseText).find("RowLimit").html()
@@ -390,143 +406,17 @@ angular.module('OneApp')
 
                     //Pass back the lists array
                     deferred.resolve(output);
-                }, function(outcome) {
+                },function (outcome) {
                     //Failure
                     toastr.error("Failed to fetch view details.");
                     deferred.reject(outcome);
-                }).always(function() {
+                }).always(function () {
                         queue.decrease();
                     });
 
                 return deferred.promise;
             };
 
-            /**
-             * Use SOAP web service to request list data
-             * @param options.listName || options.list - One of the two is required
-             * @param options.query - Optionally provide custom Query
-             * @param options.rowLimit - Limit the number of rows returned (defaults to no limit)
-             * @param options.queryIndex - Defaults to the first query object for the list
-             * @param options.webURL - Optionally pull list data from another site
-             * @param options.allFields - If true, all fields are returned
-             * @param options.ignoreCache - Optionally ignore cache and pull fresh data
-             * @param options.mode - Options for what to do with local list data array in store [replace, update, return]
-             * @returns promise - Promise which resolves with array of requested data
-             */
-//            var getListItems = function (options)
-//            {
-//                //Display animation
-//                queue.increase();
-//
-//                var list = options.list || store.lists[options.listName];
-//                var deferred = $q.defer();
-//                //Default options
-//                var defaults = {
-//                    mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
-//                    rowLimit: 0, //Return all matching list items
-//                    list: list,
-//                    ignoreCache: false, //Can optionally ignore cache and pull fresh data
-//                    queryIndex: 0, //First query attached to the specified list
-//                    webURL: config.defaultUrl,
-//                    allFields: false //If true, all fields are returned
-//                };
-//                //Replace defaults with any values supplied in options
-//                var settings = _.extend({}, defaults, options);
-//
-//                //Check CAML Query Scenarios
-//                if(_.isUndefined(options.query)) {
-//                    //Use preset query (defaults to first query for list)
-//                    settings.query = settings.list.queries[settings.queryIndex].query;
-//                    //Check if already cached
-//                    if(_.isObject(list.queries[settings.queryIndex].promise) && !settings.ignoreCache) {
-//                        console.log("Data for " + list.name + "already cached.");
-//                        //Data is cached so return data object array for list
-//                        queue.decrease();
-//                        //Ensure that existing promise is resolved before passing back data array
-//                        deferred.resolve(list.queries[settings.queryIndex].promise.then(function() {
-//                            return list.data;
-//                        }));
-//                        return deferred.promise;
-//                    } else {
-//                        settings.cacheable = true;
-//                    }
-//                }
-//
-//                //Save promise on stored query to prevent unnecessary calls in future
-//                if(settings.cacheable) {
-//                    list.queries[settings.queryIndex].promise = deferred.promise;
-//                }
-//
-//                if(config.offline) {
-//                    //Get offline data
-//                    $.getJSON('dev/offline.json', function(data) {
-//                        var listName = settings.list.name;
-//                        //Use factory function as constructor for any additional proto
-//                        _.each(data[listName], function(row) {
-//                            list.data.push(list.factory(row));
-//                        });
-//                        queue.decrease();
-//                        deferred.resolve(list.data);
-//                    });
-//                } else {
-//                    if(_.isNumber(options.rowLimit)) settings.rowLimit = options.rowLimit;
-//
-//                    //SPServices payload
-//                    var payload = {
-//                        operation: "GetListItems",
-//                        webURL: settings.webURL,
-//                        listName: settings.list.guid,
-//                        query: settings.query,
-//                        queryOptions: '<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>',
-//                        rowLimit: settings.rowLimit
-//                    };
-//
-//                    if (settings.allFields !== true)
-//                    {
-//                        //Set standard fields mapped in store
-//                        //Otherwise all fields are returned
-//                        payload.viewFields = settings.list.viewFields;
-//                    }
-//
-//                    //SPServices returns a promise
-//                    var webServiceCall = $().SPServices(payload);
-//
-//                    webServiceCall
-//                        .then(function ()
-//                        {
-//                            //Success
-//                            //Map returned XML to JSON
-//                            var returnedRows = $(webServiceCall.responseXML).SPFilterNode("z:row");
-//                            webServiceCall.json = utility.xmlToJson(returnedRows, { mapping: settings.list.mapping });
-//
-//                            //Create a container on promise to store results
-//                            webServiceCall.output = [];
-//
-//                            //Use factory to create new object for each returned item
-//                            _.each(webServiceCall.json, function (row)
-//                            {
-//                                webServiceCall.output.push(settings.list.factory(row));
-//                            });
-//
-//                            //Update data store
-//                            if (settings.mode === 'replace' || settings.mode === 'update')
-//                            {
-//                                updateStore(settings.list, webServiceCall.output, settings.mode);
-//                                settings.list.isReady = true;
-//                            }
-//                            //Pass back the lists array
-//                            deferred.resolve(webServiceCall.output);
-//                        }, function (outcome)
-//                        {
-//                            //In the event of an error, display toast
-//                            toastr.error("There was an error getting the requested data from " + options.listName);
-//                            deferred.reject(outcome);
-//                        }).always(function() {
-//                            queue.decrease();
-//                        });
-//                }
-//                return deferred.promise;
-//            };
 
             /**
              * Combines the ready promises for a controller into an array and
@@ -535,21 +425,43 @@ angular.module('OneApp')
              * @param {array} models - Array of models to register/add to scope
              * @returns Combines the test
              */
-            var registerModels = function(scope, models) {
+            var registerModels = function (scope, models) {
 //                scope.promises = scope.promises || [];
                 var promises = [];
                 //Add simple refresh functionality
-                scope.refresh = function() {
+                scope.refresh = function () {
                     if (!scope.$$phase) {
                         scope.$apply();
                     }
                 };
-                _.each(models,  function(model) {
+                _.each(models, function (model) {
                     promises.push(model.ready.promise);
                     scope[utility.toCamelCase(model.list.title)] = model.data;
                 });
                 return $q.all(promises);
             };
+
+            /** Pulls down any list item changes that have occurred since the last time the query was called **/
+            var getUpdatesSinceToken = function (model, query, options) {
+                var defaults = {};
+                var deferred = $q.defer();
+                //Replace defaults with any values supplied in options
+                var settings = _.extend({}, defaults, options);
+
+                //Check for changes
+                dataService.initializeModel(model, query, {deferred: deferred}).then(function (updates) {
+                    console.log(updates);
+                    //If onAfterChange callback is provided and data has changed, call it
+                    if (_.isFunction(settings.onAfterChange)) {
+                        settings.onAfterChange();
+                    }
+                    deferred.resolve(updates);
+                    keepDataUpdated(model, query, options);
+                });
+
+                return deferred.promise;
+            };
+
 
             /**
              * Timer job to check for updates to a list using the GetListItemChangesSinceToken service
@@ -564,29 +476,19 @@ angular.module('OneApp')
              * @callback {function} options.onAfterChange - callback called after response from server
              * @returns {promise}
              */
-            var keepDataUpdated = function(model, query,  options) {
+            var keepDataUpdated = function (model, query, options) {
                 var defaults = {
-                    timeout:30000 //30 seconds
+                    timeout: 30000 //30 seconds
                 };
-                var deferred = $q.defer();
+
                 //Replace defaults with any values supplied in options
                 var settings = _.extend({}, defaults, options);
 
                 //Delay before running
-                $timeout(function() {
+                $timeout(function () {
                     //Check for changes
-                    dataService.initializeModel(model, query,  {deferred: deferred}).then(function(updates) {
-                        console.log(updates);
-                        //If onAfterChange callback is provided and data has changed, call it
-                        if(_.isFunction(settings.onAfterChange) ) {
-                            settings.onAfterChange();
-                        }
-                        deferred.resolve(updates);
-                        keepDataUpdated(model, query,  options);
-                    });
+                    getUpdatesSinceToken(model, query, options);
                 }, settings.timeout);
-
-                return deferred.promise;
             };
 
             /**
@@ -597,32 +499,31 @@ angular.module('OneApp')
              * @param options.offlineXML //Alternate location to XML data file
              * @returns {promise} - Returns reference to model
              */
-            var initializeModel = function (model, query, options)
-            {
+            var initializeModel = function (model, query, options) {
                 //Display animation
                 queue.increase();
                 options = options || {};
 
                 var deferredObj = options.deferred || model.ready;
 
-                if(config.offline) {
+                if (config.offline) {
                     //Optionally set alternate offline XML location but default to value in model
                     var offlineData = options.offlineXML || 'dev/' + model.list.title + '.xml';
 
                     //Get offline data
-                    $.ajax( offlineData ).then(function(offlineData) {
+                    $.ajax(offlineData).then(function (offlineData) {
                         processListItems(model, offlineData, options);
                         //Set date time to allow for time based updates
                         query.lastRun = new Date();
                         queue.decrease();
                         deferredObj.resolve(model);
                     });
-                } else if(query){
+                } else if (query) {
                     var webServiceCall = $().SPServices(query);
-                    webServiceCall.then(function() {
-                        if(query.operation === "GetListItemChangesSinceToken") {
+                    webServiceCall.then(function () {
+                        if (query.operation === "GetListItemChangesSinceToken") {
                             //Find element containing the token (should only be 1 but use .each to be safe)
-                            $(webServiceCall.responseXML).SPFilterNode('Changes').each(function() {
+                            $(webServiceCall.responseXML).SPFilterNode('Changes').each(function () {
                                 //Retrieve the token string
                                 var token = $(this).attr("LastChangeToken");
                                 //Store token for future web service calls to return changes
@@ -630,22 +531,22 @@ angular.module('OneApp')
                             });
                             var deleteCount = 0;
                             //Remove any local list items that were deleted from the server
-                            $(webServiceCall.responseXML).SPFilterNode('Id').each(function() {
+                            $(webServiceCall.responseXML).SPFilterNode('Id').each(function () {
                                 //Check for the type of change
                                 var changeType = $(this).attr("ChangeType");
-                                if(changeType === "Delete") {
-                                    var itemId = parseInt( $(this).text(), 10);
+                                if (changeType === "Delete") {
+                                    var itemId = parseInt($(this).text(), 10);
                                     //Remove from local data array
-                                    var item = _.findWhere(model.data,  {id: itemId});
+                                    var item = _.findWhere(model.data, {id: itemId});
                                     var index = _.indexOf(model.data, item);
-                                    if(index) {
+                                    if (index) {
                                         deleteCount++;
                                         //Remove the locally cached record
-                                        model.data.splice(index,1);
+                                        model.data.splice(index, 1);
                                     }
                                 }
                             });
-                            if(deleteCount > 0) {
+                            if (deleteCount > 0) {
                                 console.log(deleteCount + ' item(s) removed from local cache to mirror changes on source list.');
                             }
                         }
@@ -701,19 +602,16 @@ angular.module('OneApp')
              *
              */
 
-            var createValuePair = function(field, value){
+            var createValuePair = function (field, value) {
                 var valuePair = [];
 
-                var stringifyArray = function(idProperty) {
-                    if (value.length)
-                    {
+                var stringifyArray = function (idProperty) {
+                    if (value.length) {
                         var arrayValue = '';
-                        _.each(value, function (value, i)
-                        {
+                        _.each(value, function (value, i) {
                             //Need to format string of id's in following format [ID0];#;#[ID1];#;#[ID1]
                             arrayValue += value[idProperty];
-                            if (i < value.length)
-                            {
+                            if (i < value.length) {
                                 arrayValue += ';#;#';
                             }
                         });
@@ -726,18 +624,15 @@ angular.module('OneApp')
 
                 var internalName = field.internalName;
 
-                if( _.isUndefined(value) || value === ''){
+                if (_.isUndefined(value) || value === '') {
                     //Create empty value pair if blank or undefined
                     valuePair = [internalName, ''];
                 } else {
-                    console.log("Populated: " + internalName + ' (' + JSON.stringify(field.objectType) + ") : " + JSON.stringify(value));
-                    switch(field.objectType) {
-                        case "Boolean":
-                            //1 = TRUE / 0 = FALSE
-                            valuePair = [internalName, value ? 1 : 0];
+                    console.log("Populated: " + JSON.stringify(field.objectType) + " : " + JSON.stringify(value));
+                    switch (field.objectType) {
                         case "Lookup":
                         case "User":
-                            if(_.isUndefined(value.lookupId)) {
+                            if (_.isUndefined(value.lookupId)) {
                                 valuePair = [internalName, ''];
                             } else {
                                 valuePair = [internalName, value.lookupId];
@@ -748,8 +643,8 @@ angular.module('OneApp')
                             stringifyArray('lookupId');
                             break;
                         case "DateTime":
-                            if(moment(value).isValid()) {
-                                valuePair = [internalName, moment(value).format('YYYY-MM-DD[T]HH:mm:ss[Z]Z')];
+                            if (moment(value).isValid()) {
+                                valuePair = [internalName, moment(value).format()];
                             } else {
                                 valuePair = [internalName, ''];
                             }
@@ -767,7 +662,7 @@ angular.module('OneApp')
                 return valuePair;
             };
 
-            var addUpdateItemModel = function(model, item, options) {
+            var addUpdateItemModel = function (model, item, options) {
                 var defaults = {
                     mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
                     buildValuePairs: true,
@@ -779,12 +674,11 @@ angular.module('OneApp')
                 //Display loading animation
                 queue.increase();
 
-                if (settings.buildValuePairs === true)
-                {
+                if (settings.buildValuePairs === true) {
                     var editableFields = _.where(model.list.fields, {readOnly: false});
-                    _.each(editableFields, function(field) {
+                    _.each(editableFields, function (field) {
                         //Check to see if item contains data for this field
-                        if( _.has(item, field.mappedName ) ) {
+                        if (_.has(item, field.mappedName)) {
                             settings.valuePairs.push(
                                 createValuePair(field, item[field.mappedName])
                             );
@@ -798,48 +692,46 @@ angular.module('OneApp')
                     valuepairs: settings.valuePairs
                 };
 
-                if (  (_.isObject(item) && _.isNumber(item.id)))
-                {
+                if ((_.isObject(item) && _.isNumber(item.id))) {
                     //Updating existing list item
                     payload.batchCmd = "Update";
                     payload.ID = item.id;
-                } else
-                {
+                } else {
                     //Creating new list item
                     payload.batchCmd = "New";
                 }
 
                 window.console.log(payload);
 
-                if(config.offline) {
+                if (config.offline) {
                     //Offline mode
                     var offlineDefaults = {
-                        modified:new Date(),
+                        modified: new Date(),
                         editor: {
-                            lookupId:23,
-                            lookupValue:'Hatcher, Scott B CIV ESED, JXPML'
+                            lookupId: 23,
+                            lookupValue: 'Hatcher, Scott B CIV ESED, JXPML'
                         }
                     };
-                    if(_.isUndefined(item.id)) {
+                    if (_.isUndefined(item.id)) {
                         //Creating new item so find next logical id to assign
                         var maxId = 0;
-                        _.each(model.data,  function(item) {
-                            if(item.id > maxId) {
+                        _.each(model.data, function (item) {
+                            if (item.id > maxId) {
                                 maxId = item.id;
                             }
                         });
                         //Include additional fields for new item
                         offlineDefaults.author = {
-                            lookupId:23,
-                            lookupValue:'Hatcher, Scott B CIV ESED, JXPML'
+                            lookupId: 23,
+                            lookupValue: 'Hatcher, Scott B CIV ESED, JXPML'
                         };
                         offlineDefaults.created = new Date();
                         offlineDefaults.id = maxId++;
                         //Use factory to build new object
-                        var newItem = model.factory( _.defaults(item, offlineDefaults) );
+                        var newItem = model.factory(_.defaults(item, offlineDefaults));
                         model.data.push(newItem);
                         deferred.resolve(newItem);
-                    } else{
+                    } else {
                         //Update existing record
                         _.extend(item, offlineDefaults);
                         deferred.resolve(item);
@@ -853,18 +745,18 @@ angular.module('OneApp')
                         var output = processListItems(model, webServiceCall, settings);
                         deferred.resolve(output[0]);
 
-                    }, function (outcome) {
+                    },function (outcome) {
                         //In the event of an error, display toast
                         toastr.error("There was an error getting the requested data from " + model.list.name);
                         deferred.reject(outcome);
-                    }).always(function() {
+                    }).always(function () {
                             queue.decrease();
                         });
                 }
                 return deferred.promise;
             };
 
-            var deleteItemModel = function(model, item) {
+            var deleteItemModel = function (model, item) {
                 queue.increase();
                 var payload = {
                     operation: "UpdateListItems",
@@ -877,13 +769,13 @@ angular.module('OneApp')
 
                 function removeItemFromMemory() {
                     var index = _.indexOf(model.data, item);
-                    if(index) {
+                    if (index) {
                         //Remove the locally cached record
-                        model.data.splice(index,1);
+                        model.data.splice(index, 1);
                     }
                 }
 
-                if(config.offline) {
+                if (config.offline) {
                     //Simulate deletion and remove locally
                     removeItemFromMemory();
                     queue.decrease();
@@ -895,25 +787,24 @@ angular.module('OneApp')
                         //Success
                         removeItemFromMemory();
                         deferred.resolve(response);
-                    }, function (outcome) {
+                    },function (outcome) {
                         //In the event of an error, display toast
                         toastr.error("There was an error deleting a list item from " + model.list.title);
                         deferred.reject(outcome);
-                    }).always(function() {
+                    }).always(function () {
                             queue.decrease();
                         });
                 }
                 return deferred.promise;
             };
 
-            var getUserGroupCollection = function (user)
-            {
+            var getUserGroupCollection = function (user) {
 
                 var deferred = $q.defer();
 
-                if(config.offline) {
+                if (config.offline) {
                     //Get offline data
-                    $.ajax( 'dev/usergroupcollection.xml').then(function(offlineData) {
+                    $.ajax('dev/usergroupcollection.xml').then(function (offlineData) {
                         processListItems(model, offlineData, filter);
                         //Set date time to allow for time based updates
                         query.lastRun = new Date();
@@ -928,11 +819,9 @@ angular.module('OneApp')
                     userLoginName: store.user.accountRef
                 });
 
-                webServiceCall.then(function ()
-                {
+                webServiceCall.then(function () {
                     user.groupCollection.groups = [];
-                    $(user.groupCollection.responseXML).find("Group").each(function (index)
-                    {
+                    $(user.groupCollection.responseXML).find("Group").each(function (index) {
                         var self = $(this);
                         user.groupCollection.groups.push({
                             id: self.attr('ID'),
@@ -942,42 +831,44 @@ angular.module('OneApp')
 
                     /**Can pass in either a group name or id**/
                     /**Returns true/false**/
-                    user.groupCollection.isMemberOf = function(groupNameOrId)
-                    {
-                        var match = _.find(user.groupCollection.groups, function (group)
-                        {
+                    user.groupCollection.isMemberOf = function (groupNameOrId) {
+                        var match = _.find(user.groupCollection.groups, function (group) {
                             return group.name === groupNameOrId || group.id === groupNameOrId;
                         });
 
                         return typeof match !== 'undefined' ? true : false;
                     };
                     deferred.resolve(user.groupCollection);
-                }, function (outcome) {
+                },function (outcome) {
                     //In the event of an error, display toast
                     toastr.error("There was an error retrieving user group collection information.");
                     deferred.reject(outcome);
-                }).always(function() {
+                }).always(function () {
                         queue.decrease();
                     });
                 return deferred.promise;
             };
 
             _.extend(dataService, {
-                addUpdateItemModel:addUpdateItemModel,
+                addUpdateItemModel: addUpdateItemModel,
                 createValuePair: createValuePair,
-                deleteItemModel:deleteItemModel,
+                deleteItemModel: deleteItemModel,
                 getAttachmentCollectionModel: getAttachmentCollectionModel,
                 getList: getList,
                 getListCollection: getListCollection,
+                getUpdatesSinceToken: getUpdatesSinceToken,
+                getUserCollectionFromSite: getUserCollectionFromSite,
                 getUserGroupCollection: getUserGroupCollection,
                 getView: getView,
                 getViewCollection: getViewCollection,
                 initializeModel: initializeModel,
                 keepDataUpdated: keepDataUpdated,
                 processListItems: processListItems,
-                registerModels:registerModels
+                registerModels: registerModels
             });
 
             return dataService;
 
-        }]);
+        }
+    ])
+;
