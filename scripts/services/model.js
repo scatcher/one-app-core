@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('OneApp')
-    .factory('modelFactory', ['$q', '$timeout', 'config','utility','dataService',
-        function($q, $timeout, config, utility, dataService) {
+    .factory('modelFactory', function ($q, $timeout, config, utility, dataService) {
         /**
          * Decorates field with optional defaults
          * @param definition
@@ -14,7 +13,7 @@ angular.module('OneApp')
                 readOnly: false,
                 objectType: 'Text'
             };
-            var field = _.extend({}, defaults,  obj);
+            var field = _.extend({}, defaults, obj);
             field.displayName = field.displayName || utility.fromCamelCase(field.mappedName);
             return field;
         }
@@ -38,7 +37,7 @@ angular.module('OneApp')
                 ready: $q.defer()
             };
 
-            var model = _.extend({}, defaults,  options);
+            var model = _.extend({}, defaults, options);
             model.dataService = dataService;
             model.list = new List(model.list);
             //Add a query to pull all list items
@@ -54,10 +53,10 @@ angular.module('OneApp')
              * Uses new deferred object instead of resolving model.ready
              * @returns {promise}
              */
-            model.getAllListItems = function() {
+            model.getAllListItems = function () {
                 var deferred = $q.defer();
                 dataService.initializeModel(model, model.queries.getAllListItems, {deferred: deferred})
-                    .then(function(response){
+                    .then(function (response) {
                         deferred.resolve(response);
                     });
                 return deferred.promise();
@@ -68,8 +67,8 @@ angular.module('OneApp')
              * @example {title: "Some Title", date: new Date()}
              * @returns {*}
              */
-            model.addNewItem = function(obj) {
-                return dataService.addUpdateItemModel(model,  obj);
+            model.addNewItem = function (obj) {
+                return dataService.addUpdateItemModel(model, obj);
             };
 
             return model;
@@ -91,34 +90,90 @@ angular.module('OneApp')
              * @param {object} options - optionally pass params to the dataService
              * @returns {promise}
              */
-            self.saveChanges = function(options) {
-                return dataService.addUpdateItemModel(model, this, options);
+            self.saveChanges = function (options) {
+                return dataService.addUpdateItemModel(model, self, options);
             };
             /**
              * Deletes record directly from the object and removes record from user cache
              * @param {object} options - optionally pass params to the dataService
              * @returns {promise}
              */
-            self.deleteItem = function() {
-                return dataService.deleteItemModel(model,  this);
+            self.deleteItem = function () {
+                return dataService.deleteItemModel(model, self);
             };
             /**
              * Requests all attachments for the object
              * @param {object} options - optionally pass params to the dataService
              * @returns {promise} - containing attachment collection
              */
-            self.getAttachmentCollection = function() {
-                return dataService.getAttachmentCollectionModel(model, this);
+            self.getAttachmentCollection = function () {
+                return dataService.getAttachmentCollectionModel(model, self);
+            };
+
+            /**
+             * Returns the version history for a specific field
+             * @fieldNames {string || array} the js mapped name of the field(s) (ex: title)
+             * @returns {promise} - containing array of changes
+             */
+            self.getFieldVersionHistory = function (fieldNames) {
+                var deferred = $q.defer();
+                var promiseArray = [];
+
+                //Creates a promise for each field
+                var createPromise = function (fieldName) {
+
+                    var fieldDefinition = _.findWhere(model.list.fields, {mappedName: fieldName});
+
+                    var payload = {
+                        operation: "GetVersionCollection",
+                        webURL: config.defaultUrl,
+                        strlistID: model.list.title,
+                        strlistItemID: self.id,
+                        strFieldName: fieldDefinition.internalName
+                    };
+
+                    promiseArray.push(dataService.getFieldVersionHistory(payload, fieldDefinition));
+                };
+
+                if (_.isArray(fieldNames)) {
+                    //Deal with an array of field names
+                    _.each(fieldNames, function (fieldName) {
+                        createPromise(fieldName);
+                    });
+                } else if (_.isString(fieldNames)) {
+                    //Request for a single fields version history
+                    createPromise(fieldNames);
+                }
+
+                //Pause until everything is resolved
+                $q.all(promiseArray).then(function (changes) {
+                    console.log(changes);
+                    var versionCount = changes[0].length;
+                    var versionHistory = [];
+                    //All fields should have the same number of versions
+                    _.each(changes[0], function (fieldVersion, versionNumber) {
+                        var itemVersion = {};
+                        //Consolidate all changes between fields for a specific version and push snapshot to history
+                        _.each(changes, function (fieldChangeHistory) {
+                            _.extend(itemVersion, fieldChangeHistory[versionNumber]);
+                        });
+                        versionHistory.push(itemVersion);
+                    });
+                    console.log(versionHistory);
+                    deferred.resolve(versionHistory);
+                });
+
+                return deferred.promise;
             };
 
             /**
              * @returns {Object} Contains properties for each permission level evaluated for current user(true | false)
              */
-            self.resolvePermissions = function() {
+            self.resolvePermissions = function () {
                 return resolvePermissions(self);
             };
 
-            return _.extend(this,  obj);
+            return _.extend(self, obj);
         }
 
         /**
@@ -140,19 +195,19 @@ angular.module('OneApp')
                 webURL: config.defaultUrl
             };
 
-            var list = _.extend({}, defaults,  obj);
+            var list = _.extend({}, defaults, obj);
 
             /**
              * Read only fields that should be included in all lists
              * @type {Array}
              */
             var defaultFields = [
-                { internalName: "ID", objectType: "Counter", mappedName: "id", readOnly:true},
-                { internalName: "Modified", objectType: "DateTime", mappedName: "modified", readOnly:true},
-                { internalName: "Created", objectType: "DateTime", mappedName: "created", readOnly:true},
-                { internalName: "Author", objectType: "User", sid: true, mappedName: "author", readOnly:true},
-                { internalName: "Editor", objectType: "User", sid: true, mappedName: "editor", readOnly:true},
-                { internalName: "PermMask", objectType: "Text", mappedName: "permMask", readOnly:true}
+                { internalName: "ID", objectType: "Counter", mappedName: "id", readOnly: true},
+                { internalName: "Modified", objectType: "DateTime", mappedName: "modified", readOnly: true},
+                { internalName: "Created", objectType: "DateTime", mappedName: "created", readOnly: true},
+                { internalName: "Author", objectType: "User", sid: true, mappedName: "author", readOnly: true},
+                { internalName: "Editor", objectType: "User", sid: true, mappedName: "editor", readOnly: true},
+                { internalName: "PermMask", objectType: "Text", mappedName: "permMask", readOnly: true}
             ];
 
             /**
@@ -161,7 +216,7 @@ angular.module('OneApp')
              * - create ows_ mapping
              * @param fieldDefinition
              */
-            var buildField = function(fieldDefinition) {
+            var buildField = function (fieldDefinition) {
                 var field = new Field(fieldDefinition);
                 list.fields.push(field);
                 list.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
@@ -172,12 +227,12 @@ angular.module('OneApp')
             list.viewFields += '<ViewFields>';
 
             /** Add the default fields */
-            _.each(defaultFields,  function(field) {
+            _.each(defaultFields, function (field) {
                 buildField(field);
             });
 
             /** Add each of the fields defined in the model */
-            _.each(list.customFields, function(field) {
+            _.each(list.customFields, function (field) {
                 buildField(field);
             });
 
@@ -193,32 +248,37 @@ angular.module('OneApp')
          * @returns {Query}
          * @constructor
          */
-        function Query(obj)
-        {
+        function Query(obj) {
             var defaults = {
                 lastRun: null,              // the date/time last run
                 webURL: config.defaultUrl,
                 queryOptions: '' +
                     '<QueryOptions>' +
-                        '<IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
-                        '<IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
-                        '<IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
-                        '<ExpandUserField>FALSE</ExpandUserField>' +
+                    '<IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
+                    '<IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
+                    '<IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
+                    '<ExpandUserField>FALSE</ExpandUserField>' +
                     '</QueryOptions>',
                 query: '' +
                     '<Query>' +
-                        '<OrderBy>' +
-                            '<FieldRef Name="ID" Ascending="TRUE"/>' +
-                        '</OrderBy>' +
+                    '<OrderBy>' +
+                    '<FieldRef Name="ID" Ascending="TRUE"/>' +
+                    '</OrderBy>' +
                     '</Query>'
             };
             var query = _.extend({}, defaults, obj);
 
             //Mapping of SharePoint properties to SPServices properties
-            var mapping = [["query", "CAMLQuery"], ["viewFields", "CAMLViewFields"], ["rowLimit", "CAMLRowLimit"], ["queryOptions", "CAMLQueryOptions"],["listItemID", "ID"]];
+            var mapping = [
+                ["query", "CAMLQuery"],
+                ["viewFields", "CAMLViewFields"],
+                ["rowLimit", "CAMLRowLimit"],
+                ["queryOptions", "CAMLQueryOptions"],
+                ["listItemID", "ID"]
+            ];
 
-            _.each(mapping, function(map) {
-                if(query[map[0]] && !query[map[1]]) {
+            _.each(mapping, function (map) {
+                if (query[map[0]] && !query[map[1]]) {
                     //Ensure SPServices properties are added in the event the true property name is used
                     query[map[1]] = query[map[0]];
                 }
@@ -271,12 +331,12 @@ angular.module('OneApp')
             permissionSet.CreateAlerts = (permissionsMask & 549755813888) > 0;
             permissionSet.EditMyUserInfo = (permissionsMask & 1099511627776) > 0;
             permissionSet.EnumeratePermissions = (permissionsMask & 4611686018427387904) > 0;
-            permissionSet.FullMask = (permissionsMask == 9223372036854775807) ;
+            permissionSet.FullMask = (permissionsMask == 9223372036854775807);
 
             //Full Mask only resolves correctly for the Full Mask level
             // because so in that case set everything to true
-            if(permissionSet.FullMask) {
-                _.each(permissionSet, function(perm, key) {
+            if (permissionSet.FullMask) {
+                _.each(permissionSet, function (perm, key) {
                     permissionSet[key] = true;
                 });
             }
@@ -291,4 +351,4 @@ angular.module('OneApp')
             Model: Model,
             Query: Query
         };
-    }]);
+    });

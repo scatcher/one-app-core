@@ -61,6 +61,12 @@ angular.module('OneApp')
         }; // End $.fn.SPServices.SPXmlToJson
 
 
+        /**
+         * Converts a SharePoint string representation of a field into the correctly formatted JS version
+         * @param v
+         * @param objectType
+         * @returns {*}
+         */
         function attrToJson(v, objectType) {
 
             var colValue;
@@ -150,7 +156,7 @@ angular.module('OneApp')
 
         function userMultiToJsonObject(s) {
             if (s.length === 0) {
-                return [];
+                return null;
             } else {
                 var thisUserMultiObject = [];
                 var thisUserMulti = s.split(";#");
@@ -268,9 +274,10 @@ angular.module('OneApp')
                 self.title = thisUserExpanded[4].replace(/(,,)/g, ",");
             }
             return self;
-        };
+        }
 
         return {
+            attrToJson: attrToJson,
             fromCamelCase: fromCamelCase,
             lookupToJsonObject: lookupToJsonObject,
             SplitIndex: SplitIndex,
