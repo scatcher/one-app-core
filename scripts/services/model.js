@@ -31,48 +31,51 @@ angular.module('OneApp')
          * @constructor
          */
         function Model(options) {
+            var self = this;
             var defaults = {
                 data: [],
                 queries: {},
                 ready: $q.defer()
             };
 
-            var model = _.extend({}, defaults, options);
-            model.dataService = dataService;
-            model.list = new List(model.list);
+            _.extend(self, defaults, options);
+
+            self.dataService = dataService;
+            self.list = new List(self.list);
             //Add a query to pull all list items
-            model.queries.allListItems = new Query({
+            self.queries.allListItems = new Query({
                 operation: "GetListItems",
-                listName: model.list.guid,
-                viewFields: model.list.viewFields
+                listName: self.list.guid,
+                viewFields: self.list.viewFields
             });
 
-            /**
-             * Inherited from Model constructor
-             * Gets all list items in the current list, processes the xml, and adds the data to the model
-             * Uses new deferred object instead of resolving model.ready
-             * @returns {promise}
-             */
-            model.getAllListItems = function () {
-                var deferred = $q.defer();
-                dataService.initializeModel(model, model.queries.getAllListItems, {deferred: deferred})
-                    .then(function (response) {
-                        deferred.resolve(response);
-                    });
-                return deferred.promise();
-            };
-            /**
-             * Inherited from Model constructor
-             * @param obj
-             * @example {title: "Some Title", date: new Date()}
-             * @returns {*}
-             */
-            model.addNewItem = function (obj) {
-                return dataService.addUpdateItemModel(model, obj);
-            };
-
-            return model;
+            return self;
         }
+
+        /**
+         * Inherited from Model constructor
+         * Gets all list items in the current list, processes the xml, and adds the data to the model
+         * Uses new deferred object instead of resolving self.ready
+         * @returns {promise}
+         */
+        Model.prototype.getAllListItems = function () {
+            var deferred = $q.defer();
+            dataService.initializeModel(this, this.queries.getAllListItems, {deferred: deferred})
+                .then(function (response) {
+                    deferred.resolve(response);
+                });
+            return deferred.promise();
+        };
+
+        /**
+         * Inherited from Model constructor
+         * @param obj
+         * @example {title: "Some Title", date: new Date()}
+         * @returns {*}
+         */
+        Model.prototype.addNewItem = function (obj) {
+            return dataService.addUpdateItemModel(this, obj);
+        };
 
         /**
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
@@ -82,99 +85,112 @@ angular.module('OneApp')
          * @returns {ListItem}
          * @constructor
          */
-        function ListItem(obj, model, dataService) {
+        function ListItem(obj, model) {
             var self = this;
             self.dataService = dataService;
-            /**
-             * Updates record directly from the object
-             * @param {object} options - optionally pass params to the dataService
-             * @returns {promise}
-             */
-            self.saveChanges = function (options) {
-                return dataService.addUpdateItemModel(model, self, options);
-            };
-            /**
-             * Deletes record directly from the object and removes record from user cache
-             * @param {object} options - optionally pass params to the dataService
-             * @returns {promise}
-             */
-            self.deleteItem = function () {
-                return dataService.deleteItemModel(model, self);
-            };
-            /**
-             * Requests all attachments for the object
-             * @param {object} options - optionally pass params to the dataService
-             * @returns {promise} - containing attachment collection
-             */
-            self.getAttachmentCollection = function () {
-                return dataService.getAttachmentCollectionModel(model, self);
+
+            self.getDataService = function() {
+                return dataService;
             };
 
-            /**
-             * Returns the version history for a specific field
-             * @fieldNames {string || array} the js mapped name of the field(s) (ex: title)
-             * @returns {promise} - containing array of changes
-             */
-            self.getFieldVersionHistory = function (fieldNames) {
-                var deferred = $q.defer();
-                var promiseArray = [];
-
-                //Creates a promise for each field
-                var createPromise = function (fieldName) {
-
-                    var fieldDefinition = _.findWhere(model.list.fields, {mappedName: fieldName});
-
-                    var payload = {
-                        operation: "GetVersionCollection",
-                        webURL: config.defaultUrl,
-                        strlistID: model.list.title,
-                        strlistItemID: self.id,
-                        strFieldName: fieldDefinition.internalName
-                    };
-
-                    promiseArray.push(dataService.getFieldVersionHistory(payload, fieldDefinition));
-                };
-
-                if (_.isArray(fieldNames)) {
-                    //Deal with an array of field names
-                    _.each(fieldNames, function (fieldName) {
-                        createPromise(fieldName);
-                    });
-                } else if (_.isString(fieldNames)) {
-                    //Request for a single fields version history
-                    createPromise(fieldNames);
-                }
-
-                //Pause until everything is resolved
-                $q.all(promiseArray).then(function (changes) {
-                    console.log(changes);
-                    var versionCount = changes[0].length;
-                    var versionHistory = [];
-                    //All fields should have the same number of versions
-                    _.each(changes[0], function (fieldVersion, versionNumber) {
-                        var itemVersion = {};
-                        //Consolidate all changes between fields for a specific version and push snapshot to history
-                        _.each(changes, function (fieldChangeHistory) {
-                            _.extend(itemVersion, fieldChangeHistory[versionNumber]);
-                        });
-                        versionHistory.push(itemVersion);
-                    });
-                    console.log(versionHistory);
-                    deferred.resolve(versionHistory);
-                });
-
-                return deferred.promise;
-            };
-
-            /**
-             * @returns {Object} Contains properties for each permission level evaluated for current user(true | false)
-             */
-            self.resolvePermissions = function () {
-                return resolvePermissions(self);
+            self.getModel = function() {
+                return model;
             };
 
             return _.extend(self, obj);
         }
+
+
+        /**
+         * Updates record directly from the object
+         * @param {object} options - optionally pass params to the dataService
+         * @returns {promise}
+         */
+        ListItem.prototype.saveChanges = function (options) {
+            return dataService.addUpdateItemModel(this.getModel(), this, options);
+        };
+
+        /**
+         * Deletes record directly from the object and removes record from user cache
+         * @param {object} options - optionally pass params to the dataService
+         * @returns {promise}
+         */
+        ListItem.prototype.deleteItem = function () {
+            return dataService.deleteItemModel(this.getModel(), this);
+        };
+
+        /**
+         * Requests all attachments for the object
+         * @param {object} options - optionally pass params to the dataService
+         * @returns {promise} - containing attachment collection
+         */
+        ListItem.prototype.getAttachmentCollection = function () {
+            return dataService.getAttachmentCollectionModel(this.getModel(), this);
+        };
+
+        /**
+         * @returns {Object} Contains properties for each permission level evaluated for current user(true | false)
+         */
+        ListItem.prototype.resolvePermissions = function () {
+            return resolvePermissions(this);
+        };
+
+
+        /**
+         * Returns the version history for a specific field
+         * @fieldNames {string || array} the js mapped name of the field(s) (ex: title)
+         * @returns {promise} - containing array of changes
+         */
+        ListItem.prototype.getFieldVersionHistory = function (fieldNames) {
+            var deferred = $q.defer();
+            var promiseArray = [];
+            var self = this;
+            var model = this.getModel();
+
+            //Creates a promise for each field
+            var createPromise = function (fieldName) {
+
+                var fieldDefinition = _.findWhere(model.list.fields, {mappedName: fieldName});
+
+                var payload = {
+                    operation: "GetVersionCollection",
+                    webURL: config.defaultUrl,
+                    strlistID: model.list.title,
+                    strlistItemID: self.id,
+                    strFieldName: fieldDefinition.internalName
+                };
+
+                promiseArray.push(dataService.getFieldVersionHistory(payload, fieldDefinition));
+            };
+
+            if (_.isArray(fieldNames)) {
+                //Deal with an array of field names
+                _.each(fieldNames, function (fieldName) {
+                    createPromise(fieldName);
+                });
+            } else if (_.isString(fieldNames)) {
+                //Request for a single fields version history
+                createPromise(fieldNames);
+            }
+
+            //Pause until everything is resolved
+            $q.all(promiseArray).then(function (changes) {
+                var versionHistory = [];
+                //All fields should have the same number of versions
+                _.each(changes[0], function (fieldVersion, versionNumber) {
+                    var itemVersion = {};
+                    //Consolidate all changes between fields for a specific version and push snapshot to history
+                    _.each(changes, function (fieldChangeHistory) {
+                        _.extend(itemVersion, fieldChangeHistory[versionNumber]);
+                    });
+                    versionHistory.push(itemVersion);
+                });
+                console.log(versionHistory);
+                deferred.resolve(versionHistory);
+            });
+
+            return deferred.promise;
+        };
 
         /**
          * List Object Constructor
