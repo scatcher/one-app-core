@@ -2,7 +2,6 @@
 
 angular.module('OneApp')
     .service('dataService', function ($q, $timeout, config, queue, utility) {
-        var self = this;
         var dataService = {};
 
 //        var addAttachment = function (options) {
