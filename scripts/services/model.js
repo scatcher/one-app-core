@@ -89,11 +89,11 @@ angular.module('OneApp')
             var self = this;
             self.dataService = dataService;
 
-            self.getDataService = function() {
+            self.getDataService = function () {
                 return dataService;
             };
 
-            self.getModel = function() {
+            self.getModel = function () {
                 return model;
             };
 
@@ -138,7 +138,7 @@ angular.module('OneApp')
 
         /**
          * Returns the version history for a specific field
-         * @fieldNames {string || array} the js mapped name of the field(s) (ex: title)
+         * @fieldNames {array} the js mapped name of the fields (ex: [title])
          * @returns {promise} - containing array of changes
          */
         ListItem.prototype.getFieldVersionHistory = function (fieldNames) {
@@ -163,28 +163,37 @@ angular.module('OneApp')
                 promiseArray.push(dataService.getFieldVersionHistory(payload, fieldDefinition));
             };
 
-            if (_.isArray(fieldNames)) {
-                //Deal with an array of field names
-                _.each(fieldNames, function (fieldName) {
-                    createPromise(fieldName);
-                });
-            } else if (_.isString(fieldNames)) {
-                //Request for a single fields version history
-                createPromise(fieldNames);
+            if (!_.isArray(fieldNames)) {
+                fieldNames = [fieldNames];
             }
+
+            //Generate promises for each field
+            _.each(fieldNames, function (fieldName) {
+                createPromise(fieldName);
+            });
+
 
             //Pause until everything is resolved
             $q.all(promiseArray).then(function (changes) {
-                var versionHistory = [];
+                var versionHistory = {};
+
                 //All fields should have the same number of versions
-                _.each(changes[0], function (fieldVersion, versionNumber) {
-                    var itemVersion = {};
-                    //Consolidate all changes between fields for a specific version and push snapshot to history
-                    _.each(changes, function (fieldChangeHistory) {
-                        _.extend(itemVersion, fieldChangeHistory[versionNumber]);
+                _.each(changes, function (fieldVersions) {
+
+                    _.each(fieldVersions, function (fieldVersion) {
+                        if (!versionHistory[fieldVersion.modified.toJSON()]) {
+                            versionHistory[fieldVersion.modified.toJSON()] = {};
+                        }
+                        //Add field to the version history for this version
+                        _.extend(versionHistory[fieldVersion.modified.toJSON()], fieldVersion);
                     });
-                    versionHistory.push(itemVersion);
                 });
+
+                //Add a version prop on each version to identify the numeric sequence
+                _.each(versionHistory, function (ver, num) {
+                    ver.version = num;
+                });
+
                 console.log(versionHistory);
                 deferred.resolve(versionHistory);
             });
