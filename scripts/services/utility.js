@@ -137,13 +137,11 @@ angular.module('OneApp')
         }
 
         function booleanToJsonObject(s) {
-            var out = s === "0" ? false : true;
-            return out;
+            return (s === "0" || s === "False") ? false : true;
         }
 
         function dateToJsonObject(s) {
             return new Date(s.replace(/-/g, "/"));
-//            return moment(s).toDate();
         }
 
         function userToJsonObject(s) {
