@@ -189,13 +189,15 @@ angular.module('OneApp')
                     });
                 });
 
+                var versionArray = [];
                 //Add a version prop on each version to identify the numeric sequence
                 _.each(versionHistory, function (ver, num) {
                     ver.version = num;
+                    versionArray.push(ver);
                 });
 
-                console.log(versionHistory);
-                deferred.resolve(versionHistory);
+                console.log(versionArray);
+                deferred.resolve(versionArray);
             });
 
             return deferred.promise;
