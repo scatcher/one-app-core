@@ -573,7 +573,7 @@ angular.module('OneApp')
             var valuePair = [];
 
             var stringifyArray = function (idProperty) {
-                if (value.length) {
+                if (value && value.length) {
                     var arrayValue = '';
                     _.each(value, function (value, i) {
                         //Need to format string of id's in following format [ID0];#;#[ID1];#;#[ID1]
@@ -608,6 +608,9 @@ angular.module('OneApp')
                     case "LookupMulti":
                     case "UserMulti":
                         stringifyArray('lookupId');
+                        break;
+                    case "Boolean":
+                        valuePair = [internalName, value ? 1 : 0];
                         break;
                     case "DateTime":
                         if (moment(value).isValid()) {
