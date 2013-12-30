@@ -46,15 +46,8 @@
 }
 
 /*------------------------------------------------------------------
-[ Bootstrap Overides ]
+[ Bootstrap Additions ]
 */
-
-/* IE doesn't shade active buttons properly so force it */
-/*.btn-group > .btn.active.btn-primary{*/
-    /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4C6A8C', endColorstr='#385A7F', GradientType=0);*/
-/*}*/
-
-
 .list-group-item-sm {
     padding-bottom: 5px;
     padding-top: 5px;
@@ -67,44 +60,7 @@
 .panel > .alert-panel{
     margin-bottom: 0;
 }
-/*------------------------------------------------------------------
-[ Temp fix for modals in Angular UI because they don't currently support bootstrap 3 ]
-*/
-.modal {
-    display: block;
-}
-.modal-body:before,
-.modal-body:after {
-    display: table;
-    content: " ";
-}
-.modal-header:before,
-.modal-header:after {
-    display: table;
-    content: " ";
-}
-/*------------------------------------------------------------------
-[ Temp fix for Bootstrap 3 tooltips and IE8 - shouldn't be necessary after next release ]
-*/
-.tooltip.in {
-    opacity: 0.9;
-    filter: alpha(opacity=90);
-}
-.tooltip.top{
-    background-color: #000000;
-}
-.tooltip.top-left .tooltip-arrow {
-    border-top-color: #000000;
-}
-.tooltip.top-right .tooltip-arrow {
-    border-top-color: #000000;
-}
-.tooltip.bottom-left .tooltip-arrow {
-    border-top-color: #000000;
-}
-.tooltip.bottom-right .tooltip-arrow {
-    border-top-color: #000000;
-}
+
 /*------------------------------------------------------------------
 [ Helper Classes ]
 */
