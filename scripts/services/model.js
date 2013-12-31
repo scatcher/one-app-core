@@ -327,7 +327,7 @@ angular.module('OneApp')
             permissionSet.ViewListItems = (1 & permissionsMask) > 0;
             permissionSet.AddListItems = (2 & permissionsMask) > 0;
             permissionSet.EditListItems = (4 & permissionsMask) > 0;
-            permissionSet.DeleteListITems = (8 & permissionsMask) > 0;
+            permissionSet.DeleteListItems = (8 & permissionsMask) > 0;
             permissionSet.ApproveItems = (16 & permissionsMask) > 0;
             permissionSet.OpenItems = (32 & permissionsMask) > 0;
             permissionSet.ViewVersions = (64 & permissionsMask) > 0;
