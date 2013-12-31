@@ -1,23 +1,23 @@
 {
-  "name": "one-app-core",
-  "version": "0.0.1",
-  "homepage": "https://github.com/scatcher/one-app-core",
-  "authors": [
-    "Scott <github@scotthatcher.com>"
-  ],
-  "description": "Shared components of OneApp.",
-  "license": "MIT",
-  "private": true,
+    "name": "one-app-core",
+    "version": "0.0.1",
+    "homepage": "https://github.com/scatcher/one-app-core",
+    "authors": [
+        "Scott <github@scotthatcher.com>"
+    ],
+    "description": "Shared components of OneApp.",
+    "license": "MIT",
+    "private": true,
     "dependencies": {
-        "angular": "1.2.6",
-        "angular-animate": "1.2.6",
+        "angular": "~1.2",
+        "angular-animate": "~1.2",
         "angular-bootstrap": "latest",
-        "angular-cookies": "1.2.6",
+        "angular-cookies": "~1.2",
         "angular-google-chart": "gh-pages",
-        "angular-resource": "1.2.6",
+        "angular-resource": "~1.2",
         "angular-round-progress": "git://github.com/scatcher/angular-round-progress.git",
-        "angular-route": "1.2.6",
-        "angular-sanitize": "1.2.6",
+        "angular-route": "~1.2",
+        "angular-sanitize": "~1.2",
         "angular-spinner": "latest",
         "angular-ui-calendar": "latest",
         "angular-ui-date": "latest",
@@ -44,10 +44,10 @@
         "underscore": "latest"
     },
     "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
 }
