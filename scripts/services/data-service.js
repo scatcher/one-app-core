@@ -479,11 +479,11 @@ angular.module('OneApp')
 
                 //Get offline data
                 $.ajax(offlineData).then(function (offlineData) {
-                    processListItems(model, offlineData, options);
+                    var changes = processListItems(model, offlineData, options);
                     //Set date time to allow for time based updates
                     query.lastRun = new Date();
                     queue.decrease();
-                    deferredObj.resolve(model);
+                    deferredObj.resolve(changes);
                 });
             } else if (query) {
                 var webServiceCall = $().SPServices(query);
@@ -518,11 +518,11 @@ angular.module('OneApp')
                         }
                     }
                     //Convert the XML into JS
-                    dataService.processListItems(model, webServiceCall);
+                    var changes = processListItems(model, webServiceCall);
                     //Set date time to allow for time based updates
                     query.lastRun = new Date();
                     queue.decrease();
-                    deferredObj.resolve(model);
+                    deferredObj.resolve(changes);
                 });
             }
 
@@ -620,6 +620,7 @@ angular.module('OneApp')
                         }
                         break;
                     case "Note":
+                    case "HTML":
                         valuePair = [internalName, _.escape(value)];
                         break;
                     case "JSON":
