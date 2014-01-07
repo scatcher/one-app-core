@@ -80,6 +80,7 @@ angular.module('OneApp')
             //If sync is being used, notify all online users that a change has been made
             if(self.sync && _.isFunction(self.sync.registerChange)) {
                 deferredUpdate.then(function() {
+                    //Register after update success
                     self.sync.registerChange();
                 });
             }
