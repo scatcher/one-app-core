@@ -10,16 +10,39 @@ angular.module('OneApp')
             sync.changeNotifier = new Firebase(config.firebaseURL + '/changes/' + model.list.title);
             sync.lastUpdate = $firebase(sync.changeNotifier);
 
+            //Prevent reevaluating when current user is the one
+            sync.myChanges = [];
+
             //Used to notify all other users that a change has been made
             sync.registerChange = function () {
-                console.time("Registering Change");
                 console.log("Change detected in " + model.list.title + ' list.');
-                sync.lastUpdate.$set(Firebase.ServerValue.TIMESTAMP);
-                console.timeEnd("Registering Change");
+                var timeStamp = Firebase.ServerValue.TIMESTAMP;
+                sync.lastUpdate.$set(timeStamp);
+                sync.myChanges.push(timeStamp);
             };
 
             //Container to hold all current subscriptions
             sync.subscriptions = [];
+
+            //Running counter of the number of changes
+            sync.changeCount = 0;
+
+            //Fired when anyone updates a requirement
+            sync.lastUpdate.$on("change", function(newVal, oldVal) {
+                //Prevent from running the first time
+                if(sync.changeCount > 0) {
+                    model.updateData().then(function() {
+                        _.each(sync.subscriptions, function(callback) {
+                            console.log("Processing callback");
+                            if(_.isFunction(callback)) {
+                                callback();
+                            }
+                        });
+                    });
+                }
+
+                sync.changeCount += 1;
+            });
 
             //Allows controller to be notified when change is made
             sync.subscribeToChanges = function (callback) {
@@ -29,17 +52,6 @@ angular.module('OneApp')
                 }
             };
 
-            //Fired when anyone updates a requirement
-            sync.lastUpdate.$on("change", function() {
-                model.updateData().then(function() {
-                    _.each(sync.subscriptions, function(callback) {
-                        console.log("Processing callback");
-                        if(_.isFunction(callback)) {
-                            callback();
-                        }
-                    });
-                });
-            });
             console.timeEnd("Sync Service");
 
             return sync;

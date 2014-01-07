@@ -72,20 +72,20 @@ angular.module('OneApp')
             } else if (settings.mode === 'update') {
                 var updateCount = 0,
                     createCount = 0;
+
+                //Map to only run through target list once and speed up subsequent lookups
+                var idMap = _.pluck(settings.target, 'id');
+
                 //Default: update any existing items in store
                 _.each(items, function (item) {
-                    var found = _.find(settings.target, function (potentialMatch) {
-                        return potentialMatch.id === item.id;
-                    });
-
-                    if (_.isUndefined(found)) {
-                        //No match found
+                    if (idMap.indexOf(item.id) === -1) {
+                        //No match found, add to target and update map
                         settings.target.push(item);
+                        idMap.push(item.id);
                         createCount++;
                     } else {
                         //Replace local item with updated value
-                        angular.copy(item, found);
-//                            found = item;
+                        angular.copy(item, settings.target[idMap.indexOf(item.id)]);
                         updateCount++;
                     }
                 });
@@ -640,6 +640,7 @@ angular.module('OneApp')
                 valuePairs: []
             };
             var deferred = $q.defer();
+            options = options || {};
             var settings = _.extend(defaults, options);
 
             //Display loading animation
