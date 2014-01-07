@@ -74,7 +74,16 @@ angular.module('OneApp')
          * @returns {*}
          */
         Model.prototype.addNewItem = function (obj) {
-            return dataService.addUpdateItemModel(this, obj);
+            var self = this;
+            var deferredUpdate = dataService.addUpdateItemModel(self, obj);
+
+            //If sync is being used, notify all online users that a change has been made
+            if(self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    self.sync.registerChange();
+                });
+            }
+            return deferredUpdate;
         };
 
         /**
@@ -107,7 +116,16 @@ angular.module('OneApp')
          * @returns {promise}
          */
         ListItem.prototype.saveChanges = function (options) {
-            return dataService.addUpdateItemModel(this.getModel(), this, options);
+            var self = this;
+            var deferredUpdate = dataService.addUpdateItemModel(self.getModel(), self, options);
+
+            //If sync is being used, notify all online users that a change has been made
+            if(self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    self.sync.registerChange();
+                });
+            }
+            return deferredUpdate;
         };
 
         /**
@@ -116,7 +134,16 @@ angular.module('OneApp')
          * @returns {promise}
          */
         ListItem.prototype.deleteItem = function () {
-            return dataService.deleteItemModel(this.getModel(), this);
+            var self = this;
+            var deferredUpdate = dataService.deleteItemModel(self.getModel(), self);
+
+            //If sync is being used, notify all online users that a change has been made
+            if(self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    self.sync.registerChange();
+                });
+            }
+            return deferredUpdate;
         };
 
         /**
