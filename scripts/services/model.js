@@ -68,6 +68,19 @@ angular.module('OneApp')
         };
 
         /**
+         * If online and sync is being used, notify all online users that a change has been made
+         * @param {promise} Update event
+         */
+        function registerChange(self, deferredUpdate) {
+            if(!config.offline && self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    //Register change after successful update
+                    self.sync.registerChange();
+                });
+            }
+        }
+
+        /**
          * Inherited from Model constructor
          * @param obj
          * @example {title: "Some Title", date: new Date()}
@@ -77,13 +90,9 @@ angular.module('OneApp')
             var self = this;
             var deferredUpdate = dataService.addUpdateItemModel(self, obj);
 
-            //If sync is being used, notify all online users that a change has been made
-            if(self.sync && _.isFunction(self.sync.registerChange)) {
-                deferredUpdate.then(function() {
-                    //Register after update success
-                    self.sync.registerChange();
-                });
-            }
+            //Optionally broadcast change event
+            registerChange(self, deferredUpdate);
+
             return deferredUpdate;
         };
 
@@ -120,12 +129,9 @@ angular.module('OneApp')
             var self = this;
             var deferredUpdate = dataService.addUpdateItemModel(self.getModel(), self, options);
 
-            //If sync is being used, notify all online users that a change has been made
-            if(self.sync && _.isFunction(self.sync.registerChange)) {
-                deferredUpdate.then(function() {
-                    self.sync.registerChange();
-                });
-            }
+            //Optionally broadcast change event
+            registerChange(self, deferredUpdate);
+
             return deferredUpdate;
         };
 
@@ -138,12 +144,9 @@ angular.module('OneApp')
             var self = this;
             var deferredUpdate = dataService.deleteItemModel(self.getModel(), self);
 
-            //If sync is being used, notify all online users that a change has been made
-            if(self.sync && _.isFunction(self.sync.registerChange)) {
-                deferredUpdate.then(function() {
-                    self.sync.registerChange();
-                });
-            }
+            //Optionally broadcast change event
+            registerChange(self, deferredUpdate);
+
             return deferredUpdate;
         };
 
