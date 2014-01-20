@@ -575,10 +575,10 @@ angular.module('OneApp')
             var stringifyArray = function (idProperty) {
                 if (value && value.length) {
                     var arrayValue = '';
-                    _.each(value, function (value, i) {
+                    _.each(value, function (lookupObject, iteration) {
                         //Need to format string of id's in following format [ID0];#;#[ID1];#;#[ID1]
-                        arrayValue += value[idProperty];
-                        if (i < value.length) {
+                        arrayValue += lookupObject[idProperty];
+                        if (iteration < value.length) {
                             arrayValue += ';#;#';
                         }
                     });
