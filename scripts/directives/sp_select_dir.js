@@ -8,7 +8,7 @@ angular.module('OneApp')
                 '   <span ng-if="!multi">\n' +
                 '       <select class="form-control" ng-model="state.singleSelectID"\n ' +
                 '           ng-change="updateSingleModel()" style="width: 100%" ng-disabled="ngDisabled"\n ' +
-                '           ng-options="lookup.id as lookup[lookupValue] for lookup in arr">\n ' +
+                '           ng-options="lookup.id as lookup[state.lookupField] for lookup in arr">\n ' +
                 '       </select>\n' +
                 '   </span>\n' +
                 '   <span ng-if="multi">\n' +
@@ -16,7 +16,7 @@ angular.module('OneApp')
                 '           ng-change="updateMultiModel()" style="width: 100%;" ng-disabled="ngDisabled">\n' +
                 '               <option></option>\n' +
                 '               <option ng-repeat="lookup in arr" value="{{ lookup.id }}"\n' +
-                '                   ng-bind="lookup[lookupValue]">&nbsp;</option>\n' +
+                '                   ng-bind="lookup[state.lookupField]">&nbsp;</option>\n' +
                 '       </select>\n' +
                 '   </span>\n' +
                 '</span>\n' +
@@ -30,11 +30,14 @@ angular.module('OneApp')
             },
             link: function (scope, element, attrs) {
 
-                $timeout(function() {
+                $timeout(function () {
                     scope.state = {
                         multiSelectIDs: [],
                         singleSelectID: ''
                     };
+
+                    //Default to title field if not provided
+                    scope.state.lookupField = scope.lookupValue || 'title';
 
                     if (scope.multi) {
                         //Multi Select Mode
@@ -52,20 +55,20 @@ angular.module('OneApp')
                     }
                 }, 0);
 
-                var buildLookupObject = function(stringId) {
+                var buildLookupObject = function (stringId) {
                     var intID = parseInt(stringId, 10);
                     var match = _.findWhere(scope.arr, {id: intID});
-                    return { lookupId: intID, lookupValue: match[scope.lookupValue] };
+                    return { lookupId: intID, lookupValue: match[scope.state.lookupField] };
                 };
 
                 //Todo: Get this hooked up to allow custom function to be passed in instead of property name
-                scope.generateDisplayText = function(item) {
-                    if(_.isFunction(scope.lookupValue)) {
+                scope.generateDisplayText = function (item) {
+                    if (_.isFunction(scope.state.lookupField)) {
                         //Passed in a reference to a function to generate the select display text
-                        return scope.lookupValue(item);
-                    } else if(_.isString(scope.lookupValue)){
+                        return scope.state.lookupField(item);
+                    } else if (_.isString(scope.state.lookupField)) {
                         //Passed in a property name on the item to use
-                        return item[scope.lookupValue];
+                        return item[scope.state.lookupField];
                     } else {
                         //Default to the title property of the object
                         return item.title;
