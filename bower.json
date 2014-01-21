@@ -22,6 +22,7 @@
         "angular-ui-date": "latest",
         "angular-ui-router": "latest",
         "angular-ui-select2": "latest",
+        "angular-ui-sortable": "latest",
         "angular-ui-tinymce": "latest",
         "angular-ui-utils": "latest",
         "angularfire": "~0.5",
