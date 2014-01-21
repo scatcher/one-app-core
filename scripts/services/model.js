@@ -9,13 +9,13 @@ angular.module('OneApp')
          * @constructor
          */
         function Field(obj) {
+            var self = this;
             var defaults = {
                 readOnly: false,
                 objectType: 'Text'
             };
-            var field = _.extend({}, defaults, obj);
-            field.displayName = field.displayName || utility.fromCamelCase(field.mappedName);
-            return field;
+            _.extend(self, defaults, obj);
+            self.displayName = self.displayName || utility.fromCamelCase(self.mappedName);
         }
 
         /**
@@ -48,8 +48,6 @@ angular.module('OneApp')
                 listName: self.list.guid,
                 viewFields: self.list.viewFields
             });
-
-            return self;
         }
 
         /**
@@ -68,19 +66,6 @@ angular.module('OneApp')
         };
 
         /**
-         * If online and sync is being used, notify all online users that a change has been made
-         * @param {promise} Update event
-         */
-        function registerChange(self, deferredUpdate) {
-            if(!config.offline && self.sync && _.isFunction(self.sync.registerChange)) {
-                deferredUpdate.then(function() {
-                    //Register change after successful update
-                    self.sync.registerChange();
-                });
-            }
-        }
-
-        /**
          * Inherited from Model constructor
          * @param obj
          * @example {title: "Some Title", date: new Date()}
@@ -90,9 +75,13 @@ angular.module('OneApp')
             var self = this;
             var deferredUpdate = dataService.addUpdateItemModel(self, obj);
 
-            //Optionally broadcast change event
-            registerChange(self, deferredUpdate);
-
+            //If sync is being used, notify all online users that a change has been made
+            if(self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    //Register after update success
+                    self.sync.registerChange();
+                });
+            }
             return deferredUpdate;
         };
 
@@ -115,8 +104,7 @@ angular.module('OneApp')
             self.getModel = function () {
                 return model;
             };
-
-            return _.extend(self, obj);
+            _.extend(self, obj);
         }
 
 
@@ -129,9 +117,12 @@ angular.module('OneApp')
             var self = this;
             var deferredUpdate = dataService.addUpdateItemModel(self.getModel(), self, options);
 
-            //Optionally broadcast change event
-            registerChange(self, deferredUpdate);
-
+            //If sync is being used, notify all online users that a change has been made
+            if(self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    self.sync.registerChange();
+                });
+            }
             return deferredUpdate;
         };
 
@@ -144,9 +135,12 @@ angular.module('OneApp')
             var self = this;
             var deferredUpdate = dataService.deleteItemModel(self.getModel(), self);
 
-            //Optionally broadcast change event
-            registerChange(self, deferredUpdate);
-
+            //If sync is being used, notify all online users that a change has been made
+            if(self.sync && _.isFunction(self.sync.registerChange)) {
+                deferredUpdate.then(function() {
+                    self.sync.registerChange();
+                });
+            }
             return deferredUpdate;
         };
 
@@ -173,9 +167,9 @@ angular.module('OneApp')
          * @returns {promise} - containing array of changes
          */
         ListItem.prototype.getFieldVersionHistory = function (fieldNames) {
+            var self = this;
             var deferred = $q.defer();
             var promiseArray = [];
-            var self = this;
             var model = this.getModel();
 
             //Creates a promise for each field
@@ -242,6 +236,7 @@ angular.module('OneApp')
          * @constructor
          */
         function List(obj) {
+            var self = this;
             var defaults = {
                 viewFields: '',
                 customFields: [],
@@ -253,7 +248,7 @@ angular.module('OneApp')
                 webURL: config.defaultUrl
             };
 
-            var list = _.extend({}, defaults, obj);
+            _.extend(self, defaults, obj);
 
             /**
              * Read only fields that should be included in all lists
@@ -276,13 +271,13 @@ angular.module('OneApp')
              */
             var buildField = function (fieldDefinition) {
                 var field = new Field(fieldDefinition);
-                list.fields.push(field);
-                list.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
-                list.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
+                self.fields.push(field);
+                self.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
+                self.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
             };
 
             /** Open viewFields */
-            list.viewFields += '<ViewFields>';
+            self.viewFields += '<ViewFields>';
 
             /** Add the default fields */
             _.each(defaultFields, function (field) {
@@ -290,14 +285,12 @@ angular.module('OneApp')
             });
 
             /** Add each of the fields defined in the model */
-            _.each(list.customFields, function (field) {
+            _.each(self.customFields, function (field) {
                 buildField(field);
             });
 
             /** Close viewFields */
-            list.viewFields += '</ViewFields>';
-
-            return list;
+            self.viewFields += '</ViewFields>';
         }
 
         /**
@@ -307,6 +300,7 @@ angular.module('OneApp')
          * @constructor
          */
         function Query(obj) {
+            var self = this;
             var defaults = {
                 lastRun: null,              // the date/time last run
                 webURL: config.defaultUrl,
@@ -324,7 +318,8 @@ angular.module('OneApp')
                     '</OrderBy>' +
                     '</Query>'
             };
-            var query = _.extend({}, defaults, obj);
+
+            _.extend(self, defaults, obj);
 
             //Mapping of SharePoint properties to SPServices properties
             var mapping = [
@@ -336,13 +331,11 @@ angular.module('OneApp')
             ];
 
             _.each(mapping, function (map) {
-                if (query[map[0]] && !query[map[1]]) {
+                if (self[map[0]] && !self[map[1]]) {
                     //Ensure SPServices properties are added in the event the true property name is used
-                    query[map[1]] = query[map[0]];
+                    self[map[1]] = self[map[0]];
                 }
             });
-
-            return query;
         }
 
         /**

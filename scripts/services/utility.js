@@ -243,11 +243,9 @@ angular.module('OneApp')
         /**Constructors for user and lookup fields*/
         /**Allows for easier distinction when debugging if object type is shown as either Lookup or User**/
         function Lookup(s) {
-            var self = this;
             var thisLookup = new SplitIndex(s);
-            self.lookupId = thisLookup.id;
-            self.lookupValue = thisLookup.value;
-            return self;
+            this.lookupId = thisLookup.id;
+            this.lookupValue = thisLookup.value;
         }
 
         function User(s) {
@@ -271,7 +269,6 @@ angular.module('OneApp')
                 self.sipAddress = thisUserExpanded[3].replace(/(,,)/g, ",");
                 self.title = thisUserExpanded[4].replace(/(,,)/g, ",");
             }
-            return self;
         }
 
         return {
@@ -281,5 +278,5 @@ angular.module('OneApp')
             SplitIndex: SplitIndex,
             toCamelCase: toCamelCase,
             xmlToJson: xmlToJson
-        }
+        };
     });
