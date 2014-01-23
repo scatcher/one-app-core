@@ -42,6 +42,7 @@
         "ng-table-export": "latest",
         "respond": "latest",
         "select2": "latest",
+        "SPServices": "https://github.com/sympmarc/SPServices.git#master",
         "toastr": "latest",
         "underscore": "latest"
     },
