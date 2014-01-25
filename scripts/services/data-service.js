@@ -4,29 +4,6 @@ angular.module('OneApp')
     .service('dataService', function ($q, $timeout, config, queue, utility) {
         var dataService = {};
 
-//        var addAttachment = function (options) {
-//            var deferred = $q.defer();
-//            if (config.offline) {
-//                //Resolve and return empty array if offline
-//                deferred.resolve([]);
-//                return deferred.promise;
-//            }
-//            var defaults = {
-//                webURL: config.defaultUrl,
-//                list: options.list || store.lists[options.listName]
-//            };
-//            var settings = {};
-//            _.extend(settings, defaults, options);
-//
-//            var payload = {
-//                webURL: settings.webURL,
-//                listName: settings.list.guid,
-//                listItemID: settings.obj.id,
-//                fileName: "Test"
-//            };
-//
-//        };
-
         /**
          * Post processing of data after returning list items from server
          *              -required-
@@ -97,8 +74,13 @@ angular.module('OneApp')
         var getAttachmentCollectionModel = function (model, item) {
             var deferred = $q.defer();
             if (config.offline) {
-                //Resolve and return empty array if offline
-                deferred.resolve([]);
+                //Simulate async call
+                $timeout(function() {
+                    //Resolve and return empty array if offline
+                    deferred.resolve(['https://sitecollection/site/document.docx',
+                        'https://sitecollection/site/some_other.pdf',
+                        'https://sitecollection/site/and_text_file.txt']);
+                });
                 return deferred.promise;
             }
 
@@ -876,5 +858,6 @@ angular.module('OneApp')
         });
 
         return dataService;
+
     }
 );

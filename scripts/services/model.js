@@ -167,7 +167,7 @@ angular.module('OneApp')
         ListItem.prototype.deleteAttachment = function (url) {
             var self = this;
             return dataService.deleteAttachment({
-                listItemID: self.id,
+                listItemId: self.id,
                 url: url,
                 listName: self.getModel().list.guid
             });
