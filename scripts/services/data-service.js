@@ -303,6 +303,40 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
+        var deleteAttachment = function(options) {
+            options = options || {};
+            queue.increase();
+            var deferred = $q.defer();
+
+            var webServiceCall = $().SPServices({
+                operation: "DeleteAttachment",
+                listItemID: options.listItemId,
+                url: options.url,
+                listName: options.listName,
+                webURL: options.webURL || config.defaultUrl
+            });
+
+            webServiceCall.then(function () {
+                //Success
+                queue.decrease();
+
+                //Map returned XML to JSON
+                var json = $(webServiceCall.responseXML).SPFilterNode("Field").SPXmlToJson({
+                    includeAllAttrs: true,
+                    removeOws: false
+                });
+                //Pass back the lists array
+                deferred.resolve(json);
+            },function (outcome) {
+                //Failure
+                deferred.reject(outcome);
+                toastr.error("Failed to fetch list details.");
+            }).always(function () {
+                    queue.decrease();
+                });
+
+            return deferred.promise;
+        };
 
         /**
          *
@@ -824,6 +858,7 @@ angular.module('OneApp')
         _.extend(dataService, {
             addUpdateItemModel: addUpdateItemModel,
             createValuePair: createValuePair,
+            deleteAttachment: deleteAttachment,
             deleteItemModel: deleteItemModel,
             getAttachmentCollectionModel: getAttachmentCollectionModel,
             getFieldVersionHistory: getFieldVersionHistory,
@@ -841,6 +876,5 @@ angular.module('OneApp')
         });
 
         return dataService;
-
     }
 );
