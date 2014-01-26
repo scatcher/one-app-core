@@ -611,7 +611,6 @@ angular.module('OneApp')
                 //Create empty value pair if blank or undefined
                 valuePair = [internalName, ''];
             } else {
-                console.log("Populated: " + JSON.stringify(field.objectType) + " : " + JSON.stringify(value));
                 switch (field.objectType) {
                     case "Lookup":
                     case "User":
@@ -640,11 +639,12 @@ angular.module('OneApp')
                         valuePair = [internalName, _.escape(value)];
                         break;
                     case "JSON":
-                        valuePair = [internalName, JSON.stringify(value)];
+                        valuePair = [internalName, angular.toJson(value)];
                         break;
                     default:
                         valuePair = [internalName, value];
                 }
+                console.log('{' + field.objectType + '} ' + valuePair);
             }
             return valuePair;
         };
