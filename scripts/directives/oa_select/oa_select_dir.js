@@ -1,5 +1,5 @@
 angular.module('OneApp')
-    .directive('spSelect', function ($timeout) {
+    .directive('oaSelect', function ($timeout) {
         return {
             restrict: "A",
             replace: true,
