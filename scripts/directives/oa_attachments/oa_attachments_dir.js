@@ -3,7 +3,7 @@ angular.module('OneApp')
         return {
             restrict: "A",
             replace: true,
-            templateUrl: 'bower_components/one-app-core/scripts/directives/oa_attachments_tmpl.html',
+            templateUrl: 'bower_components/one-app-core/scripts/directives/oa_attachments/oa_attachments_tmpl.html',
             scope: {
                 listItem: "=",      //List item the attachments belong to
                 changeEvent: '='    //Optional - called after an attachment is deleted
