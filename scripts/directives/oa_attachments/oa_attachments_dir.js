@@ -37,6 +37,7 @@ angular.module('OneApp')
 
                 //Pull down all attachments for the current list item
                 var fetchAttachments = function () {
+                    toastr.info("Checking for attachments")
                     scope.listItem.getAttachmentCollection().then(function (attachments) {
                         scope.attachments.length = 0;
                         //Push any new attachments into the existing array to prevent breakage of references
@@ -55,6 +56,7 @@ angular.module('OneApp')
                 scope.deleteAttachment = function (attachment) {
                     var confirmation = window.confirm("Are you sure you want to delete this file?");
                     if (confirmation) {
+                        toastr.info("Negotiating with the server");
                         scope.listItem.deleteAttachment(attachment).then(function () {
                             toastr.success("Attachment successfully deleted");
                             fetchAttachments();
@@ -73,7 +75,7 @@ angular.module('OneApp')
 
                     if (iframe.find("#CancelButton").length < 1) {
                         //Upload complete, reset iframe
-                        toastr.success("File successfully attached");
+                        toastr.success("File successfully uploaded");
                         resetSrc();
                         fetchAttachments();
                         if (_.isFunction(scope.changeEvent)) {
@@ -88,7 +90,7 @@ angular.module('OneApp')
                         //Style OK button
                         iframe.find("input[name$='Ok']").css({float: 'left'}).click(function (event) {
                             //Click handler
-                            toastr.info("Upload started");
+                            toastr.info("Please wait while the file is uploaded");
                         });
 
                         iframe.find("input[name$='$InputFile']").attr({'size': 40});
