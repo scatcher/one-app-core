@@ -262,6 +262,7 @@ angular.module('OneApp')
          * @constructor
          */
         function List(obj) {
+            var self = this;
             var defaults = {
                 viewFields: '',
                 customFields: [],
@@ -273,7 +274,7 @@ angular.module('OneApp')
                 webURL: config.defaultUrl
             };
 
-            var list = _.extend({}, defaults, obj);
+            _.extend(self, defaults, obj);
 
             /**
              * Read only fields that should be included in all lists
@@ -296,13 +297,13 @@ angular.module('OneApp')
              */
             var buildField = function (fieldDefinition) {
                 var field = new Field(fieldDefinition);
-                list.fields.push(field);
-                list.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
-                list.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
+                self.fields.push(field);
+                self.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
+                self.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
             };
 
             /** Open viewFields */
-            list.viewFields += '<ViewFields>';
+            self.viewFields += '<ViewFields>';
 
             /** Add the default fields */
             _.each(defaultFields, function (field) {
@@ -310,12 +311,12 @@ angular.module('OneApp')
             });
 
             /** Add each of the fields defined in the model */
-            _.each(list.customFields, function (field) {
+            _.each(self.customFields, function (field) {
                 buildField(field);
             });
 
             /** Close viewFields */
-            list.viewFields += '</ViewFields>';
+            self.viewFields += '</ViewFields>';
         }
 
         /**
