@@ -17,7 +17,7 @@ angular.module('OneApp')
                     respondingTo: ''
                 };
 
-                scope.comments = scope.listItem.comments;
+                scope.comments = scope.listItem.comments || null;
 
                 //Helper to force digest
                 scope.refresh = function () {
@@ -26,50 +26,70 @@ angular.module('OneApp')
                     }
                 };
 
-                scope.clearTempVars = function() {
+                scope.clearTempVars = function () {
                     scope.state.respondingTo = '';
                     scope.state.tempResponse = '';
                     scope.state.tempComment = '';
+                    scope.refresh();
                 };
 
                 scope.createNewComment = function () {
-                    if(scope.comments) {
+                    if (scope.comments) {
                         //Comment already exists so no need to create new one
-                        scope.comments.createResponse(scope.state.tempComment).then(function() {
+                        scope.comments.createResponse(scope.state.tempComment).then(function () {
                             scope.clearTempVars();
                         });
                     } else {
                         //Creating a new list item
-                        commentsModel.createComment(scope.listItem, scope.state.tempComment).then(function(response) {
+                        commentsModel.createComment(scope.listItem, scope.state.tempComment).then(function (response) {
                             scope.comments = response;
                             scope.clearTempVars();
                         });
                     }
                 };
 
-                scope.createResponse = function(comment) {
-                    comment.createResponse(scope.state.tempResponse).then(function() {
+                scope.createResponse = function (comment) {
+                    comment.createResponse(scope.state.tempResponse).then(function () {
                         scope.clearTempVars();
                     });
                 };
 
-                scope.deleteComment = function(comment) {
+                scope.deleteComment = function (comment) {
+                    var parent = comment.parentComment();
+                    var root = comment.rootComment();
+
                     var confirmation = window.confirm("Are you sure you want to delete this comment?");
                     if (confirmation) {
-                        comment.deleteComment().then(function() {
-
-                        });
+                        if (parent === root && parent.thread.length === 1) {
+                            //Delete the list item because it's at the root and there are no others
+                            return root.deleteItem().then(function () {
+                                //Remove reference to the comment
+                                delete scope.comments;
+                                toastr.success("Comment successfully deleted");
+                            }, function () {
+                                toastr.error("There was a problem deleting this comment.  Please try again.");
+                            });
+                        } else {
+                            return root.saveChanges().then(function () {
+                                //Just remove this comment from the thread
+                                var commentIndex = parent.thread.indexOf(comment);
+                                parent.thread.splice(commentIndex, 1);
+                                toastr.success("Comment successfully deleted");
+                            }, function () {
+                                toastr.error("There was a problem deleting this comment.  Please try again.");
+                            });
+                        }
                     }
                 };
 
                 //Pull down all comments for the current list item
                 var fetchComments = function () {
                     scope.listItem.fetchComments().then(function (comments) {
-                        $timeout(function() {
-                            if(config.offline && !scope.listItem.comments) {
+                        $timeout(function () {
+                            if (config.offline && !scope.listItem.comments) {
                                 //Just return first comment
                                 scope.comments = comments[0];
-                            } else if (comments.length > 0){
+                            } else if (comments.length > 0) {
                                 scope.comments = comments[0];
                             }
 
@@ -83,7 +103,7 @@ angular.module('OneApp')
 
                 fetchComments();
 
-                commentsModel.sync.subscribeToChanges(function() {
+                commentsModel.sync.subscribeToChanges(function () {
                     console.log("Comment change detected");
                 });
 

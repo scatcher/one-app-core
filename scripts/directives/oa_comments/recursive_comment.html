@@ -5,34 +5,34 @@
                 <h5>
                     <small>
                         <span class="author">{{ response.author.lookupValue }}</span>
-                        <span>{{ response.dateTime  | date:'short' }}</span>
-                        <button class="btn btn-link btn-xs" ng-click="state.replyToComment = response"><i
+                        <span>{{ response.modified  | date:'short' }}</span>
+                        <button class="btn btn-link btn-xs" ng-click="state.respondingTo = response"><i
                                 class="fa fa-mail-reply"></i> Reply
                         </button>
                         <button class="btn btn-link btn-xs"
-                                ng-click="deleteResponse(rootComment, comment.thread, $index, level)"><i
+                                ng-click="deleteComment(response)"><i
                                 class="fa fa-trash-o"></i> Delete
                         </button>
                     </small>
                 </h5>
-                <p class="comment-text">{{ response.responseText }}</p>
+                <p class="comment-text">{{ response.comment }}</p>
             </div>
         </div>
-        <div ng-if="state.replyToComment === response">
+        <div ng-if="state.respondingTo === response">
             <div class="row">
                 <div class="col-xs-12">
                     <form>
                         <div class="form-group">
                             <h5>
                                 <small>
-                                        Response
+                                    Response
                                     <label class="pull-right">
                                         <button class="btn btn-link btn-xs"
-                                                ng-click="createResponse(rootComment, response.thread)"><i
+                                                ng-click="createResponse(response)"><i
                                                 class="fa fa-save"></i> Save
                                         </button>
                                         <button class="btn btn-link btn-xs"
-                                                ng-click="clearTempComment()"><i class="fa fa-undo"></i> Cancel
+                                                ng-click="clearTempVars()"><i class="fa fa-undo"></i> Cancel
                                         </button>
                                     </label>
                                 </small>
@@ -46,7 +46,7 @@
         </div>
         <div ng-if="response.thread.length !== -1">
             <div ng-include="'bower_components/one-app-core/scripts/directives/oa_comments/recursive_comment.html'"
-                 ng-init="comment = response; level = level + 1"></div>
+                 ng-init="comment = response;"></div>
         </div>
     </li>
 </ul>
