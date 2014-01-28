@@ -72,10 +72,11 @@ angular.module('OneApp')
          * @param {promise} Update event
          */
         function registerChange(self, deferredUpdate) {
-            if(!config.offline && self.sync && _.isFunction(self.sync.registerChange)) {
+            var model = self.getModel();
+            if(!config.offline && model.sync && _.isFunction(model.sync.registerChange)) {
                 deferredUpdate.then(function() {
                     //Register change after successful update
-                    self.sync.registerChange();
+                    model.sync.registerChange();
                 });
             }
         }
