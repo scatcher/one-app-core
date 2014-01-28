@@ -48,6 +48,8 @@ angular.module('OneApp')
                 listName: self.list.guid,
                 viewFields: self.list.viewFields
             });
+
+            return self;
         }
 
         /**
@@ -262,7 +264,6 @@ angular.module('OneApp')
          * @constructor
          */
         function List(obj) {
-            var self = this;
             var defaults = {
                 viewFields: '',
                 customFields: [],
@@ -274,7 +275,7 @@ angular.module('OneApp')
                 webURL: config.defaultUrl
             };
 
-            _.extend(self, defaults, obj);
+            var list = _.extend({}, defaults, obj);
 
             /**
              * Read only fields that should be included in all lists
@@ -297,13 +298,13 @@ angular.module('OneApp')
              */
             var buildField = function (fieldDefinition) {
                 var field = new Field(fieldDefinition);
-                self.fields.push(field);
-                self.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
-                self.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
+                list.fields.push(field);
+                list.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
+                list.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
             };
 
             /** Open viewFields */
-            self.viewFields += '<ViewFields>';
+            list.viewFields += '<ViewFields>';
 
             /** Add the default fields */
             _.each(defaultFields, function (field) {
@@ -311,12 +312,14 @@ angular.module('OneApp')
             });
 
             /** Add each of the fields defined in the model */
-            _.each(self.customFields, function (field) {
+            _.each(list.customFields, function (field) {
                 buildField(field);
             });
 
             /** Close viewFields */
-            self.viewFields += '</ViewFields>';
+            list.viewFields += '</ViewFields>';
+
+            return list;
         }
 
         /**
@@ -360,6 +363,8 @@ angular.module('OneApp')
                     query[map[1]] = query[map[0]];
                 }
             });
+
+            return query;
         }
 
         /**
