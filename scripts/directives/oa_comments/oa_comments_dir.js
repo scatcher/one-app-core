@@ -35,6 +35,8 @@ angular.module('OneApp')
                 };
 
                 scope.createNewComment = function () {
+                    toastr.info("Negotiating with the server");
+
                     if (scope.comments) {
                         //Comment already exists so no need to create new one
                         scope.comments.createResponse(scope.state.tempComment).then(function (response) {
@@ -51,6 +53,7 @@ angular.module('OneApp')
                 };
 
                 scope.createResponse = function (comment) {
+                    toastr.info("Negotiating with the server");
                     comment.createResponse(scope.state.tempResponse).then(function () {
                         scope.clearTempVars();
                     });
@@ -62,6 +65,7 @@ angular.module('OneApp')
 
                     var confirmation = window.confirm("Are you sure you want to delete this comment?");
                     if (confirmation) {
+                        toastr.info("Negotiating with the server");
                         if (parent === root && parent.thread.length === 1) {
                             //Delete the list item because it's at the root and there are no others
                             return root.deleteItem().then(function () {
@@ -87,6 +91,7 @@ angular.module('OneApp')
 
                 //Pull down all comments for the current list item
                 var fetchComments = function () {
+                    toastr.info("Checking for new comments");
                     scope.listItem.fetchComments().then(function (comments) {
                         $timeout(function () {
                             if (config.offline && !scope.listItem.comments) {
@@ -107,6 +112,12 @@ angular.module('OneApp')
                 fetchComments();
 
                 commentsModel.sync.subscribeToChanges(function () {
+                    //Ensure all updates to comment thread are displayed as they happen
+//                    var localComments = commentsModel.checkForLocalComments(scope.listItem);
+//                    if(localComments) {
+//                        scope.comments = localComments;
+//                        scope.listItem.comments = localComments;
+//                    }
                     console.log("Comment change detected");
                 });
 
