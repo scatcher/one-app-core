@@ -9,8 +9,8 @@
                 ng-show="state.tempComment.length > 0">Cancel
         </button>
         <!--<button class="btn btn-link btn-xs" title="Toggle the new comment form"-->
-                <!--ng-click="state.newCommentVisible = !state.newCommentVisible">-->
-            <!--<i class="fa fa-comment"></i> Create-->
+        <!--ng-click="state.newCommentVisible = !state.newCommentVisible">-->
+        <!--<i class="fa fa-comment"></i> Create-->
         <!--</button>-->
     </div>
     <div style="min-height: 150px;">
@@ -24,11 +24,11 @@
             <h4><small>loading...</small></h4>
         </div>
         <div class="grey" style="margin-top: 30px;" ng-show="!comments && !state.newCommentVisible && state.ready">
-            There aren't currently any comments on this requirement. Select the link above to create one.
+            No comments have been made. Select the link above to create one.
         </div>
         <div ng-if="comments && comments.thread.length > 0" class="comments-container">
             <span ng-include="'bower_components/one-app-core/scripts/directives/oa_comments/recursive_comment.html'"
-                  ng-init="comment = comments; level = 1"></span>
+                  ng-init="comment = comments;"></span>
         </div>
     </div>
 </div>
