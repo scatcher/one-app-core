@@ -27,16 +27,18 @@ angular.module('OneApp')
                 };
 
                 scope.clearTempVars = function () {
-                    scope.state.respondingTo = '';
-                    scope.state.tempResponse = '';
-                    scope.state.tempComment = '';
-                    scope.refresh();
+                    $timeout(function() {
+                        scope.state.respondingTo = '';
+                        scope.state.tempResponse = '';
+                        scope.state.tempComment = '';
+                    });
                 };
 
                 scope.createNewComment = function () {
                     if (scope.comments) {
                         //Comment already exists so no need to create new one
-                        scope.comments.createResponse(scope.state.tempComment).then(function () {
+                        scope.comments.createResponse(scope.state.tempComment).then(function (response) {
+                            scope.comments = response;
                             scope.clearTempVars();
                         });
                     } else {
@@ -65,6 +67,7 @@ angular.module('OneApp')
                             return root.deleteItem().then(function () {
                                 //Remove reference to the comment
                                 delete scope.comments;
+                                delete scope.listItem.comments;
                                 toastr.success("Comment successfully deleted");
                             }, function () {
                                 toastr.error("There was a problem deleting this comment.  Please try again.");
