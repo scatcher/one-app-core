@@ -9,13 +9,13 @@ angular.module('OneApp')
          * @constructor
          */
         function Field(obj) {
+            var self = this;
             var defaults = {
                 readOnly: false,
                 objectType: 'Text'
             };
-            var field = _.extend({}, defaults, obj);
-            field.displayName = field.displayName || utility.fromCamelCase(field.mappedName);
-            return field;
+            _.extend(self, defaults, obj);
+            self.displayName = self.displayName || utility.fromCamelCase(self.mappedName);
         }
 
         /**
@@ -48,8 +48,6 @@ angular.module('OneApp')
                 listName: self.list.guid,
                 viewFields: self.list.viewFields
             });
-
-            return self;
         }
 
         /**
@@ -71,12 +69,10 @@ angular.module('OneApp')
          * If online and sync is being used, notify all online users that a change has been made
          * @param {promise} Update event
          */
-        function registerChange(self, deferredUpdate) {
+        function registerChange(self) {
             if(!config.offline && self.sync && _.isFunction(self.sync.registerChange)) {
-                deferredUpdate.then(function() {
-                    //Register change after successful update
-                    self.sync.registerChange();
-                });
+                //Register change after successful update
+                self.sync.registerChange();
             }
         }
 
@@ -88,12 +84,14 @@ angular.module('OneApp')
          */
         Model.prototype.addNewItem = function (obj) {
             var self = this;
-            var deferredUpdate = dataService.addUpdateItemModel(self, obj);
+            var deferred = $q.defer();
+            dataService.addUpdateItemModel(self, obj).then(function(response) {
+                deferred.resolve(response);
+                //Optionally broadcast change event
+                registerChange(self);
+            });
 
-            //Optionally broadcast change event
-            registerChange(self, deferredUpdate);
-
-            return deferredUpdate;
+            return deferred.promise;
         };
 
         /**
@@ -116,7 +114,7 @@ angular.module('OneApp')
                 return model;
             };
 
-            return _.extend(self, obj);
+            _.extend(self, obj);
         }
 
 
@@ -127,12 +125,16 @@ angular.module('OneApp')
          */
         ListItem.prototype.saveChanges = function (options) {
             var self = this;
-            var deferredUpdate = dataService.addUpdateItemModel(self.getModel(), self, options);
+            var model = self.getModel();
+            var deferred = $q.defer();
 
-            //Optionally broadcast change event
-            registerChange(self, deferredUpdate);
+            dataService.addUpdateItemModel(model, self, options).then(function(response) {
+                deferred.resolve(response);
+                //Optionally broadcast change event
+                registerChange(self);
+            });
 
-            return deferredUpdate;
+            return deferred.promise;
         };
 
         /**
@@ -142,12 +144,16 @@ angular.module('OneApp')
          */
         ListItem.prototype.deleteItem = function () {
             var self = this;
-            var deferredUpdate = dataService.deleteItemModel(self.getModel(), self);
+            var model = self.getModel();
+            var deferred = $q.defer();
 
-            //Optionally broadcast change event
-            registerChange(self, deferredUpdate);
+            dataService.deleteItemModel(model, self).then(function(response) {
+                deferred.resolve(response);
+                //Optionally broadcast change event
+                registerChange(self);
+            });
 
-            return deferredUpdate;
+            return deferred.promise;
         };
 
         /**
@@ -310,8 +316,6 @@ angular.module('OneApp')
 
             /** Close viewFields */
             list.viewFields += '</ViewFields>';
-
-            return list;
         }
 
         /**
@@ -355,8 +359,6 @@ angular.module('OneApp')
                     query[map[1]] = query[map[0]];
                 }
             });
-
-            return query;
         }
 
         /**
