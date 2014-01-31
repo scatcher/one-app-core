@@ -734,7 +734,6 @@ angular.module('OneApp')
             createValuePair: createValuePair,
             deleteAttachment: deleteAttachment,
             deleteItemModel: deleteItemModel,
-            getAttachmentCollectionModel: getAttachmentCollectionModel,
             getCollection: getCollection,
             getFieldVersionHistory: getFieldVersionHistory,
             getList: getList,
