@@ -71,36 +71,6 @@ angular.module('OneApp')
             return items;
         };
 
-        var getAttachmentCollectionModel = function (model, item) {
-            var deferred = $q.defer();
-            if (config.offline) {
-                //Simulate async call
-                $timeout(function() {
-                    //Resolve and return empty array if offline
-                    deferred.resolve(['https://sitecollection/site/document.docx',
-                        'https://sitecollection/site/some_other.pdf',
-                        'https://sitecollection/site/and_text_file.txt']);
-                });
-                return deferred.promise;
-            }
-
-            $().SPServices({
-                operation: "GetAttachmentCollection",
-                webURL: model.list.webURL,
-                listName: model.list.guid,
-                ID: item.id
-            }).done(function (response) {
-                    var attachments = [];
-                    //Push each of the attachment URL's to the above array
-                    $(response).SPFilterNode("Attachment").each(function () {
-                        attachments.push($(this).text());
-                    });
-                    //Resolve and return attachments
-                    deferred.resolve(attachments);
-                });
-            return deferred.promise;
-        };
-
         /**
          * Returns the version history for a field in a list item
          * @param {object} payload
@@ -153,9 +123,42 @@ angular.module('OneApp')
         };
 
         /**
-         * @param {string} operation ["GetUserCollectionFromSite" (default) || "GetGroupCollectionFromSite" || "GetGroupCollectionFromUser" || "GetUserCollectionFromGroup" || "GetListCollection" || "GetViewCollection]
-         * @param {object} options
-         * @returns {promise}
+         * @ngdoc function
+         * @name dataService.getCollection
+         * @description
+         * Used to handle any of the Get[filterNode]Collection calls to SharePoint
+         *
+         * @param {object} options | object used to extend payload and needs to include all SPServices required attributes
+         * @param {string} options.operation
+         *  - GetUserCollectionFromSite
+         *  - GetGroupCollectionFromSite
+         *  - GetGroupCollectionFromUser
+         *      @requires options.userLoginName
+         *  - GetUserCollectionFromGroup
+         *      @requires options.groupName
+         *  - GetListCollection
+         *  - GetViewCollection
+         *      @requires options.listName
+         *  - GetAttachmentCollection
+         *      @requires options.listName
+         *      @requires options.ID
+         *
+         *  @param {string} options.filterNode (Optional: Value to iterate over in returned XML
+         *         if not provided it's extracted from the name of the operation
+         *         ex: Get[User]CollectionFromSite, "User" is used as the filterNode
+         *
+         * @returns {promise} when resolved will contain an array of the requested collection
+         *
+         * @example
+         * Typical usage
+         * <pre>
+         *  dataService.getCollection({
+         *       operation: "GetGroupCollectionFromUser",
+         *       userLoginName: $scope.state.selectedUser.LoginName
+         *  }).then(function (response) {
+         *       postProcessFunction(response);
+         *  });
+         * </pre>
          */
         var getCollection = function (options) {
             queue.increase();
@@ -166,24 +169,36 @@ angular.module('OneApp')
 
             var deferred = $q.defer();
 
+            //Convert the xml returned from the server into an array of js objects
+            var processXML = function (serverResponse) {
+                var convertedItems = [];
+                //Get attachments only returns the links associated with a list item
+                if (options.operation === "GetAttachmentCollection") {
+                    //Unlike other call, get attachments only returns strings instead of an object with attributes
+                    $(serverResponse).SPFilterNode(filterNode).each(function () {
+                        convertedItems.push($(this).text());
+                    });
+                } else {
+                    convertedItems = $(serverResponse).SPFilterNode(filterNode).SPXmlToJson({
+                        includeAllAttrs: true,
+                        removeOws: false
+                    });
+                }
+                return convertedItems;
+            };
+
             if (config.offline) {
                 var offlineData = 'dev/' + options.operation + '.xml';
 
                 //Get offline data
                 $.ajax(offlineData).then(
                     function (offlineData) {
-                        var items = $(offlineData).SPFilterNode(filterNode).SPXmlToJson({
-                            includeAllAttrs: true,
-                            removeOws: false
-                        });
-
                         queue.decrease();
-
                         //Pass back the group array
-                        deferred.resolve(items);
-                    }, function () {
+                        deferred.resolve(processXML(offlineData));
+                    }, function (outcome) {
                         toastr.error("You need to have a dev/" + options.operation + ".xml in order to get the group collection in offline mode.");
-                        deferred.reject();
+                        deferred.reject(outcome);
                         queue.decrease();
                     });
             } else {
@@ -195,9 +210,9 @@ angular.module('OneApp')
                 _.extend(payload, options);
 
 
-                var verifyParams = function(params) {
-                    _.each(params, function(param) {
-                        if(!payload[param]) {
+                var verifyParams = function (params) {
+                    _.each(params, function (param) {
+                        if (!payload[param]) {
                             toastr.error("options" + param + " is required to complete this operation");
                             validPayload = false;
                             deferred.reject([]);
@@ -206,7 +221,7 @@ angular.module('OneApp')
                 };
 
                 //Verify all required params are included
-                switch(options.operation) {
+                switch (options.operation) {
                     case "GetGroupCollectionFromUser":
                         verifyParams(['userLoginName']);
                         break;
@@ -221,20 +236,13 @@ angular.module('OneApp')
                         break;
                 }
 
-                if(validPayload) {
+                if (validPayload) {
                     var webServiceCall = $().SPServices(payload);
 
                     webServiceCall.then(function () {
                         //Success
-                        //Map returned XML to JSON
-                        var items = $(webServiceCall.responseXML).SPFilterNode(filerNode).SPXmlToJson({
-                            includeAllAttrs: true,
-                            removeOws: false
-                        });
                         queue.decrease();
-
-                        //Pass back the group array
-                        deferred.resolve(items);
+                        deferred.resolve(processXML(webServiceCall.responseXML));
                     }, function (outcome) {
                         //Failure
                         toastr.error("Failed to fetch list collection.");
@@ -287,7 +295,7 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
-        var deleteAttachment = function(options) {
+        var deleteAttachment = function (options) {
             options = options || {};
             queue.increase();
             var deferred = $q.defer();
