@@ -164,7 +164,13 @@ angular.module('OneApp')
          * @returns {promise} - containing attachment collection
          */
         ListItem.prototype.getAttachmentCollection = function () {
-            return dataService.getAttachmentCollectionModel(this.getModel(), this);
+            return dataService.getCollection({
+                operation: 'GetAttachmentCollection',
+                listName: this.getModel().list.guid,
+                webURL: this.getModel().list.webURL,
+                ID: this.id,
+                filterNode: 'Attachment'
+            });
         };
 
         /**

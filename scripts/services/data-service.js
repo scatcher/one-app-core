@@ -90,14 +90,14 @@ angular.module('OneApp')
                 listName: model.list.guid,
                 ID: item.id
             }).done(function (response) {
-                var attachments = [];
-                //Push each of the attachment URL's to the above array
-                $(response).SPFilterNode("Attachment").each(function () {
-                    attachments.push($(this).text());
+                    var attachments = [];
+                    //Push each of the attachment URL's to the above array
+                    $(response).SPFilterNode("Attachment").each(function () {
+                        attachments.push($(this).text());
+                    });
+                    //Resolve and return attachments
+                    deferred.resolve(attachments);
                 });
-                //Resolve and return attachments
-                deferred.resolve(attachments);
-            });
             return deferred.promise;
         };
 
@@ -152,137 +152,22 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
-        var getUserCollectionFromSite = function (options) {
-            queue.increase();
-            options = options || {};
-            var deferred = $q.defer();
-
-            if (config.offline) {
-                var offlineData = 'dev/UserCollection.xml';
-
-                //Get offline data
-                $.ajax(offlineData).then(
-                    function (offlineData) {
-                        var users = $(offlineData).SPFilterNode("User").SPXmlToJson({
-                            includeAllAttrs: true,
-                            removeOws: false
-                        });
-
-                        queue.decrease();
-
-                        //Pass back the user array
-                        deferred.resolve(users);
-                    }, function () {
-                        toastr.error("You need to have a dev/UserCollection.xml in order to get the user group collection in offline mode.");
-                        deferred.reject();
-                        queue.decrease();
-
-                    });
-            } else {
-                var payload = {
-                    operation: "GetUserCollectionFromSite",
-                    webURL: options.webURL || config.defaultUrl
-                };
-
-                var webServiceCall = $().SPServices(payload);
-
-                webServiceCall.then(function () {
-                    //Success
-                    //Map returned XML to JSON
-                    var users = $(webServiceCall.responseXML).SPFilterNode("User").SPXmlToJson({
-                        includeAllAttrs: true,
-                        removeOws: false
-                    });
-
-                    queue.decrease();
-
-                    //Pass back the user array
-                    deferred.resolve(users);
-                }, function (outcome) {
-                    //Failure
-                    toastr.error("Failed to fetch list collection.");
-                    queue.decrease();
-                    deferred.reject(outcome);
-                });
-            }
-
-            return deferred.promise;
-
-        };
-
-
-        var getGroupCollectionFromSite = function (options) {
-            queue.increase();
-            options = options || {};
-            var deferred = $q.defer();
-
-            if (config.offline) {
-                var offlineData = 'dev/GroupCollection.xml';
-
-                //Get offline data
-                $.ajax(offlineData).then(
-                    function (offlineData) {
-                        var groups = $(offlineData).SPFilterNode("Group").SPXmlToJson({
-                            includeAllAttrs: true,
-                            removeOws: false
-                        });
-
-                        queue.decrease();
-
-                        //Pass back the group array
-                        deferred.resolve(groups);
-                    }, function () {
-                        toastr.error("You need to have a dev/GroupCollection.xml in order to get the group collection in offline mode.");
-                        deferred.reject();
-                        queue.decrease();
-                    });
-            } else {
-                var payload = {
-                    operation: "GetGroupCollectionFromSite",
-                    webURL: options.webURL || config.defaultUrl
-                };
-
-                var webServiceCall = $().SPServices(payload);
-
-                webServiceCall.then(function () {
-                    //Success
-                    //Map returned XML to JSON
-                    var groups = $(webServiceCall.responseXML).SPFilterNode("Group").SPXmlToJson({
-                        includeAllAttrs: true,
-                        removeOws: false
-                    });
-                    queue.decrease();
-
-                    //Pass back the group array
-                    deferred.resolve(groups);
-                }, function (outcome) {
-                    //Failure
-                    toastr.error("Failed to fetch list collection.");
-                    queue.decrease();
-                    deferred.reject(outcome);
-                });
-            }
-
-            return deferred.promise;
-
-        };
-
         /**
-         * @param {string} operation ["GetUserCollectionFromSite" (default) || "GetGroupCollectionFromSite" || "GetGroupCollectionFromUser" || "GetUserCollectionFromGroup"]
+         * @param {string} operation ["GetUserCollectionFromSite" (default) || "GetGroupCollectionFromSite" || "GetGroupCollectionFromUser" || "GetUserCollectionFromGroup" || "GetListCollection" || "GetViewCollection]
          * @param {object} options
          * @returns {promise}
          */
-        var getCollection = function (operation, options) {
+        var getCollection = function (options) {
             queue.increase();
             options = options || {};
 
-            //Determine the XML node to iterate over
-            var filterNode = operation.split("Get")[1].split("Collection")[0];
+            //Determine the XML node to iterate over if filterNode isn't provided
+            var filterNode = options.filterNode || options.operation.split("Get")[1].split("Collection")[0];
 
             var deferred = $q.defer();
 
             if (config.offline) {
-                var offlineData = 'dev/' + operation + '.xml';
+                var offlineData = 'dev/' + options.operation + '.xml';
 
                 //Get offline data
                 $.ajax(offlineData).then(
@@ -297,91 +182,70 @@ angular.module('OneApp')
                         //Pass back the group array
                         deferred.resolve(items);
                     }, function () {
-                        toastr.error("You need to have a dev/" + operation + ".xml in order to get the group collection in offline mode.");
+                        toastr.error("You need to have a dev/" + options.operation + ".xml in order to get the group collection in offline mode.");
                         deferred.reject();
                         queue.decrease();
                     });
             } else {
+                var validPayload = true;
                 var payload = {
-                    operation: operation,
                     webURL: options.webURL || config.defaultUrl
                 };
 
-                if(operation === "GetGroupCollectionFromUser") {
-                    if(!options.userLoginName) {
-                        toastr.error("options.userLoginName is required to complete this operation");
-                        deferred.reject([]);
-                        return deferred.promise;
-                    }
-                    payload.userLoginName = options.userLoginName;
-                } else if (operation === "GetUserCollectionFromGroup") {
-                    if(!options.groupName) {
-                        toastr.error("options.groupName is required to complete this operation");
-                        deferred.reject([]);
-                        return deferred.promise;
-                    }
-                    payload.groupName = options.groupName;
+                _.extend(payload, options);
+
+
+                var verifyParams = function(params) {
+                    _.each(params, function(param) {
+                        if(!payload[param]) {
+                            toastr.error("options" + param + " is required to complete this operation");
+                            validPayload = false;
+                            deferred.reject([]);
+                        }
+                    });
+                };
+
+                //Verify all required params are included
+                switch(options.operation) {
+                    case "GetGroupCollectionFromUser":
+                        verifyParams(['userLoginName']);
+                        break;
+                    case "GetUserCollectionFromGroup":
+                        verifyParams(['groupName']);
+                        break;
+                    case "GetViewCollection":
+                        verifyParams(['listName']);
+                        break;
+                    case "GetAttachmentCollection":
+                        verifyParams(['listName', 'ID']);
+                        break;
                 }
 
-                var webServiceCall = $().SPServices(payload);
+                if(validPayload) {
+                    var webServiceCall = $().SPServices(payload);
 
-                webServiceCall.then(function () {
-                    //Success
-                    //Map returned XML to JSON
-                    var items = $(webServiceCall.responseXML).SPFilterNode(filerNode).SPXmlToJson({
-                        includeAllAttrs: true,
-                        removeOws: false
+                    webServiceCall.then(function () {
+                        //Success
+                        //Map returned XML to JSON
+                        var items = $(webServiceCall.responseXML).SPFilterNode(filerNode).SPXmlToJson({
+                            includeAllAttrs: true,
+                            removeOws: false
+                        });
+                        queue.decrease();
+
+                        //Pass back the group array
+                        deferred.resolve(items);
+                    }, function (outcome) {
+                        //Failure
+                        toastr.error("Failed to fetch list collection.");
+                        queue.decrease();
+                        deferred.reject(outcome);
                     });
-                    queue.decrease();
-
-                    //Pass back the group array
-                    deferred.resolve(items);
-                }, function (outcome) {
-                    //Failure
-                    toastr.error("Failed to fetch list collection.");
-                    queue.decrease();
-                    deferred.reject(outcome);
-                });
+                }
             }
 
             return deferred.promise;
 
-        };
-
-
-        /**
-         * Returns all list settings for each list on the site
-         * @param options.webURL returns info for specified site (optional)
-         * @returns promise for json dataset
-         */
-        var getListCollection = function (options) {
-            options = options || {};
-            queue.increase();
-            var deferred = $q.defer();
-            var payload = {
-                operation: "GetListCollection",
-                webURL: options.webURL || config.defaultUrl
-            };
-
-            var webServiceCall = $().SPServices(payload);
-
-            webServiceCall.then(function () {
-                //Success
-                //Map returned XML to JSON
-                var json = $(webServiceCall.responseXML).SPFilterNode("List").SPXmlToJson({
-                    includeAllAttrs: true,
-                    removeOws: false
-                });
-                //Pass back the lists array
-                deferred.resolve(json);
-            },function (outcome) {
-                //Failure
-                toastr.error("Failed to fetch list collection.");
-                deferred.reject(outcome);
-            }).always(function () {
-                queue.decrease();
-            });
-            return deferred.promise;
         };
 
         /**
@@ -417,8 +281,8 @@ angular.module('OneApp')
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
             }).always(function () {
-                queue.decrease();
-            });
+                    queue.decrease();
+                });
 
             return deferred.promise;
         };
@@ -452,45 +316,8 @@ angular.module('OneApp')
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
             }).always(function () {
-                queue.decrease();
-            });
-
-            return deferred.promise;
-        };
-
-        /**
-         *
-         * @param options.list (required)
-         * @param options.webURL (optional)
-         * @returns {*}
-         */
-        var getViewCollection = function (options) {
-            options = options || {};
-            queue.increase();
-            var deferred = $q.defer();
-
-            var webServiceCall = $().SPServices({
-                operation: "GetViewCollection",
-                listName: options.listName,
-                webURL: options.webURL || config.defaultUrl
-            });
-
-            webServiceCall.then(function () {
-                //Success
-                //Map returned XML to JSON
-                var json = $(webServiceCall.responseXML).SPFilterNode("View").SPXmlToJson({
-                    includeAllAttrs: true,
-                    removeOws: false
+                    queue.decrease();
                 });
-                //Pass back the lists array
-                deferred.resolve(json);
-            },function (outcome) {
-                //Failure
-                toastr.error("Failed to get the view collection.");
-                deferred.reject(outcome);
-            }).always(function () {
-                queue.decrease();
-            });
 
             return deferred.promise;
         };
@@ -532,8 +359,8 @@ angular.module('OneApp')
                 toastr.error("Failed to fetch view details.");
                 deferred.reject(outcome);
             }).always(function () {
-                queue.decrease();
-            });
+                    queue.decrease();
+                });
 
             return deferred.promise;
         };
@@ -683,36 +510,6 @@ angular.module('OneApp')
             return deferredObj.promise;
         };
 
-//            var getListItemChanges = function(model, query, options) {
-//                //Display animation
-//                queue.increase();
-//                options = options || {};
-//                //Make sure the correct operation is set
-//                query.operation = "GetListItemChanges";
-//                var deferredObj = options.deferred || model.ready;
-//
-//                if(config.offline) {
-//                    //Get offline data again to simulate real async call
-//                    $.ajax( 'dev/' + model.list.title + '.xml').then(function(offlineData) {
-//                        //Set date time to allow for time based updates
-//                        query.lastRun = new Date();
-//                        queue.decrease();
-//                        //Resolve with no changes
-//                        deferredObj.resolve([]);
-//                    });
-//                } else if(query){
-//                    var webServiceCall = $().SPServices(query);
-//                    webServiceCall.then(function() {
-//                        dataService.processListItems(model, webServiceCall);
-//                        //Set date time to allow for time based updates
-//                        query.lastRun = new Date();
-//                        queue.decrease();
-//                        deferredObj.resolve(model);
-//                    });
-//                }
-//
-//                return deferredObj.promise;
-//            };
         /**
          *
          * @param pairOptions.list Object (Need either list or list name)
@@ -876,8 +673,8 @@ angular.module('OneApp')
                     toastr.error("There was an error getting the requested data from " + model.list.name);
                     deferred.reject(outcome);
                 }).always(function () {
-                    queue.decrease();
-                });
+                        queue.decrease();
+                    });
             }
             return deferred.promise;
         };
@@ -918,62 +715,11 @@ angular.module('OneApp')
                     toastr.error("There was an error deleting a list item from " + model.list.title);
                     deferred.reject(outcome);
                 }).always(function () {
-                    queue.decrease();
-                });
+                        queue.decrease();
+                    });
             }
             return deferred.promise;
         };
-
-//        var getUserGroupCollection = function (user) {
-//
-//            var deferred = $q.defer();
-//
-//            if (config.offline) {
-//                //Get offline data
-//                $.ajax('dev/usergroupcollection.xml').then(function (offlineData) {
-//                    processListItems(model, offlineData, filter);
-//                    //Set date time to allow for time based updates
-//                    query.lastRun = new Date();
-//                    queue.decrease();
-//                    deferredObj.resolve(model);
-//                });
-//            }
-//            queue.increase();
-//            var webServiceCall = $().SPServices({
-//                webURL: config.defaultUrl,
-//                operation: "GetGroupCollectionFromUser",
-//                userLoginName: store.user.accountRef
-//            });
-//
-//            webServiceCall.then(function () {
-//                user.groupCollection.groups = [];
-//                $(user.groupCollection.responseXML).find("Group").each(function (index) {
-//                    var self = $(this);
-//                    user.groupCollection.groups.push({
-//                        id: self.attr('ID'),
-//                        name: self.attr('Name')
-//                    });
-//                });
-//
-//                /**Can pass in either a group name or id**/
-//                /**Returns true/false**/
-//                user.groupCollection.isMemberOf = function (groupNameOrId) {
-//                    var match = _.find(user.groupCollection.groups, function (group) {
-//                        return group.name === groupNameOrId || group.id === groupNameOrId;
-//                    });
-//
-//                    return typeof match !== 'undefined' ? true : false;
-//                };
-//                deferred.resolve(user.groupCollection);
-//            },function (outcome) {
-//                //In the event of an error, display toast
-//                toastr.error("There was an error retrieving user group collection information.");
-//                deferred.reject(outcome);
-//            }).always(function () {
-//                    queue.decrease();
-//                });
-//            return deferred.promise;
-//        };
 
         _.extend(dataService, {
             addUpdateItemModel: addUpdateItemModel,
@@ -983,13 +729,9 @@ angular.module('OneApp')
             getAttachmentCollectionModel: getAttachmentCollectionModel,
             getCollection: getCollection,
             getFieldVersionHistory: getFieldVersionHistory,
-            getGroupCollectionFromSite: getGroupCollectionFromSite,
             getList: getList,
-            getListCollection: getListCollection,
             getUpdatesSinceToken: getUpdatesSinceToken,
-            getUserCollectionFromSite: getUserCollectionFromSite,
             getView: getView,
-            getViewCollection: getViewCollection,
             initializeModel: initializeModel,
             keepDataUpdated: keepDataUpdated,
             processListItems: processListItems,
