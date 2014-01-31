@@ -21,7 +21,7 @@ angular.module('OneApp')
         $scope.listCollection = [];
 
         $scope.getLists = function() {
-            dataService.getListCollection({
+            dataService.getCollection('GetListCollection', {
                 webURL: $scope.state.siteUrl
             }).then(function(dataArray) {
                     $scope.listCollection.push.apply($scope.listCollection, dataArray);
