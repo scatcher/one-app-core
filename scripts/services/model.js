@@ -133,7 +133,7 @@ angular.module('OneApp')
             dataService.addUpdateItemModel(model, self, options).then(function(response) {
                 deferred.resolve(response);
                 //Optionally broadcast change event
-                registerChange(self);
+                registerChange(model);
             });
 
             return deferred.promise;
@@ -152,7 +152,7 @@ angular.module('OneApp')
             dataService.deleteItemModel(model, self).then(function(response) {
                 deferred.resolve(response);
                 //Optionally broadcast change event
-                registerChange(self);
+                registerChange(model);
             });
 
             return deferred.promise;
