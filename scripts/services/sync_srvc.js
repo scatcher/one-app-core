@@ -10,15 +10,11 @@ angular.module('OneApp')
             sync.changeNotifier = new Firebase(config.firebaseURL + '/changes/' + model.list.title);
             sync.lastUpdate = $firebase(sync.changeNotifier);
 
-            //Prevent reevaluating when current user is the one
-            sync.myChanges = [];
-
             //Used to notify all other users that a change has been made
             sync.registerChange = function () {
                 console.log("Change detected in " + model.list.title + ' list.');
                 var timeStamp = Firebase.ServerValue.TIMESTAMP;
                 sync.lastUpdate.$set(timeStamp);
-                sync.myChanges.push(timeStamp);
             };
 
             //Container to hold all current subscriptions
@@ -27,8 +23,7 @@ angular.module('OneApp')
             //Running counter of the number of changes
             sync.changeCount = 0;
 
-            //Fired when anyone updates a requirement
-            sync.lastUpdate.$on("change", function(newVal, oldVal) {
+            sync.processChanges = function() {
                 //Prevent from running the first time
                 if(sync.changeCount > 0) {
                     model.updateData().then(function() {
@@ -42,7 +37,17 @@ angular.module('OneApp')
                 }
 
                 sync.changeCount += 1;
+            };
+
+            /** Don't make a call more than once every 10 seconds */
+            sync.throttleRequests = _.throttle(function() {return sync.processChanges() }, 10000);
+
+            //Fired when anyone updates a requirement
+            sync.lastUpdate.$on("change", function(newVal, oldVal) {
+                sync.throttleRequests();
             });
+
+
 
             //Allows controller to be notified when change is made
             sync.subscribeToChanges = function (callback) {
