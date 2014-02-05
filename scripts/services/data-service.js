@@ -257,6 +257,72 @@ angular.module('OneApp')
         };
 
         /**
+         * Generic wrapper for any SPServices web service call
+         * Check http://spservices.codeplex.com/documentation for details on expected parameters for each operation
+         *
+         * @param {object} options - payload params
+         * @returns {promise}
+         *      If options.filterNode is provided, returns XML parsed by node name
+         *      Otherwise returns the server response
+         */
+        var serviceWrapper = function (options) {
+            queue.increase();
+            options = options || {};
+
+            var deferred = $q.defer();
+
+            //Convert the xml returned from the server into an array of js objects
+            var processXML = function (serverResponse) {
+                if(options.filterNode) {
+                    return $(serverResponse).SPFilterNode(options.filterNode).SPXmlToJson({
+                        includeAllAttrs: true,
+                        removeOws: false
+                    });
+                } else {
+                    return serverResponse;
+                }
+            };
+
+            if (config.offline) {
+                //Debugging offline
+                var offlineData = 'dev/' + options.operation + '.xml';
+
+                //Get offline data
+                $.ajax(offlineData).then(
+                    function (offlineData) {
+                        queue.decrease();
+                        //Pass back the group array
+                        deferred.resolve(processXML(offlineData));
+                    }, function (outcome) {
+                        toastr.error("You need to have a dev/" + options.operation + ".xml in order to get the group collection in offline mode.");
+                        deferred.reject(outcome);
+                        queue.decrease();
+                    });
+            } else {
+                //Add in webURL to speed up call, set to default if not specified
+                var payload = {
+                    webURL: options.webURL || config.defaultUrl
+                };
+
+                _.extend(payload, options);
+
+                var webServiceCall = $().SPServices(payload);
+
+                webServiceCall.then(function () {
+                    //Success
+                    queue.decrease();
+                    deferred.resolve(processXML(webServiceCall.responseXML));
+                }, function (outcome) {
+                    //Failure
+                    toastr.error("Failed to fetch list collection.");
+                    queue.decrease();
+                    deferred.reject(outcome);
+                });
+            }
+            return deferred.promise;
+        };
+
+        /**
          * Returns all list settings for each list on the site
          * @param options.listName (required)
          * @param options.webURL returns info for specified site (optional)
@@ -289,8 +355,8 @@ angular.module('OneApp')
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
             }).always(function () {
-                    queue.decrease();
-                });
+                queue.decrease();
+            });
 
             return deferred.promise;
         };
@@ -324,8 +390,8 @@ angular.module('OneApp')
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
             }).always(function () {
-                    queue.decrease();
-                });
+                queue.decrease();
+            });
 
             return deferred.promise;
         };
@@ -367,8 +433,8 @@ angular.module('OneApp')
                 toastr.error("Failed to fetch view details.");
                 deferred.reject(outcome);
             }).always(function () {
-                    queue.decrease();
-                });
+                queue.decrease();
+            });
 
             return deferred.promise;
         };
@@ -681,8 +747,8 @@ angular.module('OneApp')
                     toastr.error("There was an error getting the requested data from " + model.list.name);
                     deferred.reject(outcome);
                 }).always(function () {
-                        queue.decrease();
-                    });
+                    queue.decrease();
+                });
             }
             return deferred.promise;
         };
@@ -723,8 +789,8 @@ angular.module('OneApp')
                     toastr.error("There was an error deleting a list item from " + model.list.title);
                     deferred.reject(outcome);
                 }).always(function () {
-                        queue.decrease();
-                    });
+                    queue.decrease();
+                });
             }
             return deferred.promise;
         };
@@ -742,7 +808,8 @@ angular.module('OneApp')
             initializeModel: initializeModel,
             keepDataUpdated: keepDataUpdated,
             processListItems: processListItems,
-            registerModels: registerModels
+            registerModels: registerModels,
+            serviceWrapper: serviceWrapper
         });
 
         return dataService;
