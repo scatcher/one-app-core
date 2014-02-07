@@ -707,7 +707,7 @@ angular.module('OneApp')
                     modified: new Date(),
                     editor: {
                         lookupId: 23,
-                        lookupValue: 'Hatcher, Scott B CIV ESED, JXPML'
+                        lookupValue: 'Generic User'
                     }
                 };
                 if (_.isUndefined(item.id)) {
@@ -721,7 +721,7 @@ angular.module('OneApp')
                     //Include additional fields for new item
                     offlineDefaults.author = {
                         lookupId: 23,
-                        lookupValue: 'Hatcher, Scott B CIV ESED, JXPML'
+                        lookupValue: 'Generic User'
                     };
                     offlineDefaults.created = new Date();
                     offlineDefaults.id = maxId++;
