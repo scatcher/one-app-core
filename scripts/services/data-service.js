@@ -638,7 +638,8 @@ angular.module('OneApp')
                         break;
                     case "DateTime":
                         if (moment(value).isValid()) {
-                            valuePair = [internalName, moment(value).format()];
+                            //A string date in ISO format, e.g., "2013-05-08T01:20:29Z-05:00"
+                            valuePair = [internalName, moment(value).format("YYYY-MM-DDTHH:mm:ss[Z]Z")];
                         } else {
                             valuePair = [internalName, ''];
                         }
