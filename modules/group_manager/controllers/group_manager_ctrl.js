@@ -288,12 +288,12 @@ angular.module('OneApp')
                 operation: 'GetUserCollectionFromSite'
             }).then(function (response) {
                 _.each(response, function (user) {
-                    if (user.LoginName.indexOf("0#.w|navy") > 0) {
+                    //Assume that valid users all have email addresses and services/groups don't
+                    if (user.Email) {
                         $scope.siteCollectionUsers.push(user);
                     }
                 });
                 $scope.state.selectedUser = $scope.siteCollectionUsers[0];
-//                $scope.updateAvailableGroups();
                 deferred.resolve($scope.siteCollectionUsers);
             });
             return deferred.promise;
