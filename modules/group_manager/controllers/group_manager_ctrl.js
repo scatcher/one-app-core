@@ -19,6 +19,7 @@ angular.module('OneApp')
             selectedGroup: '',
             selectedAvailableOptions: '',
             selectedAssignedOptions: '',
+            sourceGroup: '',
             userFilter: '',
             groupFilter: ''
         };
@@ -30,7 +31,7 @@ angular.module('OneApp')
             var available = [];
             var assigned = [];
 
-            var fullList = $scope.state.activeTab === "Users" ?
+            var fullList = $scope.state.activeTab === "Users" || "Merge" ?
                 $scope.siteCollectionUsers :
                 $scope.siteCollectionGroups;
 
@@ -64,19 +65,19 @@ angular.module('OneApp')
                 operation: "GetGroupCollectionFromUser",
                 userLoginName: $scope.state.selectedUser.LoginName
             }).then(function (response) {
-                buildInputs(response);
-            });
+                    buildInputs(response);
+                });
         };
 
-        $scope.updateAvailableUsers = function () {
+        $scope.updateAvailableUsers = function (group) {
             toastr.info("Retrieving an updated list of users for the current group");
             dataService.getCollection({
                 webUrl: $scope.state.siteUrl,
-                groupName: $scope.state.selectedGroup.Name,
+                groupName: group.Name,
                 operation: "GetUserCollectionFromGroup"
             }).then(function (response) {
-                buildInputs(response);
-            });
+                    buildInputs(response);
+                });
         };
 
         //Initialize with default values
@@ -136,10 +137,21 @@ angular.module('OneApp')
         $scope.groupDetailsLink = function(group) {
             $scope.state.selectedGroup = group;
             $scope.state.activeTab = "Users";
-            $scope.updateAvailableUsers();
+            $scope.updateAvailableUsers(group);
+        };
+
+        $scope.mergeGroups = function() {
+            $scope.state.selectedAvailableOptions = $scope.assignedOptions;
+            $scope.updatePermissions("AddUserToGroup").then(function(promiseArray) {
+                toastr.success(promiseArray.length + ' users successfully merged.');
+                $scope.state.selectedAvailableOptions.length = 0;
+                $scope.state.sourceGroup = '';
+                $scope.state.selectedGroup = '';
+            });
         };
 
         $scope.updatePermissions = function (operation) {
+            var deferredPermissionsUpdate = $q.defer();
             var destination = $scope.assignedOptions;
             var source = $scope.availableOptions;
             var selectedObjects = $scope.state.selectedAvailableOptions;
@@ -187,8 +199,8 @@ angular.module('OneApp')
                             groupName: groupName,
                             userLoginName: userLoginName
                         }).then(function(response) {
-                            deferred.resolve(response);
-                        });
+                                deferred.resolve(response);
+                            });
                     }
 
                     queue.push(deferred.promise);
@@ -204,15 +216,19 @@ angular.module('OneApp')
                     if (!config.offline) {
                         //Retrieve updated value from the server
                         if($scope.state.activeTab === "Users") {
-                            $scope.updateAvailableUsers();
+                            $scope.updateAvailableUsers($scope.state.selectedGroup);
                         } else {
                             $scope.updateAvailableGroups();
                         }
                     }
+                    deferredPermissionsUpdate.resolve(responses);
+
                 }, function (outcome) {
                     toastr.error("There was a problem removing the user");
                 });
             }
+
+            return deferredPermissionsUpdate.promise;
         };
 
         $scope.usersTable = new ngTableParams({
@@ -266,7 +282,7 @@ angular.module('OneApp')
                     if($scope.state.groupFilter === '') {
                         return true;
                     }
-                    var textFields = ['ID', 'Name', 'Email'];
+                    var textFields = ['ID', 'Name', 'Description'];
                     var searchStringLowerCase = $scope.state.groupFilter.toLowerCase();
                     _.each(textFields, function(fieldName) {
                         if(record[fieldName].toLowerCase().indexOf(searchStringLowerCase) !== -1) {
@@ -287,15 +303,15 @@ angular.module('OneApp')
                 webUrl: $scope.state.siteUrl,
                 operation: 'GetUserCollectionFromSite'
             }).then(function (response) {
-                _.each(response, function (user) {
-                    //Assume that valid users all have email addresses and services/groups don't
-                    if (user.Email) {
-                        $scope.siteCollectionUsers.push(user);
-                    }
+                    _.each(response, function (user) {
+                        //Assume that valid users all have email addresses and services/groups don't
+                        if (user.Email) {
+                            $scope.siteCollectionUsers.push(user);
+                        }
+                    });
+                    $scope.state.selectedUser = $scope.siteCollectionUsers[0];
+                    deferred.resolve($scope.siteCollectionUsers);
                 });
-                $scope.state.selectedUser = $scope.siteCollectionUsers[0];
-                deferred.resolve($scope.siteCollectionUsers);
-            });
             return deferred.promise;
         };
 
@@ -305,17 +321,17 @@ angular.module('OneApp')
                 webUrl: $scope.state.siteUrl,
                 operation: "GetGroupCollectionFromSite"
             }).then(function (response) {
-                Array.prototype.push.apply($scope.siteCollectionGroups, response);
-                $scope.state.selectedGroup = $scope.siteCollectionGroups[0];
-                deferred.resolve($scope.siteCollectionGroups);
-            });
+                    Array.prototype.push.apply($scope.siteCollectionGroups, response);
+                    $scope.state.selectedGroup = $scope.siteCollectionGroups[0];
+                    deferred.resolve($scope.siteCollectionGroups);
+                });
             return deferred.promise;
         };
 
 
         /** All logic dependent on model data should be inlcuded in the return statement */
         return $q.all(getUserCollection(), getGroupCollection()).then(function() {
-            $scope.updateAvailableUsers();
+            $scope.updateAvailableUsers($scope.state.selectedGroup);
             $scope.updateTab();
             console.log($scope);
         });

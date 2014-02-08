@@ -2,6 +2,7 @@
     select.multiselect {
         min-height: 400px;
     }
+
     .ui-match {
         background: yellow;
     }
@@ -15,6 +16,9 @@
         </li>
         <li ng-class="{active: state.activeTab === 'Groups'}">
             <a href ng-click="updateTab('Groups')">Groups</a>
+        </li>
+        <li ng-class="{active: state.activeTab === 'Merge'}">
+            <a href ng-click="state.activeTab = 'Merge'">Merge</a>
         </li>
         <li ng-class="{active: state.activeTab === 'UserList'}">
             <a href ng-click="state.activeTab = 'UserList'">User List</a>
@@ -30,12 +34,14 @@
                     <div class="col-xs-5">
                         <span style="font-weight:bold">{{ tabContents.labels.select }}</span>
                 <span ng-if="state.activeTab === 'Groups'">
-                    <select class="form-control" ng-model="state.selectedUser" ng-options="user.Name for user in siteCollectionUsers"
+                    <select class="form-control" ng-model="state.selectedUser"
+                            ng-options="user.Name for user in siteCollectionUsers"
                             ng-change="updateAvailableGroups()"></select>
                 </span>
                 <span ng-if="state.activeTab === 'Users'">
-                    <select class="form-control" ng-model="state.selectedGroup" ng-options="group.Name for group in siteCollectionGroups"
-                            ng-change="updateAvailableUsers()" style="min-width: 100px;"></select>
+                    <select class="form-control" ng-model="state.selectedGroup"
+                            ng-options="group.Name for group in siteCollectionGroups"
+                            ng-change="updateAvailableUsers(state.selectedGroup)" style="min-width: 100px;"></select>
                 </span>
                     </div>
                     <div class="col-xs-7">
@@ -83,7 +89,66 @@
             </div>
         </div>
     </div>
+    <div ng-if="state.activeTab === 'Merge'">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="description">This tab allows us to copy the members from the "Source" group over to
+                            the "Target" group.
+                            It's not a problem if any of the users already exist in the destination group. Note: This is
+                            a onetime operation
+                            so any additional members added to the Source group will not automatically be added to the
+                            destination group. You will
+                            need to repeat this process.
+                        </div>
+                    </div>
+                </div>
+                <hr class="hr-sm">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <fieldset>
+                            <legend>Step 1</legend>
+                            <div class="well">
+                                <div class="form-group">
+                                    <label>Source Group</label>
+                                    <select class="form-control" ng-model="state.sourceGroup"
+                                            ng-options="group.Name for group in siteCollectionGroups"
+                                            ng-change="updateAvailableUsers(state.sourceGroup)"
+                                            style="min-width: 100px;"></select>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-xs-5">
+                        <fieldset>
+                            <legend>Step 2</legend>
 
+                            <div class="well">
+                                <div class="form-group">
+                                    <label>Source Group</label>
+                                    <select class="form-control" ng-model="state.selectedGroup"
+                                            ng-options="group.Name for group in siteCollectionGroups"
+                                            style="min-width: 100px;"></select>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-xs-2">
+                        <fieldset>
+                            <legend>Step 3</legend>
+                            <button class="btn btn-success"
+                                    ng-disabled="state.sourceGroup.length < 1 || state.selectedGroup.length < 1"
+                                    ng-click="mergeGroups()"
+                                    title="Copy all members from the source group over to the destination group.">
+                                <i class="fa fa-2x fa-magic"></i> Merge
+                            </button>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div ng-if="state.activeTab === 'UserList'">
         <div class="panel panel-default">
             <div class="panel-heading">
