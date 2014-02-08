@@ -19,7 +19,7 @@ angular.module('OneApp')
                 selectedAvailable: [],
                 assigned: [],
                 selectedAssigned: [],
-                filter: [] //Group selected in dropdown at top
+                filter: '' //Group selected in dropdown at top
             };
             _.extend(self, container);
             self.clearSelected = function() {
@@ -60,7 +60,7 @@ angular.module('OneApp')
             });
 
             _.each(data.all, function (item) {
-                if (map.indexOf(item.ID) > -1) {
+                if (_.indexOf(map, item.ID) > -1) {
                     //Already assigned
                     assigned.push(item);
                 } else {
@@ -99,6 +99,10 @@ angular.module('OneApp')
             }).then(function (response) {
                     buildInputs(response, 'users');
                     deferred.resolve(response);
+                }, function() {
+                    toastr.error("Please verify that you have sufficient permissions to view members of this group");
+                    //No users were returned so display all users as available
+                    deferred.resolve([]);
                 });
 
             return deferred.promise;
@@ -106,34 +110,35 @@ angular.module('OneApp')
         };
 
         $scope.updateTab = function (tab) {
+            initializeFilterFields();
+            $scope.state.activeTab = tab;
+
             if (tab === 'Groups') {
                 $scope.updateAvailableGroups().then(function () {
-                    initializeFilterFields();
-                    $scope.state.activeTab = tab;
+
                 });
             } else {
                 $scope.updateAvailableUsers($scope.users.filter).then(function () {
-                    initializeFilterFields();
-                    $scope.state.activeTab = tab;
+
                 });
             }
         };
 
         $scope.userDetailsLink = function (user) {
             $scope.groups.filter = user;
-            $scope.updateAvailableGroups();
+            $scope.updateTab('Groups');
         };
 
         $scope.groupDetailsLink = function (group) {
             $scope.users.filter = group;
-            $scope.updateAvailableUsers(group);
+            $scope.updateTab('Users');
         };
 
         /**
          * Copy users from one group into another
          */
         $scope.mergeGroups = function () {
-            $scope.updatePermissions("AddUserToGroup", [$scope.state.sourceGroup], [$scope.state.targetGroup]).then(function (promiseArray) {
+            $scope.updatePermissions("AddUserToGroup", $scope.users.assigned, [$scope.state.targetGroup]).then(function (promiseArray) {
                 toastr.success(promiseArray.length + ' users successfully merged.');
                 //Reset dropdowns to empty
                 $scope.state.sourceGroup = '';
@@ -193,14 +198,14 @@ angular.module('OneApp')
                     toastr.success(operation === "AddUserToGroup" ?
                         "User successfully added" :
                         "User successfully removed");
-//                    if (!config.offline) {
-//                        //Retrieve updated value from the server
-//                        if ($scope.state.activeTab === "Users") {
-//                            $scope.updateAvailableUsers($scope.state.selectedGroup);
-//                        } else {
-//                            $scope.updateAvailableGroups();
-//                        }
-//                    }
+                    if (!config.offline) {
+                        //Retrieve updated value from the server
+                        if ($scope.state.activeTab === "Users") {
+                            $scope.updateAvailableUsers($scope.users.filter);
+                        } else {
+                            $scope.updateAvailableGroups();
+                        }
+                    }
                     deferredPermissionsUpdate.resolve(responses);
 
                 }, function (outcome) {
@@ -311,12 +316,12 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
+        var initializeData = function() {
+            $q.all(getUserCollection(), getGroupCollection()).then(function () {
+                $scope.updateTab('Users');
+                console.log($scope);
+            });
+        };
 
-        /** All logic dependent on model data should be inlcuded in the return statement */
-        return $q.all(getUserCollection(), getGroupCollection()).then(function () {
-            initializeFilterFields();
-//            $scope.updateAvailableUsers($scope.state.selectedGroup);
-            $scope.updateTab('Users');
-            console.log($scope);
-        });
+        initializeData();
     });

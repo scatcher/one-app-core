@@ -43,9 +43,9 @@
                     <input class="form-control" ng-model="state.siteUrl" ng-change="updateAvailableUsers(users.filter)">
                 </div>
             </div>
-            <div class="row" ng-if="state.selectedGroup.Description">
+            <div class="row" ng-if="users.filter.Description">
                 <div class="col-xs-12">
-                    <p class="help-block">Description: {{ state.selectedGroup.Description }}</p>
+                    <p class="help-block">Description: {{ users.filter.Description }}</p>
                 </div>
             </div>
         </div>
