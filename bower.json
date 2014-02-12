@@ -33,7 +33,7 @@
         "firebase-bower": "https://github.com/firebase/firebase-bower.git",
         "font-awesome": "~4",
         "fullcalendar": "latest",
-        "jquery": "1.10.2",
+        "jquery": "~1.11",
         "jquery-ui": "latest",
         "jquery.easy-pie-chart":"https://github.com/scatcher/easy-pie-chart.git#e15292d37d69d1645ae10276a5cb0d9200acc28a",
         "json3": "~3",
