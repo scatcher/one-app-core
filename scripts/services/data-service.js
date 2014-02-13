@@ -573,7 +573,7 @@ angular.module('OneApp')
                         }
                     }
                     //Convert the XML into JS
-                    var changes = processListItems(model, webServiceCall);
+                    var changes = processListItems(model, webServiceCall, options);
                     //Set date time to allow for time based updates
                     query.lastRun = new Date();
                     queue.decrease();
