@@ -98,27 +98,13 @@ angular.module('OneApp')
 
         /**
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
-         * @param {object} obj - List item
-         * @param {object} model - Reference to the model
-         * @param {object} dataService - Reference to DataService
-         * @returns {ListItem}
          * @constructor
          */
-        function ListItem(obj, model) {
-            var self = this;
-            self.dataService = dataService;
+        function ListItem() {}
 
-            self.getDataService = function () {
+        ListItem.prototype.getDataService = function() {
                 return dataService;
             };
-
-            self.getModel = function () {
-                return model;
-            };
-
-            _.extend(self, obj);
-        }
-
 
         /**
          * Updates record directly from the object
@@ -214,7 +200,7 @@ angular.module('OneApp')
                 var payload = {
                     operation: "GetVersionCollection",
                     webURL: config.defaultUrl,
-                    strlistID: model.list.title,
+                    strlistID: model.list.guid,
                     strlistItemID: self.id,
                     strFieldName: fieldDefinition.internalName
                 };
