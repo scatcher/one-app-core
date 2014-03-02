@@ -4,7 +4,7 @@ angular.module('OneApp')
     .service('utility', function utility() {
         // AngularJS will instantiate a singleton by calling "new" on this function
 
-        //Extend underscore
+        /** Extend underscore with a simple helper function */
         _.mixin({
             isDefined: function (value) {
                 return !_.isUndefined(value);
@@ -271,8 +271,43 @@ angular.module('OneApp')
             }
         }
 
+        /** Convert date into a int formatted as yyyymmdd
+         *  We don't need the time portion of comparison so an int makes this easier to evaluate */
+        function yyyymmdd(date) {
+            var yyyy = date.getFullYear().toString();
+            var mm = (date.getMonth()+1).toString();
+            var dd = date.getDate().toString();
+            return parseInt(yyyy + (mm[1]?mm:"0"+mm[0]) + dd);
+        }
+
+        /**
+         * Converts dates into yyyymmdd formatted ints and evaluates to determine if the dateToCheck
+         * falls within the date range provided
+         * @param startDate
+         * @param endDate
+         * @param dateToCheck - defaults to the current date
+         * @returns {boolean}
+         */
+        function dateWithinRange(startDate, endDate, dateToCheck) {
+            /** Ensure both a start and end date are provided **/
+            if(!startDate || !endDate) {
+                return false;
+            }
+
+            /** Use the current date as the default if one isn't provided */
+            dateToCheck = dateToCheck || new Date();
+
+            /** Create an int representation of each of the dates */
+            var startInt = yyyymmdd(startDate);
+            var endInt = yyyymmdd(endDate);
+            var dateToCheckInt = yyyymmdd(dateToCheck);
+
+            return startInt <= dateToCheckInt && dateToCheckInt <= endInt;
+        }
+
         return {
             attrToJson: attrToJson,
+            dateWithinRange: dateWithinRange,
             fromCamelCase: fromCamelCase,
             lookupToJsonObject: lookupToJsonObject,
             SplitIndex: SplitIndex,
