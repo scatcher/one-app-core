@@ -19,6 +19,7 @@
         "angular-route": "~1.2",
         "angular-sanitize": "~1.2",
         "angular-spinner": "latest",
+        "angular-toastr": "latest",
         "angular-ui-calendar": "latest",
         "angular-ui-date": "latest",
         "angular-ui-router": "latest",
