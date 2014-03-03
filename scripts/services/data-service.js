@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('dataService', function ($q, $timeout, config, queue, utility) {
+    .service('dataService', function ($q, $timeout, config, queue, utility, toastr) {
         var dataService = {};
 
         /**

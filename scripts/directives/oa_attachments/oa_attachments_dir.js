@@ -1,5 +1,5 @@
 angular.module('OneApp')
-    .directive('oaAttachments', function ($sce) {
+    .directive('oaAttachments', function ($sce, toastr) {
         return {
             restrict: "A",
             replace: true,
