@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('OneApp')
-    .controller('groupManagerCtrl', function ($scope, $q, $timeout, $filter, ngTableParams, config, dataService) {
+    .controller('groupManagerCtrl', function ($scope, $q, $timeout, $filter, ngTableParams, config, dataService, toastr) {
         /** 1. Create deferred object which is resolved one all models are ready */
         /** 2. Decorates the $scope with helper methods like "$scope.refresh()" */
         /** 3. Creates pointers on the $scope to each model.data array (ex: adds $scope.personnel for personnelModel) */

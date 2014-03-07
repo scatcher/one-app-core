@@ -1,5 +1,5 @@
 angular.module('OneApp')
-    .directive('oaComments', function ($sce, $timeout, commentsModel, config) {
+    .directive('oaComments', function ($sce, $timeout, commentsModel, config, toastr) {
         return {
             restrict: "A",
             replace: true,
