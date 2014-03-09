@@ -192,7 +192,7 @@ angular.module('OneApp')
             var self = this;
             var model = this.getModel();
 
-            //Creates a promise for each field
+            /** Constructor that creates a promise for each field */
             var createPromise = function (fieldName) {
 
                 var fieldDefinition = _.findWhere(model.list.fields, {mappedName: fieldName});
@@ -208,34 +208,41 @@ angular.module('OneApp')
                 promiseArray.push(dataService.getFieldVersionHistory(payload, fieldDefinition));
             };
 
-            if (!_.isArray(fieldNames)) {
+            if(!fieldNames) {
+                /** If fields aren't provided, pull the version history for all NON-readonly fields */
+                var targetFields = _.where(model.list.fields, {readOnly: false});
+                fieldNames = [];
+                _.each(targetFields, function(field) {
+                    fieldNames.push(field.mappedName);
+                });
+            } else if(_.isString(fieldNames)) {
+                /** If a single field name is provided, add it to an array so we can process it more easily */
                 fieldNames = [fieldNames];
             }
 
-            //Generate promises for each field
+            /** Generate promises for each field */
             _.each(fieldNames, function (fieldName) {
                 createPromise(fieldName);
             });
 
-
-            //Pause until everything is resolved
+            /** Pause until all requests are resolved */
             $q.all(promiseArray).then(function (changes) {
                 var versionHistory = {};
 
-                //All fields should have the same number of versions
+                /** All fields should have the same number of versions */
                 _.each(changes, function (fieldVersions) {
 
                     _.each(fieldVersions, function (fieldVersion) {
                         if (!versionHistory[fieldVersion.modified.toJSON()]) {
                             versionHistory[fieldVersion.modified.toJSON()] = {};
                         }
-                        //Add field to the version history for this version
+                        /** Add field to the version history for this version */
                         _.extend(versionHistory[fieldVersion.modified.toJSON()], fieldVersion);
                     });
                 });
 
                 var versionArray = [];
-                //Add a version prop on each version to identify the numeric sequence
+                /** Add a version prop on each version to identify the numeric sequence */
                 _.each(versionHistory, function (ver, num) {
                     ver.version = num;
                     versionArray.push(ver);
