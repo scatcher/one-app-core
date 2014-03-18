@@ -38,15 +38,15 @@
         "jquery-ui": "latest",
         "jquery.easy-pie-chart":"https://github.com/scatcher/easy-pie-chart.git#e15292d37d69d1645ae10276a5cb0d9200acc28a",
         "json3": "~3",
+        "lodash": "latest",
         "moment": "latest",
         "ng-ckeditor": "latest",
-        "ng-table": "107138b8bf9ab45ef54c7c49b3a2f16ac4d66a75",
+        "ng-table": "master",
         "ng-table-export": "latest",
         "respond": "latest",
         "select2": "latest",
         "SPServices": "https://github.com/sympmarc/SPServices.git#master",
-        "toastr": "latest",
-        "underscore": "latest"
+        "toastr": "latest"
     },
     "ignore": [
         "**/.*",
