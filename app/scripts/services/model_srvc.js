@@ -52,8 +52,6 @@ angular.module('OneApp')
             return self;
         }
 
-
-
         /**
          * Inherited from Model constructor
          * Gets all list items in the current list, processes the xml, and adds the data to the model
@@ -120,9 +118,39 @@ angular.module('OneApp')
 
             dataService.addUpdateItemModel(model, self, options).then(function(response) {
                 deferred.resolve(response);
-                //Optionally broadcast change event
+                /** Optionally broadcast change event */
                 registerChange(model);
             });
+
+            return deferred.promise;
+        };
+
+        /**
+         * Saves a subset of fields as an alternative to saving all fields
+         * @param {array} fieldArray - array of internal field names that should be saved to SharePoint
+         * @returns {promise}
+         */
+        ListItem.prototype.saveFields = function (fieldArray) {
+            var self = this;
+            var model = self.getModel();
+            var deferred = $q.defer();
+            var definitions = [];
+            /** Find the field definition for each of the requested fields */
+            _.each(fieldArray, function(field) {
+                var match = _.findWhere(model.list.customFields, {mappedName: field});
+                if(match) {
+                    definitions.push(match);
+                }
+            });
+
+            var valuePairs = dataService.generateValuePairs(definitions, self);
+
+            dataService.addUpdateItemModel(model, self, {buildValuePairs: false, valuePairs: valuePairs})
+                .then(function(response) {
+                    deferred.resolve(response);
+                    /** Optionally broadcast change event */
+                    registerChange(model);
+                });
 
             return deferred.promise;
         };
