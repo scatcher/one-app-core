@@ -1,0 +1,14 @@
+/* left side */
+/* right side */
+/* the color that flashes when you click on the first nav element */
+/* the plus icon that appears on the parent nav when expanding and collapsing */
+/* these values will only address the first parent in the entire nav */
+.nav-tabs > li.active > a {
+  border-top: 2px solid #57889c !important;
+}
+.btn-link,
+.btn-link:active,
+.btn-link[disabled],
+fieldset[disabled] .btn-link {
+  box-shadow: none;
+}

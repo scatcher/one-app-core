@@ -1,0 +1,167 @@
+<style type="text/css">
+    .carousel {
+        top: -10px;
+    }
+
+    .carousel-inner .item {
+        background-color: #555555;
+        height: 305px
+
+    }
+
+    .carousel-caption {
+        vertical-align: middle;
+        bottom: auto;
+    }
+
+    .carousel-title {
+        padding-top: 16px;
+        color: #FFFFFF;
+        font-size: 24px;
+        font-weight: bolder;
+    }
+
+</style>
+<div carousel interval="5000">
+    <div slide ng-repeat="item in bannerItems" active="slide.active">
+        <div class="carousel-title">
+            <img ng-src="styles/images/logo-o.png">
+            {{item.title}}
+        </div>
+        <div class="carousel-caption">
+            <h4 ng-bind-html="item.text" class="text-left"></h4>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <!--<hr class="hr-sm"/>-->
+
+    <!--<div class="row">-->
+        <!--<div class="col-xs-12">-->
+            <!--<div class="jarviswidget jarviswidget-color-blueDark" style="position: relative; opacity: 1;">-->
+                <!--<header role="heading">-->
+                    <!--<span class="widget-icon"> <i class="fa fa-thumb-tack"></i> </span>-->
+
+                    <!--<h2>My Projects</h2>-->
+                <!--</header>-->
+                <!--<div>-->
+                    <!--<div class="widget-body no-padding">-->
+                        <!--<table class="table table-bordered">-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                                <!--<th>Title</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <!--<tbody>-->
+                            <!--<tr ng-repeat="project in projects">-->
+                                <!--<td>-->
+                                    <!--<a href="#/projects/{{ project.id }}"-->
+                                       <!--title="Click to view project details">{{ project.title }}</a>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--</tbody>-->
+                        <!--</table>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+
+        <!-------- Specification Requirements ----------------->
+        <div class="col-xs-12 col-md-4">
+            <div class="jarviswidget jarviswidget-color-blueDark">
+                <header role="heading">
+                    <span class="widget-icon"> <i class="fa fa-compass"></i> </span>
+
+                    <h2>Specification Requirement Changes</h2>
+                </header>
+                <div>
+                    <div class="widget-body no-padding">
+                        <table ng-table="recentSpecificationChanges" class="table table-bordered" template-pagination="custom/pager">
+                            <tr ng-repeat="requirement in $data">
+                                <td data-title="'Requirement'">
+                                    <a href ng-click="requirement.openModal()">
+                                        {{requirement.project.lookupValue}}-{{ requirement.title }}</a>
+                                </td>
+                                <td data-title="'Modified By'">{{ requirement.editor.lookupValue }}</td>
+                                <td data-title="'Modified'">{{ requirement.modified | date: 'short' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-------- Capability Requirements ----------------->
+        <div class="col-xs-12 col-md-4">
+            <div class="jarviswidget jarviswidget-color-blueDark">
+                <header role="heading">
+                    <span class="widget-icon"> <i class="fa fa-anchor"></i> </span>
+
+                    <h2>Capability Requirement Changes</h2>
+                </header>
+                <div>
+                    <div class="widget-body no-padding">
+                        <table ng-table="recentCapabilityChanges" class="table table-bordered" template-pagination="custom/pager">
+                            <tr ng-repeat="requirement in $data">
+                                <td data-title="'Requirement'">
+                                    <a href ng-click="requirement.openModal()">
+                                        {{requirement.project.lookupValue}}-{{ requirement.title }}</a>
+                                </td>
+                                <td data-title="'Modified By'">{{ requirement.editor.lookupValue }}</td>
+                                <td data-title="'Modified'">{{ requirement.modified | date: 'short' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-------- Comments ----------------->
+        <div class="col-xs-12 col-md-4">
+            <div class="jarviswidget jarviswidget-color-blueDark">
+                <header role="heading">
+                    <span class="widget-icon"> <i class="fa fa-comments-o"></i> </span>
+
+                    <h2>Recent Comments</h2>
+                </header>
+                <div>
+                    <div class="widget-body no-padding">
+                        <table ng-table="recentComments" class="table table-bordered"
+                               template-pagination="custom/pager">
+                            <tr ng-repeat="comment in $data">
+                                <td data-title="'Requirement'"> {{ comment.title }}</td>
+                                <td data-title="'Modified By'">{{ comment.editor.lookupValue }}</td>
+                                <td data-title="'Modified'">{{ comment.modified | date: 'short' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="custom/pager">
+    <div class="row">
+        <div class="col-xs-12">
+            <ul class="pager ng-cloak">
+                <li ng-repeat="page in pages"
+                    ng-class="{'disabled': !page.active}"
+                    ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
+                    <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
+                    <a ng-switch-when="next" ng-click="params.page(page.number)" href="">
+                        <i class="fa fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</script>
+
+

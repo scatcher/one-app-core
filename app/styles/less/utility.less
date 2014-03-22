@@ -1,0 +1,30 @@
+@import "variables.less";
+@import "mixins.less";
+
+
+/*
+@colorPallet: 'blueStandard', 'blueSky', 'blue', 'blueLight', 'blueDark', 'green',  'greenLight', 'greenDark',
+'greenBright', 'red', 'yellow', 'orange', 'orangeDark', 'pink', 'pinkDark', 'purple', 'darken', 'lighten', 'white',
+'greyDark', 'magenta', 'teal', 'redLight', 'redBright', 'tealLight';
+*/
+/*
+ * TEXT COLOR
+ */
+// ............................................................
+// .Loop through each defined color and create
+// .txt-color-@color {
+//    color: @color !important;
+//  }
+
+.text-color-constructor(@colorPallet);
+
+/*
+ * BACKGROUNDS
+ */
+
+// ............................................................
+// .Loop through each defined color and create
+// .bg-color-@color {
+//    background-color: @color !important;
+//  }
+.background-color-constructor(@colorPallet);

@@ -1,0 +1,154 @@
+/* left side */
+/* right side */
+/* the color that flashes when you click on the first nav element */
+/* the plus icon that appears on the parent nav when expanding and collapsing */
+/* these values will only address the first parent in the entire nav */
+/*
+@colorPallet: 'blueStandard', 'blueSky', 'blue', 'blueLight', 'blueDark', 'green',  'greenLight', 'greenDark',
+'greenBright', 'red', 'yellow', 'orange', 'orangeDark', 'pink', 'pinkDark', 'purple', 'darken', 'lighten', 'white',
+'greyDark', 'magenta', 'teal', 'redLight', 'redBright', 'tealLight';
+*/
+/*
+ * TEXT COLOR
+ */
+.txt-color-blueStandard {
+  color: #3276b1 !important;
+}
+.txt-color-blueSky {
+  color: #0091d9 !important;
+}
+.txt-color-blue {
+  color: #57889c !important;
+}
+.txt-color-blueLight {
+  color: #92a2a8 !important;
+}
+.txt-color-blueDark {
+  color: #4c4f53 !important;
+}
+.txt-color-green {
+  color: #356e35 !important;
+}
+.txt-color-greenLight {
+  color: #71843f !important;
+}
+.txt-color-greenDark {
+  color: #496949 !important;
+}
+.txt-color-greenBright {
+  color: #40ac2b !important;
+}
+.txt-color-magenta {
+  color: #6e3671 !important;
+}
+.txt-color-orange {
+  color: #c79121 !important;
+}
+.txt-color-orangeDark {
+  color: #a57225 !important;
+}
+.txt-color-pink {
+  color: #ac5287 !important;
+}
+.txt-color-pinkDark {
+  color: #a8829f !important;
+}
+.txt-color-purple {
+  color: #6e587a !important;
+}
+.txt-color-red {
+  color: #a90329 !important;
+}
+.txt-color-redLight {
+  color: #a65858 !important;
+}
+.txt-color-redBright {
+  color: #ed1c24 !important;
+}
+.txt-color-teal {
+  color: #568a89 !important;
+}
+.txt-color-tealLight {
+  color: #0aa66e !important;
+}
+.txt-color-yellow {
+  color: #b09b5b !important;
+}
+.txt-color-white {
+  color: #ffffff !important;
+}
+.txt-color-darken {
+  color: #404040 !important;
+}
+/*
+ * BACKGROUNDS
+ */
+.bg-color-blueStandard {
+  background-color: #3276b1 !important;
+}
+.bg-color-blueSky {
+  background-color: #0091d9 !important;
+}
+.bg-color-blue {
+  background-color: #57889c !important;
+}
+.bg-color-blueLight {
+  background-color: #92a2a8 !important;
+}
+.bg-color-blueDark {
+  background-color: #4c4f53 !important;
+}
+.bg-color-green {
+  background-color: #356e35 !important;
+}
+.bg-color-greenLight {
+  background-color: #71843f !important;
+}
+.bg-color-greenDark {
+  background-color: #496949 !important;
+}
+.bg-color-greenBright {
+  background-color: #40ac2b !important;
+}
+.bg-color-magenta {
+  background-color: #6e3671 !important;
+}
+.bg-color-orange {
+  background-color: #c79121 !important;
+}
+.bg-color-orangeDark {
+  background-color: #a57225 !important;
+}
+.bg-color-pink {
+  background-color: #ac5287 !important;
+}
+.bg-color-pinkDark {
+  background-color: #a8829f !important;
+}
+.bg-color-purple {
+  background-color: #6e587a !important;
+}
+.bg-color-red {
+  background-color: #a90329 !important;
+}
+.bg-color-redLight {
+  background-color: #a65858 !important;
+}
+.bg-color-redBright {
+  background-color: #ed1c24 !important;
+}
+.bg-color-teal {
+  background-color: #568a89 !important;
+}
+.bg-color-tealLight {
+  background-color: #0aa66e !important;
+}
+.bg-color-yellow {
+  background-color: #b09b5b !important;
+}
+.bg-color-white {
+  background-color: #ffffff !important;
+}
+.bg-color-darken {
+  background-color: #404040 !important;
+}
