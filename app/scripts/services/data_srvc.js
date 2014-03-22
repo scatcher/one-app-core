@@ -678,6 +678,23 @@ angular.module('OneApp')
             return valuePair;
         };
 
+        /**
+         * Uses provided field definitions to pull value pairs for desired attributes
+         * @param {Array} fieldDefinitions - definitions from the model
+         * @param {object} item - list item
+         * @returns {Array}
+         */
+        function generateValuePairs(fieldDefinitions, item) {
+            var pairs = [];
+            _.each(fieldDefinitions, function (field) {
+                /** Check to see if item contains data for this field */
+                if (_.has(item, field.mappedName)) {
+                    pairs.push( createValuePair(field, item[field.mappedName]) );
+                }
+            });
+            return pairs;
+        }
+
         var addUpdateItemModel = function (model, item, options) {
             var defaults = {
                 mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
@@ -693,14 +710,7 @@ angular.module('OneApp')
 
             if (settings.buildValuePairs === true) {
                 var editableFields = _.where(model.list.fields, {readOnly: false});
-                _.each(editableFields, function (field) {
-                    /** Check to see if item contains data for this field */
-                    if (_.has(item, field.mappedName)) {
-                        settings.valuePairs.push(
-                            createValuePair(field, item[field.mappedName])
-                        );
-                    }
-                });
+                settings.valuePairs = generateValuePairs(editableFields, item);
             }
             var payload = {
                 operation: "UpdateListItems",
@@ -821,6 +831,7 @@ angular.module('OneApp')
             createValuePair: createValuePair,
             deleteAttachment: deleteAttachment,
             deleteItemModel: deleteItemModel,
+            generateValuePairs: generateValuePairs,
             getCollection: getCollection,
             getFieldVersionHistory: getFieldVersionHistory,
             getList: getList,
