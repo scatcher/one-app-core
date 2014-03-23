@@ -63,11 +63,11 @@ angular.module('OneApp')
 
         /**
          * Converts a SharePoint string representation of a field into the correctly formatted JS version
-         * @param v
+         * @param value
          * @param objectType
          * @returns {*}
          */
-        function attrToJson(v, objectType) {
+        function attrToJson(value, objectType) {
 
             var colValue;
 
@@ -75,46 +75,46 @@ angular.module('OneApp')
                 case "DateTime":
                 case "datetime":	// For calculated columns, stored as datetime;#value
                     // Dates have dashes instead of slashes: ows_Created="2009-08-25 14:24:48"
-                    colValue = dateToJsonObject(v);
+                    colValue = dateToJsonObject(value);
                     break;
                 case "Lookup":
-                    colValue = lookupToJsonObject(v);
+                    colValue = lookupToJsonObject(value);
                     break;
                 case "User":
-                    colValue = userToJsonObject(v);
+                    colValue = userToJsonObject(value);
                     break;
                 case "LookupMulti":
-                    colValue = lookupMultiToJsonObject(v);
+                    colValue = lookupMultiToJsonObject(value);
                     break;
                 case "UserMulti":
-                    colValue = userMultiToJsonObject(v);
+                    colValue = userMultiToJsonObject(value);
                     break;
                 case "Boolean":
-                    colValue = booleanToJsonObject(v);
+                    colValue = booleanToJsonObject(value);
                     break;
                 case "Integer":
-                    colValue = intToJsonObject(v);
+                    colValue = intToJsonObject(value);
                     break;
                 case "Counter":
-                    colValue = intToJsonObject(v);
+                    colValue = intToJsonObject(value);
                     break;
                 case "MultiChoice":
-                    colValue = choiceMultiToJsonObject(v);
+                    colValue = choiceMultiToJsonObject(value);
                     break;
                 case "Currency":
                 case "Number":
                 case "float":	// For calculated columns, stored as float;#value
-                    colValue = floatToJsonObject(v);
+                    colValue = floatToJsonObject(value);
                     break;
                 case "Calc":
-                    colValue = calcToJsonObject(v);
+                    colValue = calcToJsonObject(value);
                     break;
                 case "JSON":
-                    colValue = parseJSON(v);
+                    colValue = parseJSON(value);
                     break;
                 default:
                     // All other objectTypes will be simple strings
-                    colValue = stringToJsonObject(v);
+                    colValue = stringToJsonObject(value);
                     break;
             }
             return colValue;

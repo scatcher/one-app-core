@@ -8,7 +8,7 @@ angular.module('OneApp')
         var offline = window.location.href.indexOf('localhost') > -1;
 
         /**
-         * Post processing of data after returning list items from server
+         * @description Post processing of data after returning list items from server
          *              -required-
          * @param model | reference to allow updating of model
          * @param responseXML | Resolved promise from web service call
@@ -294,7 +294,7 @@ angular.module('OneApp')
 
             var deferred = $q.defer();
 
-            //Convert the xml returned from the server into an array of js objects
+            /** Convert the xml returned from the server into an array of js objects */
             var processXML = function (serverResponse) {
                 if(options.filterNode) {
                     return $(serverResponse).SPFilterNode(options.filterNode).SPXmlToJson({
@@ -307,14 +307,14 @@ angular.module('OneApp')
             };
 
             if (offline) {
-                //Debugging offline
+                /** Debugging offline */
                 var offlineData = 'dev/' + options.operation + '.xml';
 
-                //Get offline data
+                /** Get offline data */
                 $.ajax(offlineData).then(
                     function (offlineData) {
                         queueService.decrease();
-                        //Pass back the group array
+                        /** Pass back the group array */
                         deferred.resolve(processXML(offlineData));
                     }, function (outcome) {
                         toastr.error("You need to have a dev/" + options.operation + ".xml in order to get the group collection in offline mode.");
@@ -322,7 +322,7 @@ angular.module('OneApp')
                         queueService.decrease();
                     });
             } else {
-                //Add in webURL to speed up call, set to default if not specified
+                /** Add in webURL to speed up call, set to default if not specified */
                 var payload = {};
 
                 _.extend(payload, options);
@@ -330,11 +330,11 @@ angular.module('OneApp')
                 var webServiceCall = $().SPServices(payload);
 
                 webServiceCall.then(function () {
-                    //Success
+                    /** Success */
                     queueService.decrease();
                     deferred.resolve(processXML(webServiceCall.responseXML));
                 }, function (outcome) {
-                    //Failure
+                    /** Failure */
                     toastr.error("Failed to fetch list collection.");
                     queueService.decrease();
                     deferred.reject(outcome);
@@ -360,18 +360,18 @@ angular.module('OneApp')
             });
 
             webServiceCall.then(function () {
-                //Success
+                /** Success */
                 queueService.decrease();
 
-                //Map returned XML to JSON
+                /** Map returned XML to JSON */
                 var json = $(webServiceCall.responseXML).SPFilterNode("Field").SPXmlToJson({
                     includeAllAttrs: true,
                     removeOws: false
                 });
-                //Pass back the lists array
+                /** Pass back the lists array */
                 deferred.resolve(json);
             },function (outcome) {
-                //Failure
+                /** Failure */
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
             }).always(function () {
@@ -381,6 +381,14 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
+        /**
+         * @description Deletes and attachment on a list item
+         * @param {object} options
+         * @param {string} options.listItemId
+         * @param {string} options.url
+         * @param {string} options.listName
+         * @returns {promise}
+         */
         var deleteAttachment = function (options) {
             options = options || {};
             queueService.increase();
@@ -394,18 +402,18 @@ angular.module('OneApp')
             });
 
             webServiceCall.then(function () {
-                //Success
+                /** Success */
                 queueService.decrease();
 
-                //Map returned XML to JSON
+                /** Map returned XML to JSON */
                 var json = $(webServiceCall.responseXML).SPFilterNode("Field").SPXmlToJson({
                     includeAllAttrs: true,
                     removeOws: false
                 });
-                //Pass back the lists array
+                /** Pass back the lists array */
                 deferred.resolve(json);
             },function (outcome) {
-                //Failure
+                /** Failure */
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
             }).always(function () {
@@ -431,23 +439,23 @@ angular.module('OneApp')
                 listName: options.listName
             };
 
-            //Set view name if provided in options, otherwise it returns default view
+            /** Set view name if provided in options, otherwise it returns default view */
             if (_.isDefined(options.viewName)) payload.viewName = options.viewName;
 
             var webServiceCall = $().SPServices(payload);
 
             webServiceCall.then(function () {
-                //Success
+                /** Success */
                 var output = {
                     query: "<Query>" + $(webServiceCall.responseText).find("Query").html() + "</Query>",
                     viewFields: "<ViewFields>" + $(webServiceCall.responseText).find("ViewFields").html() + "</ViewFields>",
                     rowLimit: $(webServiceCall.responseText).find("RowLimit").html()
                 };
 
-                //Pass back the lists array
+                /** Pass back the lists array */
                 deferred.resolve(output);
             },function (outcome) {
-                //Failure
+                /** Failure */
                 toastr.error("Failed to fetch view details.");
                 deferred.reject(outcome);
             }).always(function () {
@@ -695,6 +703,16 @@ angular.module('OneApp')
             return pairs;
         }
 
+        /**
+         * Adds or updates a list item based on if the item passed in contains an id attribute
+         * @param {object} model
+         * @param {object} item
+         * @param {object} options
+         * @param {string} options.mode - [update, replace, return]
+         * @param {object} options
+         * @param {object} options
+         * @returns {*}
+         */
         var addUpdateItemModel = function (model, item, options) {
             var defaults = {
                 mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
@@ -732,6 +750,7 @@ angular.module('OneApp')
                 /** Offline mode */
                 window.console.log(payload);
 
+                /** Mock data */
                 var offlineDefaults = {
                     modified: new Date(),
                     editor: {
@@ -762,12 +781,13 @@ angular.module('OneApp')
                     model.data.push(newItem);
                     deferred.resolve(newItem);
                 } else {
-                    /** Update existing record */
+                    /** Update existing record in local cache*/
                     _.extend(item, offlineDefaults);
                     deferred.resolve(item);
                 }
                 queueService.decrease();
             } else {
+                /** Make web service call */
                 var webServiceCall = $().SPServices(payload);
 
                 webServiceCall.then(function () {
@@ -785,6 +805,15 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
+        /**
+         * @description - Typically called directly from a list item, removes the list item from SharePoint
+         * and the local cache
+         * @param {object} model - model of the list item
+         * @param {object} item - list item
+         * @param {object} options
+         * @param {array} options.target - optional location to search through and remove the local cached copy
+         * @returns {promise}
+         */
         var deleteItemModel = function (model, item, options) {
             queueService.increase();
 
@@ -826,6 +855,7 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
+        /** Exposed functionality */
         _.extend(dataService, {
             addUpdateItemModel: addUpdateItemModel,
             createValuePair: createValuePair,

@@ -16,7 +16,6 @@ angular.module('OneApp')
 
         });
 
-
 //        /** ng-table config for the most recently updated Spec Requirements */
 //        $scope.recentSpecificationChanges = new ngTableParams({
 //            page: 1,            // show first page

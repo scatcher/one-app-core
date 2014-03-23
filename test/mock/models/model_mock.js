@@ -3,10 +3,10 @@
 /**Angular will instantiate this singleton by calling "new" on this function the first time it's referenced
  /* State will persist throughout life of session*/
 angular.module('OneApp')
-    .service('bannerTextModel', function ($rootScope, $q, modelFactory, configService, dataService) {
+    .service('mockModel', function ($rootScope, $q, modelFactory, configService, dataService) {
 
         /** Object Constructor (class)*/
-        function BannerText(obj) {
+        function Mock(obj) {
             var self = this;
             _.extend(self, obj);
         }
@@ -21,17 +21,24 @@ angular.module('OneApp')
             queries: {}, /** Stored queries for this data source */
             ready: $q.defer(),
             list: {
-                title: 'BannerText', /**Maps to the offline XML file in dev folder (no spaces) */
-                guid: '{7F6C6FC6-530B-44C3-A9F6-632D89754037}', /**List GUID can be found in list properties in SharePoint designer */
+                title: 'Mock', /**Maps to the offline XML file in dev folder (no spaces) */
+                guid: '', /**List GUID can be found in list properties in SharePoint designer */
                 customFields: [
                 /** Array of objects mapping each SharePoint field to a property on a list item object */
                 /** If OneApp live templates have been imported type "oafield" followed by the tab key for
                  /*  each field to quickly map with available options */
                     //Ex: {internalName: "Title", objectType: "Text", mappedName: "title", readOnly: false}
-                    { internalName: "Title", objectType: "Text", mappedName: "title", readOnly:false },
-                    { internalName: "SortOrder", objectType: "Text", mappedName: "sortOrder", readOnly:false },
                     { internalName: "Text", objectType: "Text", mappedName: "text", readOnly:false },
-                    { internalName: "LookupTest", objectType: "Lookup", mappedName: "lookupTest", readOnly:false }
+                    { internalName: "Boolean", objectType: "Boolean", mappedName: "boolean", readOnly:false },
+                    { internalName: "Currency", objectType: "Currency", mappedName: "currency", readOnly:false },
+                    { internalName: "DateTime", objectType: "DateTime", mappedName: "dateTime", readOnly:false },
+                    { internalName: "Integer", objectType: "Integer", mappedName: "integer", readOnly:false },
+                    { internalName: "JSON", objectType: "JSON", mappedName: "json", readOnly:false },
+                    { internalName: "Lookup", objectType: "Lookup", mappedName: "lookup", readOnly:false },
+                    { internalName: "LookupMulti", objectType: "LookupMulti", mappedName: "lookupMulti", readOnly:false },
+                    { internalName: "User", objectType: "User", mappedName: "user", readOnly:false },
+                    { internalName: "UserMulti", objectType: "UserMulti", mappedName: "userMulti", readOnly:false },
+                    { internalName: "ReadOnly", objectType: "Text", mappedName: "readOnly", readOnly:true }
                 ]
             }
         });
@@ -39,15 +46,15 @@ angular.module('OneApp')
         /** New List item is then passed to the object constructor for this data source to allow the addition
          /*  of any other custom methods or properties */
         model.factory = function (listItem) {
-            return new BannerText(listItem);
+            return new Mock(listItem);
         };
 
         /*********************************** Prototype Construction ***************************************/
 
         /** Inherit from master list item prototype */
-        BannerText.prototype = new modelFactory.ListItem();
+        Mock.prototype = new modelFactory.ListItem();
         /** Make the model directly accessible from the list item */
-        BannerText.prototype.getModel = function () {
+        Mock.prototype.getModel = function () {
             return model;
         };
 
@@ -62,7 +69,7 @@ angular.module('OneApp')
             query: '' +
                 '<Query>' +
                 '   <OrderBy>' +
-                '       <FieldRef Name="SortOrder" Ascending="TRUE"/>' +
+                '       <FieldRef Name="ID" Ascending="TRUE"/>' +
                 '   </OrderBy>' +
                 '</Query>'
         });

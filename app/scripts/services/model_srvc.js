@@ -18,6 +18,24 @@ angular.module('OneApp')
             self.displayName = self.displayName || utilityService.fromCamelCase(self.mappedName);
         }
 
+        var fieldTypes = [
+            { objectType: "Text", defaultValue: "" },
+            { objectType: "Boolean", defaultValue: null },
+            { objectType: "Currency", defaultValue: null },
+            { objectType: "DateTime", defaultValue: null },
+            { objectType: "Integer", defaultValue: null },
+            { objectType: "JSON", defaultValue: "" },
+            { objectType: "Lookup", defaultValue: "" },
+            { objectType: "LookupMulti", defaultValue: [] },
+            { objectType: "User", defaultValue: "" },
+            { objectType: "UserMulti", defaultValue: [] }
+        ];
+
+        function getDefaultValueByFieldType(requestedType) {
+            var matchingType = _.findWhere(fieldTypes, {objectType: requestedType}) || {};
+            return _.has(matchingType, 'defaultValue') ? matchingType.defaultValue : '';
+        }
+
         /**
          * Model Constructor
          * Provides the Following
@@ -69,25 +87,25 @@ angular.module('OneApp')
 
         /**
          * If online and sync is being used, notify all online users that a change has been made
-         * @param {promise} Update event
+         * @param {object} model event
          */
-        function registerChange(self) {
-            if(!configService.offline && self.sync && _.isFunction(self.sync.registerChange)) {
-                //Register change after successful update
-                self.sync.registerChange();
+        function registerChange(model) {
+            if (!configService.offline && model.sync && _.isFunction(model.sync.registerChange)) {
+                /** Register change after successful update */
+                model.sync.registerChange();
             }
         }
 
         /**
-         * Inherited from Model constructor
+         * Creates a new list item in SharePoint
          * @param obj
          * @example {title: "Some Title", date: new Date()}
-         * @returns {*}
+         * @returns {promise}
          */
         Model.prototype.addNewItem = function (obj) {
             var self = this;
             var deferred = $q.defer();
-            dataService.addUpdateItemModel(self, obj).then(function(response) {
+            dataService.addUpdateItemModel(self, obj).then(function (response) {
                 deferred.resolve(response);
                 //Optionally broadcast change event
                 registerChange(self);
@@ -97,10 +115,28 @@ angular.module('OneApp')
         };
 
         /**
+         * @description Creates an object using the editable fields from the model, all attributes are empty
+         * @returns {object}
+         */
+        Model.prototype.createEmptyItem = function () {
+            var self = this;
+            var newItem = {};
+            _.each(self.list.customFields, function (fieldDefinition) {
+                /** Create attributes for each non-readonly field definition */
+                if (!fieldDefinition.readOnly) {
+                    /** Create an attribute with the expected empty value based on field definition type */
+                    newItem[fieldDefinition.mappedName] = getDefaultValueByFieldType(fieldDefinition.objectType);
+                }
+            });
+            return newItem;
+        };
+
+        /**
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
          * @constructor
          */
-        function ListItem() {}
+        function ListItem() {
+        }
 
         ListItem.prototype.getDataService = function () {
             return dataService;
@@ -116,7 +152,7 @@ angular.module('OneApp')
             var model = self.getModel();
             var deferred = $q.defer();
 
-            dataService.addUpdateItemModel(model, self, options).then(function(response) {
+            dataService.addUpdateItemModel(model, self, options).then(function (response) {
                 deferred.resolve(response);
                 /** Optionally broadcast change event */
                 registerChange(model);
@@ -126,7 +162,8 @@ angular.module('OneApp')
         };
 
         /**
-         * Saves a subset of fields as an alternative to saving all fields
+         * @description Saves a named subset of fields back to SharePoint
+         * Alternative to saving all fields
          * @param {array} fieldArray - array of internal field names that should be saved to SharePoint
          * @returns {promise}
          */
@@ -136,9 +173,9 @@ angular.module('OneApp')
             var deferred = $q.defer();
             var definitions = [];
             /** Find the field definition for each of the requested fields */
-            _.each(fieldArray, function(field) {
+            _.each(fieldArray, function (field) {
                 var match = _.findWhere(model.list.customFields, {mappedName: field});
-                if(match) {
+                if (match) {
                     definitions.push(match);
                 }
             });
@@ -146,7 +183,7 @@ angular.module('OneApp')
             var valuePairs = dataService.generateValuePairs(definitions, self);
 
             dataService.addUpdateItemModel(model, self, {buildValuePairs: false, valuePairs: valuePairs})
-                .then(function(response) {
+                .then(function (response) {
                     deferred.resolve(response);
                     /** Optionally broadcast change event */
                     registerChange(model);
@@ -160,14 +197,14 @@ angular.module('OneApp')
          * @param {object} options - optionally pass params to the dataService
          * @returns {promise}
          */
-        ListItem.prototype.deleteItem = function () {
+        ListItem.prototype.deleteItem = function (options) {
             var self = this;
             var model = self.getModel();
             var deferred = $q.defer();
 
-            dataService.deleteItemModel(model, self).then(function(response) {
+            dataService.deleteItemModel(model, self, options).then(function (response) {
                 deferred.resolve(response);
-                //Optionally broadcast change event
+                /** Optionally broadcast change event */
                 registerChange(model);
             });
 
@@ -238,14 +275,14 @@ angular.module('OneApp')
                 promiseArray.push(dataService.getFieldVersionHistory(payload, fieldDefinition));
             };
 
-            if(!fieldNames) {
+            if (!fieldNames) {
                 /** If fields aren't provided, pull the version history for all NON-readonly fields */
                 var targetFields = _.where(model.list.fields, {readOnly: false});
                 fieldNames = [];
-                _.each(targetFields, function(field) {
+                _.each(targetFields, function (field) {
                     fieldNames.push(field.mappedName);
                 });
-            } else if(_.isString(fieldNames)) {
+            } else if (_.isString(fieldNames)) {
                 /** If a single field name is provided, add it to an array so we can process it more easily */
                 fieldNames = [fieldNames];
             }
@@ -354,7 +391,7 @@ angular.module('OneApp')
         /**
          * Decorates query optional attributes
          * @param obj
-         * @returns {Query}
+         * @returns {object}
          * @constructor
          */
         function Query(obj) {
@@ -363,21 +400,21 @@ angular.module('OneApp')
                 webURL: configService.defaultUrl,
                 queryOptions: '' +
                     '<QueryOptions>' +
-                    '<IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
-                    '<IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
-                    '<IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
-                    '<ExpandUserField>FALSE</ExpandUserField>' +
+                    '   <IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
+                    '       <IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
+                    '   <IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
+                    '   <ExpandUserField>FALSE</ExpandUserField>' +
                     '</QueryOptions>',
                 query: '' +
                     '<Query>' +
-                    '<OrderBy>' +
-                    '<FieldRef Name="ID" Ascending="TRUE"/>' +
-                    '</OrderBy>' +
+                    '   <OrderBy>' +
+                    '       <FieldRef Name="ID" Ascending="TRUE"/>' +
+                    '   </OrderBy>' +
                     '</Query>'
             };
             var query = _.extend({}, defaults, obj);
 
-            //Mapping of SharePoint properties to SPServices properties
+            /** Mapping of SharePoint properties to SPServices properties */
             var mapping = [
                 ["query", "CAMLQuery"],
                 ["viewFields", "CAMLViewFields"],
@@ -388,7 +425,7 @@ angular.module('OneApp')
 
             _.each(mapping, function (map) {
                 if (query[map[0]] && !query[map[1]]) {
-                    //Ensure SPServices properties are added in the event the true property name is used
+                    /** Ensure SPServices properties are added in the event the true property name is used */
                     query[map[1]] = query[map[0]];
                 }
             });
@@ -455,9 +492,10 @@ angular.module('OneApp')
         }
 
         return {
-            resolvePermissions: resolvePermissions,
+            getDefaultValueByFieldType: getDefaultValueByFieldType,
             ListItem: ListItem,
             Model: Model,
-            Query: Query
+            Query: Query,
+            resolvePermissions: resolvePermissions
         };
     });

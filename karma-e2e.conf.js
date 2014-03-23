@@ -11,9 +11,9 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            '../test/e2e/**/*.js',
+            '../test/spec/**/*.js',
+            '../test/mock/**/*.js',
             { pattern: 'dev/*.xml', watched: false, included: false, served: true }
-
         ],
 
         // list of files / patterns to exclude
