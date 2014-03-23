@@ -1,14 +1,12 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('queueService', function queue() {
-        // AngularJS will instantiate a singleton by calling "new" on this function
-        //Create a queue
+    .service('queueService', function () {
+
         var counter = 0;
         var increase = function ()
         {
             counter++;
-            console.log("Async Queue: " + counter);
             notifyObservers();
             return counter;
         };
@@ -17,7 +15,6 @@ angular.module('OneApp')
             if (counter > 0)
             {
                 counter--;
-                console.log("Async Queue: " + counter);
                 notifyObservers();
                 return counter;
             }
@@ -26,19 +23,18 @@ angular.module('OneApp')
         var reset = function ()
         {
             counter = 0;
-            console.log("Async Queue reset to: " + counter);
             notifyObservers();
             return counter;
         };
 
         var observerCallbacks = [];
 
-        //register an observer
+        /** Register an observer */
         var registerObserverCallback = function(callback){
             observerCallbacks.push(callback);
         };
 
-        //call this when queue changes
+        /** call this when queue changes */
         var notifyObservers = function(){
             angular.forEach(observerCallbacks, function(callback){
                 callback(counter);
