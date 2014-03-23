@@ -47,7 +47,9 @@ angular.module('OneApp')
             if (typeof settings.mode === 'replace') {
                 /** Replace any existing data */
                 settings.target = entities;
-                console.log(model.list.title + ' Replaced with ' + settings.target.length + ' new records.');
+                if(offline) {
+                    console.log(model.list.title + ' Replaced with ' + settings.target.length + ' new records.');
+                }
             } else if (settings.mode === 'update') {
                 var updateStats = updateLocalCache(settings.target, entities);
                 if(offline) {
@@ -606,7 +608,7 @@ angular.module('OneApp')
                     }
                 }
             });
-            if (deleteCount > 0) {
+            if (deleteCount > 0 && offline) {
                 console.log(deleteCount + ' item(s) removed from local cache to mirror changes on source list.');
             }
         }
@@ -681,7 +683,9 @@ angular.module('OneApp')
                     default:
                         valuePair = [internalName, value];
                 }
-                console.log('{' + fieldDefinition.objectType + '} ' + valuePair);
+                if(offline) {
+                    console.log('{' + fieldDefinition.objectType + '} ' + valuePair);
+                }
             }
             return valuePair;
         };
@@ -709,9 +713,9 @@ angular.module('OneApp')
          * @param {object} item
          * @param {object} options
          * @param {string} options.mode - [update, replace, return]
-         * @param {object} options
-         * @param {object} options
-         * @returns {*}
+         * @param {boolean} options.buildValuePairs - automatically generate pairs based on fields defined in model
+         * @param {array} options.valuePairs - precomputed value pairs to use instead of generating them
+         * @returns {promise}
          */
         var addUpdateItemModel = function (model, item, options) {
             var defaults = {

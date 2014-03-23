@@ -18,6 +18,7 @@ angular.module('OneApp')
             self.displayName = self.displayName || utilityService.fromCamelCase(self.mappedName);
         }
 
+        /** Field types used on the models to create a field definition */
         var fieldTypes = [
             { objectType: "Text", defaultValue: "" },
             { objectType: "Boolean", defaultValue: null },
@@ -31,6 +32,11 @@ angular.module('OneApp')
             { objectType: "UserMulti", defaultValue: [] }
         ];
 
+        /**
+         * Returns the initialization value based on field type, defaults to an empty string if no match
+         * @param {string} requestedType
+         * @returns {*}
+         */
         function getDefaultValueByFieldType(requestedType) {
             var matchingType = _.findWhere(fieldTypes, {objectType: requestedType}) || {};
             return _.has(matchingType, 'defaultValue') ? matchingType.defaultValue : '';
@@ -45,7 +51,7 @@ angular.module('OneApp')
          * - builds "model.list" with constructor
          * - adds "getAllListItems" function
          * - adds "addNewItem" function
-         * @param {object} model *Required
+         * @param {object} options
          * @constructor
          */
         function Model(options) {
@@ -262,8 +268,7 @@ angular.module('OneApp')
 
         /**
          * Requests all attachments for the object
-         * @param {object} options - optionally pass params to the dataService
-         * @returns {promise} - containing attachment collection
+         * @returns {promise} - resolves with attachment collection
          */
         ListItem.prototype.getAttachmentCollection = function () {
             return dataService.getCollection({
@@ -277,8 +282,8 @@ angular.module('OneApp')
 
         /**
          * Delete an attachment using the attachment url
-         * @param {object} options - optionally pass params to the dataService
-         * @returns {promise} - containing attachment collection
+         * @param {string} url
+         * @returns {promise} - containing updated attachment collection
          */
         ListItem.prototype.deleteAttachment = function (url) {
             var self = this;
@@ -364,7 +369,6 @@ angular.module('OneApp')
                     versionArray.push(ver);
                 });
 
-                console.log(versionArray);
                 deferred.resolve(versionArray);
             });
 
