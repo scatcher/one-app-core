@@ -22,6 +22,7 @@ module.exports = function ( config ) {
 
             'app/bower_components/SPServices/jquery.SPServices-2014.01.js',
             'app/bower_components/lodash/dist/lodash.js',
+            'app/bower_components/lodash-deep/lodash-deep.js',
             'app/bower_components/toastr/toastr.js',
             'app/bower_components/select2/select2.js',
             'app/bower_components/ng-ckeditor/libs/ckeditor/ckeditor.js',

@@ -52,7 +52,7 @@ angular.module('OneApp')
             var self = this;
             var defaults = {
                 data: [],
-                queries: {},
+                queries: {},        //Primary location to store static list queries
                 ready: $q.defer()
             };
 
@@ -60,7 +60,7 @@ angular.module('OneApp')
 
             self.list = new List(self.list);
 
-            //Add a query to pull all list items
+            /** Add a query to pull all list items */
             self.queries.allListItems = new Query({
                 operation: "GetListItemChangesSinceToken",
                 listName: self.list.guid,
@@ -112,6 +112,55 @@ angular.module('OneApp')
             });
 
             return deferred.promise;
+        };
+
+        /**
+         * @description Search functionality that allow for deeply searching an array of objects for the first
+         * record matching the supplied value.  Additionally it maps indexes to speed up future calls.  It
+         * currently rebuilds the mapping when the length of items in the local cache has changed or when the
+         * rebuildIndex flag is set.
+         *
+         * @param {*} value - The value to compare against
+         * @param {object} options
+         * @param {string} options.propertyPath - The dot separated propertyPath.
+         * @param {object} options.cacheName - Required if using a data source other than model.data.
+         * @param {object} options.localCache - Array of objects to search (Default model.data).
+         * @param {boolean} options.rebuildIndex - Set to ignore previous index and rebuild
+         */
+        Model.prototype.searchLocalCache = function (value, options) {
+            var model = this;
+            var self = model.addNewItem;
+
+            var defaults = {
+                propertyPath: 'id',
+                localCache: model.data,
+                cacheName: 'main',
+                rebuildIndex: false
+            };
+            options = _.extend({}, defaults, options);
+
+            /** Create a cache if it doesn't already exist */
+            self.indexCache = self.indexCache || {};
+            self.indexCache[options.cacheName] = self.indexCache[options.cacheName] || {};
+            var cache = self.indexCache[options.cacheName];
+
+
+            var properties = options.propertyPath.split('.');
+            _.each(properties, function(attribute) {
+                cache[attribute] = cache[attribute] || {};
+                /** Update cache reference to another level down the cache object */
+                cache = cache[attribute];
+            });
+
+            cache.map = cache.map || [];
+            /** Remap if no existing map, the number of items in the array has changed, or the rebuild flag is set */
+            if(!_.isNumber(cache.count) || cache.count !== options.localCache.length || options.rebuildIndex) {
+                cache.map = _.deepPluck(options.localCache, options.propertyPath);
+                /** Store the current length of the array for future comparisons */
+                cache.count = options.localCache.length;
+            }
+
+            return options.localCache[cache.map.indexOf(value)];
         };
 
         /**

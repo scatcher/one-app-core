@@ -40,6 +40,7 @@
     "jquery.easy-pie-chart": "https://github.com/scatcher/easy-pie-chart.git#e15292d37d69d1645ae10276a5cb0d9200acc28a",
     "json3": "~3",
     "lodash": "latest",
+    "lodash-deep": "latest",
     "moment": "latest",
     "ng-ckeditor": "latest",
     "ng-table": "master",
