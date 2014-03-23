@@ -2,7 +2,7 @@
 
 describe('Service: modelFactory', function () {
 
-    // load the controller's module
+    /** Load the main module */
     beforeEach(module('OneApp'));
 
     var mockModel, modelFactory, deepArray;
@@ -107,32 +107,40 @@ describe('Service: modelFactory', function () {
     describe('searchLocalCache', function () {
 
         it('should return the correct object when using an attribute directly on the object', function () {
-            var matchingObject = mockModel.searchLocalCache(1, {
+            var searchResults = mockModel.searchLocalCache(1, {
                 propertyPath: 'id',
                 localCache: deepArray,
-                cacheName: 'test'
+                cacheName: 'mock'
             });
-            expect(matchingObject).toEqual(deepArray[0]);
+            expect(searchResults).toEqual(deepArray[0]);
         });
 
         it('should return the correct object when a nested property path is used', function () {
-            var matchingObject = mockModel.searchLocalCache('value 3_3', {
+            var searchResults = mockModel.searchLocalCache('value 3_3', {
                 propertyPath: 'level1.level2.level3.value',
                 localCache: deepArray,
-                cacheName: 'test'
+                cacheName: 'mock'
             });
-            expect(matchingObject).toEqual(deepArray[2]);
+            expect(searchResults).toEqual(deepArray[2]);
         });
 
         it('should return the first match', function () {
-            var matchingObject = mockModel.searchLocalCache('iMatch', {
+            var searchResults = mockModel.searchLocalCache('iMatch', {
                 propertyPath: 'level1.matchingValue',
                 localCache: deepArray,
-                cacheName: 'test'
+                cacheName: 'mock'
             });
-            expect(matchingObject).toEqual(deepArray[1]);
+            expect(searchResults).toEqual(deepArray[1]);
+        });
+
+        it('should return undefined if no match is found', function () {
+            var searchResults = mockModel.searchLocalCache('iDontMatch', {
+                propertyPath: 'level1.level2.level3',
+                localCache: deepArray,
+                cacheName: 'mock'
+            });
+            expect(searchResults).toBeUndefined();
         });
 
     });
-
 });
