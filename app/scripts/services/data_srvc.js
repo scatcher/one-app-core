@@ -9,16 +9,14 @@ angular.module('OneApp')
 
         /**
          * @description Post processing of data after returning list items from server
-         *              -required-
-         * @param model | reference to allow updating of model
-         * @param responseXML | Resolved promise from web service call
-         *              -optional-
-         * @param {object} options
-         * @param options.factory | Constructor Function
-         * @param options.filter | Optional : XML filter
-         * @param options.mapping | Field definitions
-         * @param options.mode | Options for what to do with local list data array in store [replace, update, return]
-         * @param options.target | Optionally pass in array to update
+         * @param {object} model - reference to allow updating of model
+         * @param {xml} responseXML - Resolved promise from web service call
+         * @param {object} [options]
+         * @param {function} [options.factory] - Constructor Function
+         * @param {string} [options.filter] - Optional : XML filter
+         * @param {array} [options.mapping] - Field definitions
+         * @param {string} [options.mode] - Options for what to do with local list data array in store [replace, update, return]
+         * @param {array} [options.target] - Optionally pass in array to update
          */
         var processListItems = function (model, responseXML, options) {
             queueService.decrease();
@@ -155,7 +153,7 @@ angular.module('OneApp')
          * @description
          * Used to handle any of the Get[filterNode]Collection calls to SharePoint
          *
-         * @param {object} options | object used to extend payload and needs to include all SPServices required attributes
+         * @param {object} options - object used to extend payload and needs to include all SPServices required attributes
          * @param {string} options.operation
          *  - GetUserCollectionFromSite
          *  - GetGroupCollectionFromSite
@@ -170,7 +168,7 @@ angular.module('OneApp')
          *      @requires options.listName
          *      @requires options.ID
          *
-         *  @param {string} options.filterNode (Optional: Value to iterate over in returned XML
+         *  @param {string} [options.filterNode] - Value to iterate over in returned XML
          *         if not provided it's extracted from the name of the operation
          *         ex: Get[User]CollectionFromSite, "User" is used as the filterNode
          *
@@ -347,9 +345,10 @@ angular.module('OneApp')
 
         /**
          * Returns all list settings for each list on the site
-         * @param options.listName (required)
-         * @param options.webURL returns info for specified site (optional)
-         * @returns promise for json dataset
+         * @param options
+         * @param {string} options.listName
+         * @param {string} [options.webURL] - returns info for specified site (optional)
+         * @returns {object} promise
          */
         var getList = function (options) {
             options = options || {};
@@ -427,10 +426,11 @@ angular.module('OneApp')
 
         /**
          * Returns details of a SharePoint list view
-         * @param options.listName (required)
-         * @param options.viewName (optional) ***Formatted as a GUID ex: "{37388A98-534C-4A28-BFFA-22429276897B}"
-         * @param options.webURL (optional)
-         * @returns {promise for object}
+         * @param {object} options
+         * @param {string} options.listName
+         * @param {string} [options.viewName] ***Formatted as a GUID ex: "{37388A98-534C-4A28-BFFA-22429276897B}"
+         * @param {string} [options.webURL]
+         * @returns {object} promise
          */
         var getView = function (options) {
             queueService.increase();
@@ -467,51 +467,23 @@ angular.module('OneApp')
             return deferred.promise;
         };
 
-
-        /**
-         * Combines the ready promises for a controller into an array and
-         * adds a reference to each of the models data sources to the scope
-         * @param {object} scope - Reference to the controllers scope
-         * @param {array} models - Array of models to register/add to scope
-         * @returns Combines the test
-         */
-//        var registerModels = function (scope, models) {
-////                scope.promises = scope.promises || [];
-//            var promises = [];
-//            //Add simple refresh functionality
-//            scope.refresh = function () {
-//                if (!scope.$$phase) {
-//                    scope.$apply();
-//                }
-//            };
-//            _.each(models, function (model) {
-//                promises.push(model.ready.promise);
-//                scope[utilityService.toCamelCase(model.list.title)] = model.data;
-//            });
-//            return $q.all(promises);
-//        };
-
-
         /**
          * Takes in the model and a query that
          * @param {object} model
          * @param {object} query
-         * @param options.deferred //Optionally pass in another deferred object to resolve(default: model.ready)
-         * @param options.offlineXML //Alternate location to XML data file
-         * @returns {promise} - Returns reference to model
+         * @param {object} [options]
+         * @param {object} [options.deferred] - A reference to a deferred object
+         * @param {array} [options.target] - The target destination for returned entities
+         * @param {string} [options.offlineXML] - Alternate location to XML data file
+         * @returns {object} promise - Returns reference to model
          */
         var executeQuery = function (model, query, options) {
-
-            var defaults = {
-                target: model.data
-            };
+            var deferred = options.deferred || $q.defer();
 
             /** Trigger processing animation */
             queueService.increase();
             options = options || {};
             options.target = options.target || model.data;
-
-            var deferredObj = options.deferred || model.ready;
 
             if (offline) {
                 /** Optionally set alternate offline XML location but default to value in model */
@@ -523,7 +495,7 @@ angular.module('OneApp')
                     /** Set date time to allow for time based updates */
                     query.lastRun = new Date();
                     queueService.decrease();
-                    deferredObj.resolve(changes);
+                    deferred.resolve(changes);
                 }, function() {
                     toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
                 });
@@ -544,17 +516,17 @@ angular.module('OneApp')
                     /** Set date time to allow for time based updates */
                     query.lastRun = new Date();
                     queueService.decrease();
-                    deferredObj.resolve(changes);
+                    deferred.resolve(changes);
                 });
             }
 
-            return deferredObj.promise;
+            return deferred.promise;
         };
 
         /**
          * Removes an entity from the local cache if it exists
-         * @param entityArray
-         * @param entityId
+         * @param {array} entityArray
+         * @param {integer} entityId
          * @returns {boolean}
          */
         function removeEntityFromLocalCache(entityArray, entityId) {
@@ -575,7 +547,7 @@ angular.module('OneApp')
 
         /**
          * Returns the change token from the xml response of a GetListItemChangesSinceToken query
-         * @param responseXML
+         * @param {xml} responseXML
          */
         function retrieveChangeToken(responseXML) {
             /** Find element containing the token (should only be 1 but use .each to be safe) */
@@ -588,7 +560,7 @@ angular.module('OneApp')
         /**
          * GetListItemChangesSinceToken returns items that have been added as well as deleted so we need
          * to remove the deleted items from the local cache
-         * @param responseXML
+         * @param {xml} responseXML
          * @param {array} entityArray
          */
         function processDeletionsSinceToken(responseXML, entityArray) {
@@ -617,8 +589,8 @@ angular.module('OneApp')
          * Turns an array of, typically {lookupId: someId, lookupValue: someValue}, objects into a string
          * of delimited id's that can be passed to sharepoint for a multi select lookup or multi user selection
          * field
-         * @param value
-         * @param idProperty
+         * @param {array} value - Array of objects
+         * @param {integer} idProperty - ID attribute
          * @returns {string}
          */
         function stringifySharePointMultiSelect(value, idProperty) {
@@ -635,9 +607,9 @@ angular.module('OneApp')
 
 
         /**
-         * @description Uses a field definition from a model to properly format a value for submission to SharePoint 
+         * Uses a field definition from a model to properly format a value for submission to SharePoint
          * @param {object} fieldDefinition
-         * @param value
+         * @param {*} value
          * @returns {Array} - [fieldName, fieldValue]
          */
         var createValuePair = function (fieldDefinition, value) {
@@ -711,11 +683,11 @@ angular.module('OneApp')
          * Adds or updates a list item based on if the item passed in contains an id attribute
          * @param {object} model
          * @param {object} item
-         * @param {object} options
-         * @param {string} options.mode - [update, replace, return]
-         * @param {boolean} options.buildValuePairs - automatically generate pairs based on fields defined in model
-         * @param {array} options.valuePairs - precomputed value pairs to use instead of generating them
-         * @returns {promise}
+         * @param {object} [options]
+         * @param {string} [options.mode] - [update, replace, return]
+         * @param {boolean} [options.buildValuePairs] - automatically generate pairs based on fields defined in model
+         * @param {array} [options.valuePairs] - precomputed value pairs to use instead of generating them
+         * @returns {object} promise
          */
         var addUpdateItemModel = function (model, item, options) {
             var defaults = {
@@ -810,13 +782,13 @@ angular.module('OneApp')
         };
 
         /**
-         * @description - Typically called directly from a list item, removes the list item from SharePoint
+         * Typically called directly from a list item, removes the list item from SharePoint
          * and the local cache
          * @param {object} model - model of the list item
          * @param {object} item - list item
-         * @param {object} options
-         * @param {array} options.target - optional location to search through and remove the local cached copy
-         * @returns {promise}
+         * @param {object} [options]
+         * @param {array} [options.target] - optional location to search through and remove the local cached copy
+         * @returns {object} promise
          */
         var deleteItemModel = function (model, item, options) {
             queueService.increase();
