@@ -4,17 +4,15 @@ angular.module('OneApp')
     .controller('mainCtrl', function ($scope, $filter, $q, $timeout, dataService, ngTableParams, bannerTextModel, modelFactory) {
 
         /** Request Data */
-        var getBannerText = bannerTextModel.updateData();
-
-        /** Data sources available to the view */
-        $scope.bannerItems = bannerTextModel.data;
-
+        var getBannerText = bannerTextModel.executeQuery();
 
         /** Array of promises that will resolve once all sources have been returned */
-        $scope.ready = $q.all([getBannerText]).then(function (bannerItems) {
+        $scope.ready = $q.all([getBannerText]).then(function (response) {
             /** Do something with returned items */
+            window.console.log(response[0]);
 
         });
+
 
         var testModel = new modelFactory.Model();
         testModel.data = [

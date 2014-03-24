@@ -53,36 +53,20 @@ angular.module('OneApp')
 
         /*********************************** Queries ***************************************/
 
-        /** Main Query that will be executed when model is instantiated */
-        model.queries.primary = new modelFactory.Query({
-            operation: "GetListItemChangesSinceToken",
-            listName: model.list.guid,
-            viewFields: model.list.viewFields,
-            queryOptions: '<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>',
-            query: '' +
-                '<Query>' +
-                '   <OrderBy>' +
-                '       <FieldRef Name="SortOrder" Ascending="TRUE"/>' +
-                '   </OrderBy>' +
-                '</Query>'
-        });
-
         /** Fetch data (pulls local xml if offline named model.list.title + '.xml')
          *  Initially pulls all requested data.  Each subsequent call just pulls records that have been changed,
          *  updates the model, and returns a reference to the updated data array
          * @returns {Array} Requested list items
          */
-        model.updateData = function () {
-            model.ready = $q.defer();
-            dataService.executeQuery(model, model.queries.primary, {deferred: model.ready}).then(function (results) {
-                /** Return model.data instead of results because for subsequent calls, results
-                 * is only the list items that have changed since the last request */
-                model.ready.resolve(model.data);
-            });
-            return model.ready.promise;
-        };
+        model.registerQuery({
+            query: '' +
+            '<Query>' +
+            '   <OrderBy>' +
+            '       <FieldRef Name="SortOrder" Ascending="TRUE"/>' +
+            '   </OrderBy>' +
+            '</Query>'
+        });
 
-        model.updateData();
 
         /********************* Model Specific Shared Functions ***************************************/
 

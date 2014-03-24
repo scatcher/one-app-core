@@ -3,7 +3,7 @@
 /**Angular will instantiate this singleton by calling "new" on this function the first time it's referenced
  /* State will persist throughout life of session*/
 angular.module('OneApp')
-    .service('userFeedbackModel', function ($q, $modal, modelFactory, dataService) {
+    .service('userFeedbackModel', function ($q, $modal, modelFactory) {
 
         /** Object Constructor (class)*/
         function UserFeedback(obj) {
@@ -53,34 +53,12 @@ angular.module('OneApp')
 
         /*********************************** Queries ***************************************/
 
-        /** Main Query that will be executed when model is instantiated */
-        model.queries.primary = new modelFactory.Query({
-            operation: "GetListItemChangesSinceToken",
-            listName: model.list.guid,
-            viewFields: model.list.viewFields,
-            queryOptions: '<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>',
-            query: '' +
-                '<Query>' +
-                '   <OrderBy>' +
-                '       <FieldRef Name="ID" Ascending="TRUE"/>' +
-                '   </OrderBy>' +
-                '</Query>'
-        });
-
-        /** Fetch data (pulls local xml if offline named model.list.title + '.xml')
-         *  Initially pulls all requested data.  Each subsequent call just pulls records that have been changed,
-         *  updates the model, and returns a reference to the updated data array
-         * @returns {Array} Requested list items
+        /**
+         * This is the only query on this model we don't need to name it.  All records
+         * will be returned in ascending order based on ID so we don't need to specify a
+         * custom CAML query
          */
-        model.updateData = function () {
-            model.ready = $q.defer();
-            dataService.executeQuery(model, model.queries.primary, {deferred: model.ready}).then(function (results) {
-                /** Return model.data instead of results because for subsequent calls, results
-                 * is only the list items that have changed since the last request */
-                model.ready.resolve(model.data);
-            });
-            return model.ready.promise;
-        };
+        model.registerQuery();
 
         /********************* Model Specific Shared Functions ***************************************/
 
