@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('OneApp')
-    .factory('modelFactory', function ($q, $timeout, configService, utilityService, dataService) {
+    .factory('modelFactory', function ($q, $timeout, configService, utilityService, dataService, toastr) {
+
+        var defaultQueryName = 'primary';
+
         /**
          * Decorates field with optional defaults
          * @param obj
@@ -58,7 +61,7 @@ angular.module('OneApp')
             var self = this;
             var defaults = {
                 data: [],
-                queries: {},        //Primary location to store static list queries
+                queries: {},
                 ready: $q.defer()
             };
 
@@ -66,12 +69,12 @@ angular.module('OneApp')
 
             self.list = new List(self.list);
 
-            /** Add a query to pull all list items */
-            self.queries.allListItems = new Query({
-                operation: "GetListItemChangesSinceToken",
-                listName: self.list.guid,
-                viewFields: self.list.viewFields
-            });
+//            /** Add a query to pull all list items */
+//            self.queries.allListItems = new Query({
+//                operation: "GetListItemChangesSinceToken",
+//                listName: self.list.guid,
+//                viewFields: self.list.viewFields
+//            });
 
             return self;
         }
@@ -113,11 +116,60 @@ angular.module('OneApp')
             var deferred = $q.defer();
             dataService.addUpdateItemModel(self, obj).then(function (response) {
                 deferred.resolve(response);
-                //Optionally broadcast change event
+                /** Optionally broadcast change event */
                 registerChange(self);
             });
 
             return deferred.promise;
+        };
+
+        /**
+         * Constructor that allows us create a static query with a reference to the parent model
+         * @param {object} [queryOptions]
+         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
+         * @returns {Query}
+         */
+        Model.prototype.registerQuery = function(queryOptions, queryName) {
+            var model = this;
+            /** Optionally allow queryName parameter to be set on the query object */
+            queryOptions = queryOptions || {};
+
+            /** If no parameter is set, assume this is the only model and designate as primary */
+            queryOptions.name = queryOptions.name || queryName ? queryName : defaultQueryName;
+            model.queries[queryOptions.name] = new Query(queryOptions, this);
+        };
+
+        /**
+         * Helper function that attempts to locate and return a reference to the requested or catchall query
+         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
+         * @returns {object} query
+         */
+        Model.prototype.getQuery = function(queryName) {
+            var model = this;
+            if(_.isObject(model.queries[queryName])) {
+                /** The named query exists */
+                return model.queries[queryName];
+            } else if (_.isObject(model.queries[defaultQueryName])) {
+                /** The catchall query exists */
+                return model.queries[defaultQueryName];
+            } else {
+                /** Requested query not found */
+                toastr.error("Query " + queryName + " is not defined.");
+                return undefined;
+            }
+        };
+
+        /**
+         * Reference to the function which executes a query
+         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
+         * @returns {function}
+         */
+        Model.prototype.executeQuery = function(queryName) {
+            var model = this;
+            var query = model.getQuery(queryName);
+            if(query) {
+                return query.execute;
+            }
         };
 
         /**
@@ -190,9 +242,12 @@ angular.module('OneApp')
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
          * @constructor
          */
-        function ListItem() {
-        }
+        function ListItem() {}
 
+        /**
+         * Allows us to reference when out of scope
+         * @returns {object}
+         */
         ListItem.prototype.getDataService = function () {
             return dataService;
         };
@@ -443,14 +498,20 @@ angular.module('OneApp')
 
         /**
          * Decorates query optional attributes
-         * @param obj
-         * @returns {object}
+         * @param {object} query
+         * @param {object} model
          * @constructor
          */
-        function Query(obj) {
+        function Query(queryOptions, model) {
+            var self = this;
             var defaults = {
-                lastRun: null,              // the date/time last run
+                /** Date/Time last run */
+                operation: "GetListItemChangesSinceToken",
+                listName: model.list.guid,
+                viewFields: model.list.viewFields,
+                lastRun: null,
                 webURL: configService.defaultUrl,
+                cache: [],
                 queryOptions: '' +
                     '<QueryOptions>' +
                     '   <IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
@@ -465,7 +526,7 @@ angular.module('OneApp')
                     '   </OrderBy>' +
                     '</Query>'
             };
-            var query = _.extend({}, defaults, obj);
+            _.extend(self, defaults, queryOptions);
 
             /** Mapping of SharePoint properties to SPServices properties */
             var mapping = [
@@ -477,14 +538,53 @@ angular.module('OneApp')
             ];
 
             _.each(mapping, function (map) {
-                if (query[map[0]] && !query[map[1]]) {
+                if (self[map[0]] && !self[map[1]]) {
                     /** Ensure SPServices properties are added in the event the true property name is used */
-                    query[map[1]] = query[map[0]];
+                    self[map[1]] = self[map[0]];
                 }
             });
 
-            return query;
+            /** Allow the model to be referenced at a later time */
+            self.getModel = function() {
+                return model;
+            }
         }
+
+        /**
+         * Query SharePoint, pull down all initial records on first call
+         * Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken")
+         * @param options - Any options that should be passed to dataService.executeQuery
+         * @returns {promise} - Array of list item objects
+         */
+        Query.prototype.execute = function(options) {
+            var self = this;
+            var model = self.getModel();
+            self.deferred = $q.defer();
+
+            options = options || {};
+            /** Designate the central cache for this query if not already set */
+            options.target = options.target || self.cache;
+
+            dataService.executeQuery(model, self, options).then(function(results) {
+                self.deferred.resolve(options.target);
+            });
+
+            return self.deferred.promise;
+        };
+
+        /**
+         * Simple wrapper that by default sets the search location to the local query cache
+         * @param {*} value
+         * @param {object} searchOptions - Options to pass to Model.prototype.searchLocalCache
+         * @returns {object}
+         */
+        Query.prototype.searchLocalCache = function(value, searchOptions) {
+            var self = this;
+            var model = self.getModel();
+            searchOptions.cacheName = searchOptions.cacheName || self.name;
+            searchOptions.localCache = searchOptions.localCache || self.cache;
+            return model.searchLocalCache(value, searchOptions);
+        };
 
         /**
          * @description Converts permMask into something usable to determine permission level for current user
@@ -532,8 +632,10 @@ angular.module('OneApp')
             permissionSet.EnumeratePermissions = (permissionsMask & 4611686018427387904) > 0;
             permissionSet.FullMask = (permissionsMask == 9223372036854775807);
 
-            //Full Mask only resolves correctly for the Full Mask level
-            // because so in that case set everything to true
+            /**
+             * Full Mask only resolves correctly for the Full Mask level
+             * so in that case, set everything to true
+             */
             if (permissionSet.FullMask) {
                 _.each(permissionSet, function (perm, key) {
                     permissionSet[key] = true;
@@ -541,7 +643,6 @@ angular.module('OneApp')
             }
 
             return permissionSet;
-
         }
 
         return {
