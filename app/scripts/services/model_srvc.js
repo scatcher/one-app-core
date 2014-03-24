@@ -137,6 +137,9 @@ angular.module('OneApp')
             /** If no parameter is set, assume this is the only model and designate as primary */
             queryOptions.name = queryOptions.name || queryName ? queryName : defaultQueryName;
             model.queries[queryOptions.name] = new Query(queryOptions, this);
+
+            /** Return the promise for this newly created query */
+            return model.queries[queryOptions.name].deferred.promise;
         };
 
         /**
