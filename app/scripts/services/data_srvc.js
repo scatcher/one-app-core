@@ -45,12 +45,12 @@ angular.module('OneApp')
             if (typeof settings.mode === 'replace') {
                 /** Replace any existing data */
                 settings.target = entities;
-                if(offline) {
+                if (offline) {
                     console.log(model.list.title + ' Replaced with ' + settings.target.length + ' new records.');
                 }
             } else if (settings.mode === 'update') {
                 var updateStats = updateLocalCache(settings.target, entities);
-                if(offline) {
+                if (offline) {
                     console.log(model.list.title + ' Changes (Create: ' + updateStats.created +
                         ' | Update: ' + updateStats.updated + ')');
                 }
@@ -296,7 +296,7 @@ angular.module('OneApp')
 
             /** Convert the xml returned from the server into an array of js objects */
             var processXML = function (serverResponse) {
-                if(options.filterNode) {
+                if (options.filterNode) {
                     return $(serverResponse).SPFilterNode(options.filterNode).SPXmlToJson({
                         includeAllAttrs: true,
                         removeOws: false
@@ -371,7 +371,7 @@ angular.module('OneApp')
                 });
                 /** Pass back the lists array */
                 deferred.resolve(json);
-            },function (outcome) {
+            }, function (outcome) {
                 /** Failure */
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
@@ -413,7 +413,7 @@ angular.module('OneApp')
                 });
                 /** Pass back the lists array */
                 deferred.resolve(json);
-            },function (outcome) {
+            }, function (outcome) {
                 /** Failure */
                 deferred.reject(outcome);
                 toastr.error("Failed to fetch list details.");
@@ -456,7 +456,7 @@ angular.module('OneApp')
 
                 /** Pass back the lists array */
                 deferred.resolve(output);
-            },function (outcome) {
+            }, function (outcome) {
                 /** Failure */
                 toastr.error("Failed to fetch view details.");
                 deferred.reject(outcome);
@@ -502,7 +502,7 @@ angular.module('OneApp')
                     query.lastRun = new Date();
                     queueService.decrease();
                     deferred.resolve(changes);
-                }, function() {
+                }, function () {
                     toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
                 });
             } else {
@@ -513,7 +513,7 @@ angular.module('OneApp')
 
                         /** Store token for future web service calls to return changes */
                         query.changeToken = retrieveChangeToken(responseXML);
-                        /** Change token query includes deleted items as well so we need to process them seperately */
+                        /** Change token query includes deleted items as well so we need to process them separately */
                         processDeletionsSinceToken(responseXML, queryOptions.target);
                     }
                     /** Convert the XML into JS */
@@ -581,8 +581,8 @@ angular.module('OneApp')
                     var entityId = parseInt($(this).text(), 10);
                     /** Remove from local data array */
                     var foundAndRemoved = removeEntityFromLocalCache(entityArray, entityId);
-                    if(foundAndRemoved) {
-                        deleteCount ++;
+                    if (foundAndRemoved) {
+                        deleteCount++;
                     }
                 }
             });
@@ -661,7 +661,7 @@ angular.module('OneApp')
                     default:
                         valuePair = [internalName, value];
                 }
-                if(offline) {
+                if (offline) {
                     console.log('{' + fieldDefinition.objectType + '} ' + valuePair);
                 }
             }
@@ -679,7 +679,7 @@ angular.module('OneApp')
             _.each(fieldDefinitions, function (field) {
                 /** Check to see if item contains data for this field */
                 if (_.has(item, field.mappedName)) {
-                    pairs.push( createValuePair(field, item[field.mappedName]) );
+                    pairs.push(createValuePair(field, item[field.mappedName]));
                 }
             });
             return pairs;
@@ -776,7 +776,7 @@ angular.module('OneApp')
                     /** Success */
                     var output = processListItems(model, webServiceCall.responseXML, settings);
                     deferred.resolve(output[0]);
-                },function (outcome) {
+                }, function (outcome) {
                     /** In the event of an error, display toast */
                     toastr.error("There was an error getting the requested data from " + model.list.name);
                     deferred.reject(outcome);
@@ -827,7 +827,7 @@ angular.module('OneApp')
                     removeEntityFromLocalCache(settings.target, item.id);
                     queueService.decrease();
                     deferred.resolve(settings.target);
-                },function (outcome) {
+                }, function (outcome) {
                     //In the event of an error, display toast
                     toastr.error("There was an error deleting a list item from " + model.list.title);
                     queueService.decrease();
