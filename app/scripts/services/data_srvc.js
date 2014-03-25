@@ -39,7 +39,9 @@ angular.module('OneApp')
 
             /** Use factory, typically on model, to create new object for each returned item */
             _.each(jsObjects, function (item) {
-                entities.push(settings.factory(item));
+                /** Allow us to reference the originating query that generated this object */
+                item.getQuery = settings.getQuery;
+                entities.push(new model.factory(item));
             });
 
             if (typeof settings.mode === 'replace') {
@@ -487,6 +489,11 @@ angular.module('OneApp')
 
             /** Extend defaults **/
             var queryOptions = _.extend({}, defaults, options);
+
+            /** Allow a list item to reference the query which generated it */
+            queryOptions.getQuery = function() {
+                return query;
+            };
 
             /** Trigger processing animation */
             queueService.increase();

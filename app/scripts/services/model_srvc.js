@@ -45,6 +45,13 @@ angular.module('OneApp')
             return _.has(matchingType, 'defaultValue') ? matchingType.defaultValue : '';
         }
 
+        /** In the event that a factory isn't specified, just use a
+         * standard constructor to allow it to inherit from ListItem */
+        var StandardListItem = function(item) {
+            var self = this;
+            _.extend(self, item);
+        };
+
         /**
          * Model Constructor
          * Provides the Following
@@ -60,21 +67,22 @@ angular.module('OneApp')
         function Model(options) {
             var self = this;
             var defaults = {
-                data: [],
-                queries: {},
-                ready: $q.defer()
+                factory: StandardListItem,
+                queries: {}
             };
 
             _.extend(self, defaults, options);
 
+            /** Use list constructor to decorate */
             self.list = new List(self.list);
 
-//            /** Add a query to pull all list items */
-//            self.queries.allListItems = new Query({
-//                operation: "GetListItemChangesSinceToken",
-//                listName: self.list.guid,
-//                viewFields: self.list.viewFields
-//            });
+            /** Set the constructor's prototype to inherit from ListItem so we can inherit functionality */
+            self.factory.prototype = new ListItem();
+
+            /** Make the model directly accessible from the list item */
+            self.factory.prototype.getModel = function () {
+                return self;
+            };
 
             return self;
         }
