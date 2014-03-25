@@ -134,16 +134,17 @@ angular.module('OneApp')
         /**
          * Constructor that allows us create a static query with a reference to the parent model
          * @param {object} [queryOptions]
-         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
+         * @param {string} [queryOptions.name=defaultQueryName]
          * @returns {Query}
          */
-        Model.prototype.registerQuery = function (queryOptions, queryName) {
+        Model.prototype.registerQuery = function (queryOptions) {
             var model = this;
-            /** Optionally allow queryName parameter to be set on the query object */
-            queryOptions = queryOptions || {};
 
-            /** If no parameter is set, assume this is the only model and designate as primary */
-            queryOptions.name = queryOptions.name || queryName ? queryName : defaultQueryName;
+            var defaults = {
+                /** If name isn't set, assume this is the only model and designate as primary */
+                name: defaultQueryName
+            };
+
             model.queries[queryOptions.name] = new Query(queryOptions, this);
 
             /** Return the newly created query */
