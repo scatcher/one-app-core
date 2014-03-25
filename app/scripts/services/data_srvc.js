@@ -478,20 +478,26 @@ angular.module('OneApp')
          * @returns {object} promise - Returns reference to model
          */
         var executeQuery = function (model, query, options) {
-            var deferred = options.deferred || $q.defer();
+
+            var defaults = {
+                target: model.data
+            };
+
+            var deferred = $q.defer();
+
+            /** Extend defaults **/
+            var queryOptions = _.extend({}, defaults, options);
 
             /** Trigger processing animation */
             queueService.increase();
-            options = options || {};
-            options.target = options.target || model.data;
 
             if (offline) {
                 /** Optionally set alternate offline XML location but default to value in model */
-                var offlineData = options.offlineXML || 'dev/' + model.list.title + '.xml';
+                var offlineData = queryOptions.offlineXML || 'dev/' + model.list.title + '.xml';
 
                 /** Get offline data stored in the app/dev folder*/
                 $.ajax(offlineData).then(function (responseXML) {
-                    var changes = processListItems(model, responseXML, options);
+                    var changes = processListItems(model, responseXML, queryOptions);
                     /** Set date time to allow for time based updates */
                     query.lastRun = new Date();
                     queueService.decrease();
@@ -504,14 +510,14 @@ angular.module('OneApp')
                 webServiceCall.then(function () {
                     var responseXML = webServiceCall.responseXML;
                     if (query.operation === "GetListItemChangesSinceToken") {
-                        
+
                         /** Store token for future web service calls to return changes */
                         query.changeToken = retrieveChangeToken(responseXML);
                         /** Change token query includes deleted items as well so we need to process them seperately */
-                        processDeletionsSinceToken(responseXML, options.target);
+                        processDeletionsSinceToken(responseXML, queryOptions.target);
                     }
                     /** Convert the XML into JS */
-                    var changes = processListItems(model, responseXML, options);
+                    var changes = processListItems(model, responseXML, queryOptions);
 
                     /** Set date time to allow for time based updates */
                     query.lastRun = new Date();
@@ -531,17 +537,17 @@ angular.module('OneApp')
          */
         function removeEntityFromLocalCache(entityArray, entityId) {
             var successfullyDeleted = false;
-            
+
             /** Remove from local data array */
             var item = _.findWhere(entityArray, {id: entityId});
             var index = _.indexOf(entityArray, item);
-            
+
             if (index) {
                 /** Remove the locally cached record */
                 entityArray.splice(index, 1);
                 successfullyDeleted = true;
             }
-            
+
             return successfullyDeleted;
         }
 
@@ -570,7 +576,7 @@ angular.module('OneApp')
             $(responseXML).SPFilterNode('Id').each(function () {
                 /** Check for the type of change */
                 var changeType = $(this).attr("ChangeType");
-                
+
                 if (changeType === "Delete") {
                     var entityId = parseInt($(this).text(), 10);
                     /** Remove from local data array */
@@ -587,10 +593,10 @@ angular.module('OneApp')
 
         /**
          * Turns an array of, typically {lookupId: someId, lookupValue: someValue}, objects into a string
-         * of delimited id's that can be passed to sharepoint for a multi select lookup or multi user selection
+         * of delimited id's that can be passed to SharePoint for a multi select lookup or multi user selection
          * field
          * @param {array} value - Array of objects
-         * @param {integer} idProperty - ID attribute
+         * @param {string} idProperty - ID attribute
          * @returns {string}
          */
         function stringifySharePointMultiSelect(value, idProperty) {
@@ -816,7 +822,7 @@ angular.module('OneApp')
             } else {
                 var webServiceCall = $().SPServices(payload);
 
-                webServiceCall.then(function (response) {
+                webServiceCall.then(function () {
                     /** Success */
                     removeEntityFromLocalCache(settings.target, item.id);
                     queueService.decrease();

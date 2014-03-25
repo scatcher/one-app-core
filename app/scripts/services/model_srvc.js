@@ -139,7 +139,8 @@ angular.module('OneApp')
             model.queries[queryOptions.name] = new Query(queryOptions, this);
 
             /** Return the promise for this newly created query */
-            return model.queries[queryOptions.name].deferred.promise;
+            model.queries[queryOptions.name].deferred = $q.defer();
+            return model.queries[queryOptions.name].deferred.promise ;
         };
 
         /**
@@ -171,7 +172,7 @@ angular.module('OneApp')
             var model = this;
             var query = model.getQuery(queryName);
             if(query) {
-                return query.execute;
+                return query.execute();
             }
         };
 
@@ -564,12 +565,15 @@ angular.module('OneApp')
             var model = self.getModel();
             self.deferred = $q.defer();
 
-            options = options || {};
-            /** Designate the central cache for this query if not already set */
-            options.target = options.target || self.cache;
+            var defaults = {
+                /** Designate the central cache for this query if not already set */
+                target: self.cache
+            }
 
-            dataService.executeQuery(model, self, options).then(function(results) {
-                self.deferred.resolve(options.target);
+            var queryOptions = _.extend({}, defaults, options);
+
+            dataService.executeQuery(model, self, queryOptions).then(function(results) {
+                self.deferred.resolve(queryOptions.target);
             });
 
             return self.deferred.promise;
