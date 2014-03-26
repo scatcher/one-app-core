@@ -169,7 +169,6 @@ angular.module('OneApp')
                 return model.queries[defaultQueryName];
             } else {
                 /** Requested query not found */
-                toastr.error("Query " + queryName + " is not defined.");
                 return undefined;
             }
         };
