@@ -578,8 +578,10 @@ angular.module('OneApp')
         Query.prototype.execute = function (options) {
             var self = this;
             var model = self.getModel();
+            var deferred = $q.defer();
+
+            /** Set flag if this if the first time this query has been run */
             var firstRun = _.isNull(self.lastRun);
-            self.deferred = $q.defer();
 
             var defaults = {
                 /** Designate the central cache for this query if not already set */
@@ -590,14 +592,17 @@ angular.module('OneApp')
             var queryOptions = _.extend({}, defaults, options);
 
             dataService.executeQuery(model, self, queryOptions).then(function (results) {
-                self.deferred.resolve(queryOptions.target);
                 if (firstRun) {
                     /** Promise resolved the first time query is completed */
                     self.initialized.resolve(queryOptions.target);
                 }
+
+                deferred.resolve(queryOptions.target);
             });
 
-            return self.deferred.promise;
+            /** Save reference on the query **/
+            self.promise = deferred.promise;
+            return deferred.promise;
         };
 
         /**
