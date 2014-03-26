@@ -44,7 +44,7 @@ angular.module('OneApp')
                 entities.push(new model.factory(item));
             });
 
-            if (typeof settings.mode === 'replace') {
+            if (settings.mode === 'replace') {
                 /** Replace any existing data */
                 settings.target = entities;
                 if (offline) {
