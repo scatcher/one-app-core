@@ -162,7 +162,7 @@ angular.module('OneApp')
             if (_.isObject(model.queries[queryName])) {
                 /** The named query exists */
                 return model.queries[queryName];
-            } else if (_.isObject(model.queries[defaultQueryName] && !queryName)) {
+            } else if (_.isObject(model.queries[defaultQueryName]) && !queryName) {
                 /** A named query wasn't specified and the catchall query exists */
                 return model.queries[defaultQueryName];
             } else {
