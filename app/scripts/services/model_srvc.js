@@ -67,6 +67,7 @@ angular.module('OneApp')
         function Model(options) {
             var self = this;
             var defaults = {
+                data: [],
                 factory: StandardListItem,
                 queries: {}
             };
@@ -161,8 +162,8 @@ angular.module('OneApp')
             if (_.isObject(model.queries[queryName])) {
                 /** The named query exists */
                 return model.queries[queryName];
-            } else if (_.isObject(model.queries[defaultQueryName])) {
-                /** The catchall query exists */
+            } else if (_.isObject(model.queries[defaultQueryName] && !queryName)) {
+                /** A named query wasn't specified and the catchall query exists */
                 return model.queries[defaultQueryName];
             } else {
                 /** Requested query not found */
@@ -190,7 +191,7 @@ angular.module('OneApp')
          * currently rebuilds the mapping when the length of items in the local cache has changed or when the
          * rebuildIndex flag is set.
          *
-         * @param {*} value - The value to compare against
+         * @param {*|[*]} value - The value or array of values to compare against
          * @param {object} options
          * @param {string} options.propertyPath - The dot separated propertyPath.
          * @param {object} options.cacheName - Required if using a data source other than model.data.
@@ -199,7 +200,8 @@ angular.module('OneApp')
          */
         Model.prototype.searchLocalCache = function (value, options) {
             var model = this;
-            var self = model.addNewItem;
+            var self = model.searchLocalCache;
+            var response;
 
             var defaults = {
                 propertyPath: 'id',
@@ -230,7 +232,17 @@ angular.module('OneApp')
                 cache.count = options.localCache.length;
             }
 
-            return options.localCache[cache.map.indexOf(value)];
+            /** Allow an array of values to be passed in */
+            if(_.isArray(value)) {
+                response = [];
+                _.each(value, function(key) {
+                    response.push(options.localCache[cache.map.indexOf(key)]);
+                });
+            } else {
+                response = options.localCache[cache.map.indexOf(value)];
+            }
+
+            return response;
         };
 
         /**
