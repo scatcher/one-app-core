@@ -146,6 +146,8 @@ angular.module('OneApp')
                 name: defaultQueryName
             };
 
+            queryOptions = _.extend({}, defaults, queryOptions);
+
             model.queries[queryOptions.name] = new Query(queryOptions, this);
 
             /** Return the newly created query */
