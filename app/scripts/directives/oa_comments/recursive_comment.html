@@ -45,8 +45,8 @@
             </div>
         </div>
         <div ng-if="response.thread.length !== -1">
-            <div ng-include="'bower_components/one-app-core/app/scripts/directives/oa_comments/recursive_comment.html'"
-                 ng-init="comment = response;"></div>
+            <span ng-include="'bower_components/one-app-core/app/scripts/directives/oa_comments/recursive_comment.html'"
+                  ng-init="comment = response;"></span>
         </div>
     </li>
 </ul>

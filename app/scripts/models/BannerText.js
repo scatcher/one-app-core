@@ -5,11 +5,11 @@
 angular.module('OneApp')
     .service('bannerTextModel', function ($rootScope, $q, modelFactory, configService, dataService) {
 
-        /** Object Constructor (class)*/
-        function BannerText(obj) {
-            var self = this;
-            _.extend(self, obj);
-        }
+//        /** Object Constructor (class)*/
+//        function BannerText(obj) {
+//            var self = this;
+//            _.extend(self, obj);
+//        }
 
         /********************* Model Definition ***************************************/
 
@@ -19,6 +19,7 @@ angular.module('OneApp')
         var model = new modelFactory.Model({
             data: [], /** By default, all newly constructed list items are pushed to this array */
             queries: {}, /** Stored queries for this data source */
+//            factory: BannerText,
             ready: $q.defer(),
             list: {
                 title: 'BannerText', /**Maps to the offline XML file in dev folder (no spaces) */
@@ -36,20 +37,6 @@ angular.module('OneApp')
             }
         });
 
-        /** New List item is then passed to the object constructor for this data source to allow the addition
-         /*  of any other custom methods or properties */
-        model.factory = function (listItem) {
-            return new BannerText(listItem);
-        };
-
-        /*********************************** Prototype Construction ***************************************/
-
-        /** Inherit from master list item prototype */
-        BannerText.prototype = new modelFactory.ListItem();
-        /** Make the model directly accessible from the list item */
-        BannerText.prototype.getModel = function () {
-            return model;
-        };
 
         /*********************************** Queries ***************************************/
 

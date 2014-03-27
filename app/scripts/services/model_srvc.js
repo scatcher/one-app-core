@@ -45,6 +45,13 @@ angular.module('OneApp')
             return _.has(matchingType, 'defaultValue') ? matchingType.defaultValue : '';
         }
 
+        /** In the event that a factory isn't specified, just use a
+         * standard constructor to allow it to inherit from ListItem */
+        var StandardListItem = function(item) {
+            var self = this;
+            _.extend(self, item);
+        };
+
         /**
          * Model Constructor
          * Provides the Following
@@ -61,20 +68,22 @@ angular.module('OneApp')
             var self = this;
             var defaults = {
                 data: [],
-                queries: {},
-                ready: $q.defer()
+                factory: StandardListItem,
+                queries: {}
             };
 
             _.extend(self, defaults, options);
 
+            /** Use list constructor to decorate */
             self.list = new List(self.list);
 
-//            /** Add a query to pull all list items */
-//            self.queries.allListItems = new Query({
-//                operation: "GetListItemChangesSinceToken",
-//                listName: self.list.guid,
-//                viewFields: self.list.viewFields
-//            });
+            /** Set the constructor's prototype to inherit from ListItem so we can inherit functionality */
+            self.factory.prototype = new ListItem();
+
+            /** Make the model directly accessible from the list item */
+            self.factory.prototype.getModel = function () {
+                return self;
+            };
 
             return self;
         }
@@ -126,21 +135,23 @@ angular.module('OneApp')
         /**
          * Constructor that allows us create a static query with a reference to the parent model
          * @param {object} [queryOptions]
-         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
+         * @param {string} [queryOptions.name=defaultQueryName]
          * @returns {Query}
          */
-        Model.prototype.registerQuery = function(queryOptions, queryName) {
+        Model.prototype.registerQuery = function (queryOptions) {
             var model = this;
-            /** Optionally allow queryName parameter to be set on the query object */
-            queryOptions = queryOptions || {};
 
-            /** If no parameter is set, assume this is the only model and designate as primary */
-            queryOptions.name = queryOptions.name || queryName ? queryName : defaultQueryName;
+            var defaults = {
+                /** If name isn't set, assume this is the only model and designate as primary */
+                name: defaultQueryName
+            };
+
+            queryOptions = _.extend({}, defaults, queryOptions);
+
             model.queries[queryOptions.name] = new Query(queryOptions, this);
 
-            /** Return the promise for this newly created query */
-            model.queries[queryOptions.name].deferred = $q.defer();
-            return model.queries[queryOptions.name].deferred.promise ;
+            /** Return the newly created query */
+            return model.queries[queryOptions.name];
         };
 
         /**
@@ -148,17 +159,16 @@ angular.module('OneApp')
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
          * @returns {object} query
          */
-        Model.prototype.getQuery = function(queryName) {
+        Model.prototype.getQuery = function (queryName) {
             var model = this;
-            if(_.isObject(model.queries[queryName])) {
+            if (_.isObject(model.queries[queryName])) {
                 /** The named query exists */
                 return model.queries[queryName];
-            } else if (_.isObject(model.queries[defaultQueryName])) {
-                /** The catchall query exists */
+            } else if (_.isObject(model.queries[defaultQueryName]) && !queryName) {
+                /** A named query wasn't specified and the catchall query exists */
                 return model.queries[defaultQueryName];
             } else {
                 /** Requested query not found */
-                toastr.error("Query " + queryName + " is not defined.");
                 return undefined;
             }
         };
@@ -168,10 +178,10 @@ angular.module('OneApp')
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
          * @returns {function}
          */
-        Model.prototype.executeQuery = function(queryName) {
+        Model.prototype.executeQuery = function (queryName) {
             var model = this;
             var query = model.getQuery(queryName);
-            if(query) {
+            if (query) {
                 return query.execute();
             }
         };
@@ -182,7 +192,7 @@ angular.module('OneApp')
          * currently rebuilds the mapping when the length of items in the local cache has changed or when the
          * rebuildIndex flag is set.
          *
-         * @param {*} value - The value to compare against
+         * @param {*|[*]} value - The value or array of values to compare against
          * @param {object} options
          * @param {string} options.propertyPath - The dot separated propertyPath.
          * @param {object} options.cacheName - Required if using a data source other than model.data.
@@ -191,7 +201,8 @@ angular.module('OneApp')
          */
         Model.prototype.searchLocalCache = function (value, options) {
             var model = this;
-            var self = model.addNewItem;
+            var self = model.searchLocalCache;
+            var response;
 
             var defaults = {
                 propertyPath: 'id',
@@ -208,7 +219,7 @@ angular.module('OneApp')
 
 
             var properties = options.propertyPath.split('.');
-            _.each(properties, function(attribute) {
+            _.each(properties, function (attribute) {
                 cache[attribute] = cache[attribute] || {};
                 /** Update cache reference to another level down the cache object */
                 cache = cache[attribute];
@@ -216,13 +227,23 @@ angular.module('OneApp')
 
             cache.map = cache.map || [];
             /** Remap if no existing map, the number of items in the array has changed, or the rebuild flag is set */
-            if(!_.isNumber(cache.count) || cache.count !== options.localCache.length || options.rebuildIndex) {
+            if (!_.isNumber(cache.count) || cache.count !== options.localCache.length || options.rebuildIndex) {
                 cache.map = _.deepPluck(options.localCache, options.propertyPath);
                 /** Store the current length of the array for future comparisons */
                 cache.count = options.localCache.length;
             }
 
-            return options.localCache[cache.map.indexOf(value)];
+            /** Allow an array of values to be passed in */
+            if(_.isArray(value)) {
+                response = [];
+                _.each(value, function(key) {
+                    response.push(options.localCache[cache.map.indexOf(key)]);
+                });
+            } else {
+                response = options.localCache[cache.map.indexOf(value)];
+            }
+
+            return response;
         };
 
         /**
@@ -246,7 +267,8 @@ angular.module('OneApp')
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
          * @constructor
          */
-        function ListItem() {}
+        function ListItem() {
+        }
 
         /**
          * Allows us to reference when out of scope
@@ -502,20 +524,30 @@ angular.module('OneApp')
 
         /**
          * Decorates query optional attributes
-         * @param {object} query
+         * @param {object} queryOptions
          * @param {object} model
          * @constructor
          */
         function Query(queryOptions, model) {
             var self = this;
             var defaults = {
-                /** Date/Time last run */
-                operation: "GetListItemChangesSinceToken",
-                listName: model.list.guid,
-                viewFields: model.list.viewFields,
-                lastRun: null,
-                webURL: configService.defaultUrl,
+                /** Container to hold returned entities */
                 cache: [],
+                /** Promise resolved after first time query is executed */
+                initialized: $q.defer(),
+                /** Date/Time last run */
+                lastRun: null,
+                listName: model.list.guid,
+                /** Every time we run we want to check to update our cached data with
+                 * any changes made on the server */
+                operation: "GetListItemChangesSinceToken",
+                /** Default query returns list items in ascending ID order */
+                query: '' +
+                    '<Query>' +
+                    '   <OrderBy>' +
+                    '       <FieldRef Name="ID" Ascending="TRUE"/>' +
+                    '   </OrderBy>' +
+                    '</Query>',
                 queryOptions: '' +
                     '<QueryOptions>' +
                     '   <IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
@@ -523,12 +555,8 @@ angular.module('OneApp')
                     '   <IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
                     '   <ExpandUserField>FALSE</ExpandUserField>' +
                     '</QueryOptions>',
-                query: '' +
-                    '<Query>' +
-                    '   <OrderBy>' +
-                    '       <FieldRef Name="ID" Ascending="TRUE"/>' +
-                    '   </OrderBy>' +
-                    '</Query>'
+                viewFields: model.list.viewFields,
+                webURL: configService.defaultUrl
             };
             _.extend(self, defaults, queryOptions);
 
@@ -549,7 +577,7 @@ angular.module('OneApp')
             });
 
             /** Allow the model to be referenced at a later time */
-            self.getModel = function() {
+            self.getModel = function () {
                 return model;
             }
         }
@@ -558,25 +586,36 @@ angular.module('OneApp')
          * Query SharePoint, pull down all initial records on first call
          * Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken")
          * @param options - Any options that should be passed to dataService.executeQuery
-         * @returns {promise} - Array of list item objects
+         * @returns {function} - Array of list item objects
          */
-        Query.prototype.execute = function(options) {
+        Query.prototype.execute = function (options) {
             var self = this;
             var model = self.getModel();
-            self.deferred = $q.defer();
+            var deferred = $q.defer();
+
+            /** Set flag if this if the first time this query has been run */
+            var firstRun = _.isNull(self.lastRun);
 
             var defaults = {
                 /** Designate the central cache for this query if not already set */
                 target: self.cache
-            }
+            };
 
+            /** Extend defaults with any options */
             var queryOptions = _.extend({}, defaults, options);
 
-            dataService.executeQuery(model, self, queryOptions).then(function(results) {
-                self.deferred.resolve(queryOptions.target);
+            dataService.executeQuery(model, self, queryOptions).then(function (results) {
+                if (firstRun) {
+                    /** Promise resolved the first time query is completed */
+                    self.initialized.resolve(queryOptions.target);
+                }
+
+                deferred.resolve(queryOptions.target);
             });
 
-            return self.deferred.promise;
+            /** Save reference on the query **/
+            self.promise = deferred.promise;
+            return deferred.promise;
         };
 
         /**
@@ -585,12 +624,15 @@ angular.module('OneApp')
          * @param {object} searchOptions - Options to pass to Model.prototype.searchLocalCache
          * @returns {object}
          */
-        Query.prototype.searchLocalCache = function(value, searchOptions) {
+        Query.prototype.searchLocalCache = function (value, searchOptions) {
             var self = this;
             var model = self.getModel();
-            searchOptions.cacheName = searchOptions.cacheName || self.name;
-            searchOptions.localCache = searchOptions.localCache || self.cache;
-            return model.searchLocalCache(value, searchOptions);
+            var defaults = {
+                cacheName: self.name,
+                localCache: self.cache
+            };
+            var options = _.extend({}, defaults, searchOptions);
+            return model.searchLocalCache(value, options);
         };
 
         /**
