@@ -1,53 +1,13 @@
 'use strict';
 
 angular.module('OneApp')
-    .factory('modelFactory', function ($q, $timeout, configService, utilityService, dataService, toastr) {
+    .factory('modelFactory', function ($q, $timeout, configService, dataService, fieldService) {
 
         var defaultQueryName = 'primary';
 
-        /**
-         * Decorates field with optional defaults
-         * @param obj
-         * @returns {Field}
-         * @constructor
-         */
-        function Field(obj) {
-            var self = this;
-            var defaults = {
-                readOnly: false,
-                objectType: 'Text'
-            };
-            _.extend(self, defaults, obj);
-            self.displayName = self.displayName || utilityService.fromCamelCase(self.mappedName);
-        }
-
-        /** Field types used on the models to create a field definition */
-        var fieldTypes = [
-            { objectType: "Text", defaultValue: "" },
-            { objectType: "Boolean", defaultValue: null },
-            { objectType: "Currency", defaultValue: null },
-            { objectType: "DateTime", defaultValue: null },
-            { objectType: "Integer", defaultValue: null },
-            { objectType: "JSON", defaultValue: "" },
-            { objectType: "Lookup", defaultValue: "" },
-            { objectType: "LookupMulti", defaultValue: [] },
-            { objectType: "User", defaultValue: "" },
-            { objectType: "UserMulti", defaultValue: [] }
-        ];
-
-        /**
-         * Returns the initialization value based on field type, defaults to an empty string if no match
-         * @param {string} requestedType
-         * @returns {*}
-         */
-        function getDefaultValueByFieldType(requestedType) {
-            var matchingType = _.findWhere(fieldTypes, {objectType: requestedType}) || {};
-            return _.has(matchingType, 'defaultValue') ? matchingType.defaultValue : '';
-        }
-
         /** In the event that a factory isn't specified, just use a
          * standard constructor to allow it to inherit from ListItem */
-        var StandardListItem = function(item) {
+        var StandardListItem = function (item) {
             var self = this;
             _.extend(self, item);
         };
@@ -160,17 +120,33 @@ angular.module('OneApp')
          * @returns {object} query
          */
         Model.prototype.getQuery = function (queryName) {
-            var model = this;
+            var model = this, query;
             if (_.isObject(model.queries[queryName])) {
                 /** The named query exists */
-                return model.queries[queryName];
+                query = model.queries[queryName];
             } else if (_.isObject(model.queries[defaultQueryName]) && !queryName) {
                 /** A named query wasn't specified and the catchall query exists */
-                return model.queries[defaultQueryName];
+                query = model.queries[defaultQueryName];
             } else {
                 /** Requested query not found */
-                return undefined;
+                query = undefined;
             }
+            return query;
+        };
+
+        /**
+         * Helper function that return the local cache for a named query if provided, otherwise
+         * it returns the cache for the primary query for the model
+         * @param {string} [queryName]
+         * @returns {array}
+         */
+        Model.prototype.getCache = function (queryName) {
+            var model = this, query, cache;
+            query = model.getQuery(queryName);
+            if (query && query.cache) {
+                cache = query.cache;
+            }
+            return cache;
         };
 
         /**
@@ -193,11 +169,11 @@ angular.module('OneApp')
          * rebuildIndex flag is set.
          *
          * @param {*|[*]} value - The value or array of values to compare against
-         * @param {object} options
-         * @param {string} options.propertyPath - The dot separated propertyPath.
-         * @param {object} options.cacheName - Required if using a data source other than model.data.
-         * @param {object} options.localCache - Array of objects to search (Default model.data).
-         * @param {boolean} options.rebuildIndex - Set to ignore previous index and rebuild
+         * @param {object} [options]
+         * @param {string} [options.propertyPath] - The dot separated propertyPath.
+         * @param {object} [options.cacheName] - Required if using a data source other than model.data.
+         * @param {object} [options.localCache] - Array of objects to search (Default model.data).
+         * @param {boolean} [options.rebuildIndex] - Set to ignore previous index and rebuild
          */
         Model.prototype.searchLocalCache = function (value, options) {
             var model = this;
@@ -234,9 +210,9 @@ angular.module('OneApp')
             }
 
             /** Allow an array of values to be passed in */
-            if(_.isArray(value)) {
+            if (_.isArray(value)) {
                 response = [];
-                _.each(value, function(key) {
+                _.each(value, function (key) {
                     response.push(options.localCache[cache.map.indexOf(key)]);
                 });
             } else {
@@ -257,10 +233,41 @@ angular.module('OneApp')
                 /** Create attributes for each non-readonly field definition */
                 if (!fieldDefinition.readOnly) {
                     /** Create an attribute with the expected empty value based on field definition type */
-                    newItem[fieldDefinition.mappedName] = getDefaultValueByFieldType(fieldDefinition.objectType);
+                    newItem[fieldDefinition.mappedName] = fieldService.getDefaultValueForType(fieldDefinition.objectType);
                 }
             });
             return newItem;
+        };
+
+        /**
+         * Generates n mock records for testing
+         * @param {object} [options]
+         * @param {number} [options.quantity=10] - The requested number of mock records
+         * @param {string} [options.permissionLevel=FullMask] - Sets the mask on the mock records to simulate desired level
+         * @param {boolean} [options.staticValue=false] - by default all mock data is dynamically created but if set, this will
+         * cause static data to be used instead
+         */
+        Model.prototype.generateMockData = function (options) {
+            var mockData = [],
+                model = this;
+
+            var defaults = {
+                quantity: 10,
+                staticValue: false,
+                permissionLevel: 'FullMask'
+            };
+
+            options = _.extend({}, defaults, options);
+            _.times(options.quantity, function () {
+                var mock = {};
+                /** Create an attribute with mock data for each field */
+                _.each(model.list.fields, function (field) {
+                    mock[field.mappedName] = field.getMockData(options);
+                });
+                /** Use the factory on the model to extend the object */
+                mockData.push(new model.factory(mock));
+            });
+            return mockData;
         };
 
         /**
@@ -400,7 +407,7 @@ angular.module('OneApp')
                 var fieldDefinition = _.findWhere(model.list.fields, {mappedName: fieldName});
 
                 var payload = {
-                    operation: "GetVersionCollection",
+                    operation: 'GetVersionCollection',
                     webURL: configService.defaultUrl,
                     strlistID: model.list.guid,
                     strlistItemID: self.id,
@@ -458,9 +465,9 @@ angular.module('OneApp')
 
         /**
          * List Object Constructor
-         * @param obj.customFields  *Optional
-         * @param obj.guid          *Required
-         * @param obj.title         *Required
+         * @param obj.guid
+         * @param obj.title
+         * @param [obj.customFields]
          * @constructor
          */
         function List(obj) {
@@ -477,47 +484,7 @@ angular.module('OneApp')
 
             var list = _.extend({}, defaults, obj);
 
-            /**
-             * Read only fields that should be included in all lists
-             * @type {Array}
-             */
-            var defaultFields = [
-                { internalName: "ID", objectType: "Counter", mappedName: "id", readOnly: true},
-                { internalName: "Modified", objectType: "DateTime", mappedName: "modified", readOnly: true},
-                { internalName: "Created", objectType: "DateTime", mappedName: "created", readOnly: true},
-                { internalName: "Author", objectType: "User", sid: true, mappedName: "author", readOnly: true},
-                { internalName: "Editor", objectType: "User", sid: true, mappedName: "editor", readOnly: true},
-                { internalName: "PermMask", objectType: "Text", mappedName: "permMask", readOnly: true}
-            ];
-
-            /**
-             * Constructs the field
-             * - adds to viewField
-             * - create ows_ mapping
-             * @param fieldDefinition
-             */
-            var buildField = function (fieldDefinition) {
-                var field = new Field(fieldDefinition);
-                list.fields.push(field);
-                list.viewFields += '<FieldRef Name="' + field.internalName + '"/>';
-                list.mapping['ows_' + field.internalName] = { mappedName: field.mappedName, objectType: field.objectType };
-            };
-
-            /** Open viewFields */
-            list.viewFields += '<ViewFields>';
-
-            /** Add the default fields */
-            _.each(defaultFields, function (field) {
-                buildField(field);
-            });
-
-            /** Add each of the fields defined in the model */
-            _.each(list.customFields, function (field) {
-                buildField(field);
-            });
-
-            /** Close viewFields */
-            list.viewFields += '</ViewFields>';
+            fieldService.extendFieldDefinitions(list);
 
             return list;
         }
@@ -540,7 +507,7 @@ angular.module('OneApp')
                 listName: model.list.guid,
                 /** Every time we run we want to check to update our cached data with
                  * any changes made on the server */
-                operation: "GetListItemChangesSinceToken",
+                operation: 'GetListItemChangesSinceToken',
                 /** Default query returns list items in ascending ID order */
                 query: '' +
                     '<Query>' +
@@ -562,11 +529,11 @@ angular.module('OneApp')
 
             /** Mapping of SharePoint properties to SPServices properties */
             var mapping = [
-                ["query", "CAMLQuery"],
-                ["viewFields", "CAMLViewFields"],
-                ["rowLimit", "CAMLRowLimit"],
-                ["queryOptions", "CAMLQueryOptions"],
-                ["listItemID", "ID"]
+                ['query', 'CAMLQuery'],
+                ['viewFields', 'CAMLViewFields'],
+                ['rowLimit', 'CAMLRowLimit'],
+                ['queryOptions', 'CAMLQueryOptions'],
+                ['listItemID', 'ID']
             ];
 
             _.each(mapping, function (map) {
@@ -579,7 +546,7 @@ angular.module('OneApp')
             /** Allow the model to be referenced at a later time */
             self.getModel = function () {
                 return model;
-            }
+            };
         }
 
         /**
@@ -695,7 +662,6 @@ angular.module('OneApp')
         }
 
         return {
-            getDefaultValueByFieldType: getDefaultValueByFieldType,
             ListItem: ListItem,
             Model: Model,
             Query: Query,

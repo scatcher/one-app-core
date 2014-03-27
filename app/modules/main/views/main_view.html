@@ -35,107 +35,44 @@
 </div>
 
 <div class="page-content">
-    <!--<hr class="hr-sm"/>-->
-
-    <!--<div class="row">-->
-        <!--<div class="col-xs-12">-->
-            <!--<div class="jarviswidget jarviswidget-color-blueDark" style="position: relative; opacity: 1;">-->
-                <!--<header role="heading">-->
-                    <!--<span class="widget-icon"> <i class="fa fa-thumb-tack"></i> </span>-->
-
-                    <!--<h2>My Projects</h2>-->
-                <!--</header>-->
-                <!--<div>-->
-                    <!--<div class="widget-body no-padding">-->
-                        <!--<table class="table table-bordered">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th>Title</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody>-->
-                            <!--<tr ng-repeat="project in projects">-->
-                                <!--<td>-->
-                                    <!--<a href="#/projects/{{ project.id }}"-->
-                                       <!--title="Click to view project details">{{ project.title }}</a>-->
-                                <!--</td>-->
-                            <!--</tr>-->
-                            <!--</tbody>-->
-                        <!--</table>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="row">
 
-        <!-------- Specification Requirements ----------------->
-        <div class="col-xs-12 col-md-4">
+        <!-------- Static Mocks ----------------->
+        <div class="col-xs-12 col-md-6">
             <div class="jarviswidget jarviswidget-color-blueDark">
                 <header role="heading">
                     <span class="widget-icon"> <i class="fa fa-compass"></i> </span>
 
-                    <h2>Specification Requirement Changes</h2>
+                    <h2>Static Mocks</h2>
                 </header>
                 <div>
                     <div class="widget-body no-padding">
-                        <table ng-table="recentSpecificationChanges" class="table table-bordered" template-pagination="custom/pager">
-                            <tr ng-repeat="requirement in $data">
-                                <td data-title="'Requirement'">
-                                    <a href ng-click="requirement.openModal()">
-                                        {{requirement.project.lookupValue}}-{{ requirement.title }}</a>
-                                </td>
-                                <td data-title="'Modified By'">{{ requirement.editor.lookupValue }}</td>
-                                <td data-title="'Modified'">{{ requirement.modified | date: 'short' }}</td>
+                        <table ng-table="staticTable" class="table table-bordered" template-pagination="custom/pager">
+                            <tr ng-repeat="mock in $data">
+                                <td data-title="'Title'">{{ mock.title }}</td>
+                                <td data-title="'Modified By'">{{ mock.editor.lookupValue }}</td>
+                                <td data-title="'Modified'">{{ mock.modified | date: 'short' }}</td>
                             </tr>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-
-
-        <!-------- Capability Requirements ----------------->
-        <div class="col-xs-12 col-md-4">
+        <!-------- Dynamic Mocks ----------------->
+        <div class="col-xs-12 col-md-6">
             <div class="jarviswidget jarviswidget-color-blueDark">
                 <header role="heading">
-                    <span class="widget-icon"> <i class="fa fa-anchor"></i> </span>
+                    <span class="widget-icon"> <i class="fa fa-compass"></i> </span>
 
-                    <h2>Capability Requirement Changes</h2>
+                    <h2>Dynamic Mocks</h2>
                 </header>
                 <div>
                     <div class="widget-body no-padding">
-                        <table ng-table="recentCapabilityChanges" class="table table-bordered" template-pagination="custom/pager">
-                            <tr ng-repeat="requirement in $data">
-                                <td data-title="'Requirement'">
-                                    <a href ng-click="requirement.openModal()">
-                                        {{requirement.project.lookupValue}}-{{ requirement.title }}</a>
-                                </td>
-                                <td data-title="'Modified By'">{{ requirement.editor.lookupValue }}</td>
-                                <td data-title="'Modified'">{{ requirement.modified | date: 'short' }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-------- Comments ----------------->
-        <div class="col-xs-12 col-md-4">
-            <div class="jarviswidget jarviswidget-color-blueDark">
-                <header role="heading">
-                    <span class="widget-icon"> <i class="fa fa-comments-o"></i> </span>
-
-                    <h2>Recent Comments</h2>
-                </header>
-                <div>
-                    <div class="widget-body no-padding">
-                        <table ng-table="recentComments" class="table table-bordered"
-                               template-pagination="custom/pager">
-                            <tr ng-repeat="comment in $data">
-                                <td data-title="'Requirement'"> {{ comment.title }}</td>
-                                <td data-title="'Modified By'">{{ comment.editor.lookupValue }}</td>
-                                <td data-title="'Modified'">{{ comment.modified | date: 'short' }}</td>
+                        <table ng-table="dynamicTable" class="table table-bordered" template-pagination="custom/pager">
+                            <tr ng-repeat="mock in $data">
+                                <td data-title="'Title'">{{ mock.title }}</td>
+                                <td data-title="'Modified By'">{{ mock.editor.lookupValue }}</td>
+                                <td data-title="'Modified'">{{ mock.modified | date: 'short' }}</td>
                             </tr>
                         </table>
                     </div>
