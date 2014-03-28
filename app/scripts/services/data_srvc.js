@@ -520,6 +520,14 @@ angular.module('OneApp')
 
                         /** Store token for future web service calls to return changes */
                         query.changeToken = retrieveChangeToken(responseXML);
+
+
+                        /** Update the user permissions for this list */
+                        var effectivePermissionMask = retrievePermMask(responseXML);
+                        if(effectivePermissionMask) {
+                            model.list.effectivePermMask = effectivePermissionMask;
+                        }
+
                         /** Change token query includes deleted items as well so we need to process them separately */
                         processDeletionsSinceToken(responseXML, queryOptions.target);
                     }
@@ -560,10 +568,20 @@ angular.module('OneApp')
 
         /**
          * Returns the change token from the xml response of a GetListItemChangesSinceToken query
+         * Note: this attribute is only found when using 'GetListItemChangesSinceToken'
          * @param {xml} responseXML
          */
         function retrieveChangeToken(responseXML) {
             return $(responseXML).find("Changes").attr("LastChangeToken");
+        }
+
+        /**
+         * Returns the text representation of the users permission mask
+         * Note: this attribute is only found when using 'GetListItemChangesSinceToken'
+         * @param {xml} responseXML
+         */
+        function retrievePermMask(responseXML) {
+            return $(responseXML).find("listitems").attr("EffectivePermMask");
         }
 
         /**
