@@ -37,12 +37,12 @@ angular.module('OneApp')
                 /** Assume that if there is a first argument, it is the item we're editing */
                 if (args[0]) {
                     /** Create a copy in case we need to revert back */
-                    self.snapshot = angular.copy(entity);
+                    self.snapshot = angular.copy(args[0]);
                     modalInstance.result.then(function () {
 
                     }, function () {
                         /** Undo any changes if cancelled */
-                        _.extend(entity, self.snapshot);
+                        _.extend(args[0], self.snapshot);
                     });
                 }
 
