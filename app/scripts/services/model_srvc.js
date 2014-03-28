@@ -29,6 +29,8 @@ angular.module('OneApp')
             var defaults = {
                 data: [],
                 factory: StandardListItem,
+                /** Date/Time of last communication with server */
+                lastServerUpdate: null,
                 queries: {}
             };
 
@@ -161,6 +163,14 @@ angular.module('OneApp')
                 return query.execute();
             }
         };
+
+        /**
+         * Methods which allows us to easily determine if we've successfully made any queries this session
+         * @returns {boolean}
+         */
+        Model.prototype.isInitialised = function() {
+            return _.isDate(this.lastServerUpdate);
+        }
 
         /**
          * @description Search functionality that allow for deeply searching an array of objects for the first
@@ -505,6 +515,8 @@ angular.module('OneApp')
                 /** Date/Time last run */
                 lastRun: null,
                 listName: model.list.guid,
+                /** Flag to prevent us from makeing concurrent requests */
+                negotiatingWithServer: false,
                 /** Every time we run we want to check to update our cached data with
                  * any changes made on the server */
                 operation: 'GetListItemChangesSinceToken',
@@ -518,7 +530,7 @@ angular.module('OneApp')
                 queryOptions: '' +
                     '<QueryOptions>' +
                     '   <IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
-                    '       <IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
+                    '   <IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
                     '   <IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
                     '   <ExpandUserField>FALSE</ExpandUserField>' +
                     '</QueryOptions>',
@@ -527,7 +539,7 @@ angular.module('OneApp')
             };
             _.extend(self, defaults, queryOptions);
 
-            /** Mapping of SharePoint properties to SPServices properties */
+            /** Key/Value mapping of SharePoint properties to SPServices properties */
             var mapping = [
                 ['query', 'CAMLQuery'],
                 ['viewFields', 'CAMLViewFields'],
@@ -560,29 +572,44 @@ angular.module('OneApp')
             var model = self.getModel();
             var deferred = $q.defer();
 
-            /** Set flag if this if the first time this query has been run */
-            var firstRun = _.isNull(self.lastRun);
+            /** Return existing promise if request is already underway */
+            if(self.negotiatingWithServer) {
+                return self.promise;
+            } else {
 
-            var defaults = {
-                /** Designate the central cache for this query if not already set */
-                target: self.cache
-            };
+                /** Set flag to prevent another call while this query is active */
+                self.negotiatingWithServer = true;
 
-            /** Extend defaults with any options */
-            var queryOptions = _.extend({}, defaults, options);
+                /** Set flag if this if the first time this query has been run */
+                var firstRunQuery = _.isNull(self.lastRun);
 
-            dataService.executeQuery(model, self, queryOptions).then(function (results) {
-                if (firstRun) {
-                    /** Promise resolved the first time query is completed */
-                    self.initialized.resolve(queryOptions.target);
-                }
+                var defaults = {
+                    /** Designate the central cache for this query if not already set */
+                    target: self.cache
+                };
 
-                deferred.resolve(queryOptions.target);
-            });
+                /** Extend defaults with any options */
+                var queryOptions = _.extend({}, defaults, options);
 
-            /** Save reference on the query **/
-            self.promise = deferred.promise;
-            return deferred.promise;
+                dataService.executeQuery(model, self, queryOptions).then(function (results) {
+                    if (firstRunQuery) {
+                        /** Promise resolved the first time query is completed */
+                        self.initialized.resolve(queryOptions.target);
+
+                        /** Remove lock to allow for future requests */
+                        self.negotiatingWithServer = false;
+                    }
+
+                    /** Store query completion date/time on model to allow us to identify age of data */
+                    model.lastServerUpdate = new Date();
+
+                    deferred.resolve(queryOptions.target);
+                });
+
+                /** Save reference on the query **/
+                self.promise = deferred.promise;
+                return deferred.promise;
+            }
         };
 
         /**
