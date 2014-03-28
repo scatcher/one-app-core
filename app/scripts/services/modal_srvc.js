@@ -26,7 +26,7 @@ angular.module('OneApp')
                 _.each(options.expectedArgs, function (argName, index) {
                     /** Only attempt to resolve arguments that were passed in */
                     if(args[index]) {
-                        modalConfig.reslove[argName] = function() {
+                        modalConfig.resolve[argName] = function() {
                             return args[index];
                         }
                     }
