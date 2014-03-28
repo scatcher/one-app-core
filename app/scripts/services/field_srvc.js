@@ -73,11 +73,11 @@ angular.module('OneApp')
          * @returns {string}
          */
         function mockPermMask(options) {
-            var mask = commonPermissionMasks.FullMask;
+            var mask = 'FullMask';
             if(options && options.permissionLevel &&  commonPermissionMasks[options.permissionLevel]) {
-                mask = resolveValueForEffectivePermMask(options.permissionLevel);
+                mask = options.permissionLevel;
             }
-            return mask;
+            return resolveValueForEffectivePermMask(mask);
         }
 
         function randomLookup() {
