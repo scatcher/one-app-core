@@ -32,7 +32,7 @@ angular.module('OneApp')
                     }
                 });
 
-                var modalInstance = $modal.open();
+                var modalInstance = $modal.open(modalConfig);
 
                 /** Assume that if there is a first argument, it is the item we're editing */
                 if (args[0]) {
