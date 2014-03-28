@@ -20,7 +20,7 @@ angular.module('OneApp')
             self.clearSelected = function() {
                 self.selectedAvailable.length = 0;
                 self.selectedAssigned.length = 0;
-            }
+            };
         };
 
         $scope.users = new DataContainer();
@@ -70,10 +70,10 @@ angular.module('OneApp')
 
         $scope.updateAvailableGroups = function () {
             var deferred = $q.defer();
-            toastr.info("Retrieving an updated list of groups for the current user");
+            toastr.info('Retrieving an updated list of groups for the current user');
             dataService.getCollection({
                 webUrl: $scope.state.siteUrl,
-                operation: "GetGroupCollectionFromUser",
+                operation: 'GetGroupCollectionFromUser',
                 userLoginName: $scope.groups.filter.LoginName
             }).then(function (response) {
                     buildInputs(response, 'groups');
@@ -86,16 +86,16 @@ angular.module('OneApp')
         $scope.updateAvailableUsers = function (group) {
             var deferred = $q.defer();
 
-            toastr.info("Retrieving an updated list of users for the current group");
+            toastr.info('Retrieving an updated list of users for the current group');
             dataService.getCollection({
                 webUrl: $scope.state.siteUrl,
                 groupName: group.Name,
-                operation: "GetUserCollectionFromGroup"
+                operation: 'GetUserCollectionFromGroup'
             }).then(function (response) {
                     buildInputs(response, 'users');
                     deferred.resolve(response);
                 }, function() {
-                    toastr.error("Please verify that you have sufficient permissions to view members of this group");
+                    toastr.error('Please verify that you have sufficient permissions to view members of this group');
                     //No users were returned so display all users as available
                     deferred.resolve([]);
                 });
@@ -133,7 +133,7 @@ angular.module('OneApp')
          * Copy users from one group into another
          */
         $scope.mergeGroups = function () {
-            $scope.updatePermissions("AddUserToGroup", $scope.users.assigned, [$scope.state.targetGroup]).then(function (promiseArray) {
+            $scope.updatePermissions('AddUserToGroup', $scope.users.assigned, [$scope.state.targetGroup]).then(function (promiseArray) {
                 toastr.success(promiseArray.length + ' users successfully merged.');
                 //Reset dropdowns to empty
                 $scope.state.sourceGroup = '';
@@ -152,9 +152,9 @@ angular.module('OneApp')
             var deferredPermissionsUpdate = $q.defer();
 
             if (!usersArray.length) {
-                toastr.warning("Please make a selection");
+                toastr.warning('Please make a selection');
             } else {
-                toastr.info("Processing your request");
+                toastr.info('Processing your request');
                 var queue = [];
                 _.each(usersArray, function (user) {
                     _.each(groupsArray, function (group) {
@@ -167,12 +167,12 @@ angular.module('OneApp')
 //                                destination.push(user);
 //                                //Remove from the available side
 //                                source.splice(source.indexOf(user), 1);
-                            })
+                            });
                         } else {
                             dataService.serviceWrapper({
                                 webUrl: $scope.state.siteUrl,
-                                filterNode: "User",   //Look for all xml "User" nodes and convert those in to JS objects
-                                operation: operation, //AddUserToGroup || RemoveUserFromGroup"
+                                filterNode: 'User',   //Look for all xml 'User' nodes and convert those in to JS objects
+                                operation: operation, //AddUserToGroup || RemoveUserFromGroup'
                                 groupName: group.Name,
                                 userLoginName: user.LoginName
                             }).then(function (response) {
@@ -181,7 +181,7 @@ angular.module('OneApp')
                         }
 
                         queue.push(deferred.promise);
-                    })
+                    });
 
                 });
 
@@ -190,12 +190,12 @@ angular.module('OneApp')
 
                 //Resolved when all promises complete
                 $q.all(queue).then(function (responses) {
-                    toastr.success(operation === "AddUserToGroup" ?
-                        "User successfully added" :
-                        "User successfully removed");
+                    toastr.success(operation === 'AddUserToGroup' ?
+                        'User successfully added' :
+                        'User successfully removed');
                     if (!configService.offline) {
                         //Retrieve updated value from the server
-                        if ($scope.state.activeTab === "Users") {
+                        if ($scope.state.activeTab === 'Users') {
                             $scope.updateAvailableUsers($scope.users.filter);
                         } else {
                             $scope.updateAvailableGroups();
@@ -203,8 +203,8 @@ angular.module('OneApp')
                     }
                     deferredPermissionsUpdate.resolve(responses);
 
-                }, function (outcome) {
-                    toastr.error("There was a problem removing the user");
+                }, function () {
+                    toastr.error('There was a problem removing the user');
                 });
             }
 
@@ -220,7 +220,7 @@ angular.module('OneApp')
         }, {
             total: $scope.users.all.length, // length of data
             getData: function ($defer, params) {
-                console.time("Filtering");
+                console.time('Filtering');
                 // use build-in angular filter
                 var orderedData = $scope.users.all;
                 orderedData = $filter('filter')(orderedData, function (record) {
@@ -253,7 +253,7 @@ angular.module('OneApp')
         }, {
             total: $scope.groups.all.length, // length of data
             getData: function ($defer, params) {
-                console.time("Filtering");
+                console.time('Filtering');
                 // use build-in angular filter
                 var orderedData = $scope.groups.all;
                 orderedData = $filter('filter')(orderedData, function (record) {
@@ -303,7 +303,7 @@ angular.module('OneApp')
             var deferred = $q.defer();
             dataService.getCollection({
                 webUrl: $scope.state.siteUrl,
-                operation: "GetGroupCollectionFromSite"
+                operation: 'GetGroupCollectionFromSite'
             }).then(function (response) {
                     Array.prototype.push.apply($scope.groups.all, response);
                     deferred.resolve($scope.groups.all);
