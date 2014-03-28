@@ -34,14 +34,37 @@ angular.module('OneApp')
             return chance.integer();
         }
 
-        var commonPermissionMasks = {
-            ViewListItems: '0×0000000000000001',
-            AddListItems: '0×0000000000000002',
-            EditListItems: '0×0000000000000004',
-            DeleteListItems: '0×0000000000000008',
-            ApproveItems: '0×0000000000000010',
-            FullMask: '0x7FFFFFFFFFFFFFFF'
-        };
+        /**
+         * Takes the name of a permission mask and returns a permission value which can then be used
+         * to generate a permission object using modelService.resolvePermissions(outputfromthis)
+         * @param {string} perMask
+         * @returns {string} value
+         */
+        function resolveValueForEffectivePermMask(perMask) {
+            var permissionValue;
+            switch(perMask) {
+                case 'AddListItems':
+                    permissionValue = '0x0000000000000002';
+                    break;
+                case 'EditListItems':
+                    permissionValue = '0x0000000000000004';
+                    break;
+                case 'DeleteListItems':
+                    permissionValue = '0x0000000000000008';
+                    break;
+                case 'ApproveItems':
+                    permissionValue = '0x0000000000000010';
+                    break;
+                case 'FullMask':
+                    permissionValue = '0x7FFFFFFFFFFFFFFF';
+                    break;
+                case 'ViewListItems':
+                default:
+                    permissionValue = '0x0000000000000001';
+                    break;
+            }
+            return permissionValue;
+        }
 
         /**
          * Defaults to a full mask but allows simulation of each of main permission levels
@@ -52,7 +75,7 @@ angular.module('OneApp')
         function mockPermMask(options) {
             var mask = commonPermissionMasks.FullMask;
             if(options && options.permissionLevel &&  commonPermissionMasks[options.permissionLevel]) {
-                mask = commonPermissionMasks[options.permissionLevel];
+                mask = resolveValueForEffectivePermMask(options.permissionLevel);
             }
             return mask;
         }
@@ -240,7 +263,8 @@ angular.module('OneApp')
             getDefaultValueForType: getDefaultValueForType,
             getMockData: getMockData,
             getDefinition: getDefinition,
-            mockPermMask: mockPermMask
+            mockPermMask: mockPermMask,
+            resolveValueForEffectivePermMask: resolveValueForEffectivePermMask
         };
 
     });
