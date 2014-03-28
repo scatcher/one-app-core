@@ -6,22 +6,22 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-module.exports = function ( grunt ) {
+module.exports = function (grunt) {
 
     // Load grunt tasks automatically
-    require( 'load-grunt-tasks' )( grunt );
+    require('load-grunt-tasks')(grunt);
 
     // Time how long tasks take. Can help when optimizing build times
-    require( 'time-grunt' )( grunt );
+    require('time-grunt')(grunt);
 
     // Define the configuration for all the tasks
-    grunt.initConfig( {
+    grunt.initConfig({
 
         // Project settings
         config: {
             // configurable paths
-            app: require( './bower.json' ).appPath || 'app',
-            dist: require( './bower.json' ).distPath || 'dist'
+            app: require('./bower.json').appPath || 'app',
+            dist: require('./bower.json').distPath || 'dist'
         },
 
         // Watches files for changes and runs tasks based on the changed files
@@ -98,7 +98,7 @@ module.exports = function ( grunt ) {
         jshint: {
             options: {
                 jshintrc: '.jshintrc',
-                reporter: require( 'jshint-stylish' )
+                reporter: require('jshint-stylish')
             },
             all: [
                 'Gruntfile.js',
@@ -180,7 +180,8 @@ module.exports = function ( grunt ) {
                         'js': ['concat'],
                         'css': ['concat']
                     },
-                    post: {}}
+                    post: {}
+                }
             }
         },
 
@@ -347,14 +348,14 @@ module.exports = function ( grunt ) {
         // minification. These next options are pre-configured if you do not wish
         // to use the Usemin blocks.
         cssmin: {
-           dist: {
-             files: {
-               '<%= config.dist %>/styles/main.css': [
-                 '.tmp/styles/{,*/}*.css',
-                 '<%= config.app %>/styles/{,*/}*.css'
-               ]
-             }
-           }
+            dist: {
+                files: {
+                    '<%= config.dist %>/styles/main.css': [
+                        '.tmp/styles/{,*/}*.css',
+                        '<%= config.app %>/styles/{,*/}*.css'
+                    ]
+                }
+            }
         },
         uglify: {
             dist: {
@@ -388,37 +389,37 @@ module.exports = function ( grunt ) {
                 singleRun: true
             }
         }
-    } );
+    });
 
 
-    grunt.registerTask( 'serve', function ( target ) {
-        if ( target === 'dist' ) {
-            return grunt.task.run( ['build', 'connect:dist:keepalive'] );
+    grunt.registerTask('serve', function (target) {
+        if (target === 'dist') {
+            return grunt.task.run(['build', 'connect:dist:keepalive']);
         }
 
-        grunt.task.run( [
+        grunt.task.run([
             'clean:server',
             'concurrent:server',
             'autoprefixer',
             'connect:livereload',
             'watch'
-        ] );
-    } );
+        ]);
+    });
 
-    grunt.registerTask( 'server', function () {
-        grunt.log.warn( 'The `server` task has been deprecated. Use `grunt serve` to start a server.' );
-        grunt.task.run( ['serve'] );
-    } );
+    grunt.registerTask('server', function () {
+        grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
+        grunt.task.run(['serve']);
+    });
 
-    grunt.registerTask( 'test', [
+    grunt.registerTask('test', [
         'clean:server',
         'concurrent:test',
         'autoprefixer',
         'connect:test',
         'karma'
-    ] );
+    ]);
 
-    grunt.registerTask( 'build', [
+    grunt.registerTask('build', [
         'clean:dist',
         'useminPrepare',
         'concurrent:dist',
@@ -432,11 +433,11 @@ module.exports = function ( grunt ) {
 //        'rev',
         'usemin',
         'htmlmin'
-    ] );
+    ]);
 
-    grunt.registerTask( 'default', [
+    grunt.registerTask('default', [
         'newer:jshint',
         'test',
         'build'
-    ] );
+    ]);
 };
