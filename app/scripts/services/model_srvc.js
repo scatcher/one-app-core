@@ -396,7 +396,7 @@ angular.module('OneApp')
          * @returns {Object} Contains properties for each permission level evaluated for current user(true | false)
          */
         ListItem.prototype.resolvePermissions = function () {
-            return resolvePermissions(this);
+            return resolvePermissions(this.permMask);
         };
 
 
@@ -630,14 +630,15 @@ angular.module('OneApp')
         };
 
         /**
-         * @description Converts permMask into something usable to determine permission level for current user
-         * @param {object} listItem (needs a permMask property)
+         * Converts permMask into something usable to determine permission level for current user
+         * @param {string} permissionsMask - The WSS Rights Mask is an 8-byte, unsigned integer that specifies
+         * the rights that can be assigned to a user or site group. This bit mask can have zero or more flags set.
+         * @example '0x0000000000000010'
          * @returns {object} property for each permission level identifying if current user has rights (true || false)
          * @see http://sympmarc.com/2009/02/03/permmask-in-sharepoint-dvwps/
          * @see http://spservices.codeplex.com/discussions/208708
          */
-        function resolvePermissions(listItem) {
-            var permissionsMask = listItem.permMask;
+        function resolvePermissions(permissionsMask) {
             var permissionSet = {};
             permissionSet.ViewListItems = (1 & permissionsMask) > 0;
             permissionSet.AddListItems = (2 & permissionsMask) > 0;
