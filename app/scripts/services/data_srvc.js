@@ -563,11 +563,7 @@ angular.module('OneApp')
          * @param {xml} responseXML
          */
         function retrieveChangeToken(responseXML) {
-            /** Find element containing the token (should only be 1 but use .each to be safe) */
-            $(responseXML).SPFilterNode('Changes').each(function () {
-                /** Retrieve the token string **/
-                return $(this).attr("LastChangeToken");
-            });
+            return $(responseXML).find("Changes").attr("LastChangeToken");
         }
 
         /**
