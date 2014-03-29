@@ -763,6 +763,7 @@ angular.module('OneApp')
                 payload.batchCmd = 'New';
             }
 
+            /** Logic to simulate expected behavior when working offline */
             if (offline) {
                 /** Offline mode */
                 window.console.log(payload);
@@ -779,9 +780,9 @@ angular.module('OneApp')
                 if (!item.id) {
                     /** Creating new item so find next logical id to assign */
                     var maxId = 1;
-                    _.each(model.getCache(), function (item) {
-                        if (item.id > maxId) {
-                            maxId = item.id;
+                    _.each(model.getCache(), function (entity) {
+                        if (entity.id > maxId) {
+                            maxId = entity.id;
                         }
                     });
 
@@ -804,7 +805,7 @@ angular.module('OneApp')
                 }
                 queueService.decrease();
             } else {
-                /** Make web service call */
+                /** Make call to lists web service */
                 var webServiceCall = $().SPServices(payload);
 
                 webServiceCall.then(function () {
