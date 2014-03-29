@@ -140,7 +140,7 @@ angular.module('OneApp')
          * Helper function that return the local cache for a named query if provided, otherwise
          * it returns the cache for the primary query for the model
          * @param {string} [queryName]
-         * @returns {array}
+         * @returns {Array}
          */
         Model.prototype.getCache = function (queryName) {
             var model = this, query, cache;
@@ -181,8 +181,8 @@ angular.module('OneApp')
          * @param {*|[*]} value - The value or array of values to compare against
          * @param {object} [options]
          * @param {string} [options.propertyPath] - The dot separated propertyPath.
-         * @param {object} [options.cacheName] - Required if using a data source other than model.data.
-         * @param {object} [options.localCache] - Array of objects to search (Default model.data).
+         * @param {object} [options.cacheName] - Required if using a data source other than primary cache.
+         * @param {object} [options.localCache] - Array of objects to search (Default model.getCache()).
          * @param {boolean} [options.rebuildIndex] - Set to ignore previous index and rebuild
          */
         Model.prototype.searchLocalCache = function (value, options) {
@@ -192,7 +192,7 @@ angular.module('OneApp')
 
             var defaults = {
                 propertyPath: 'id',
-                localCache: model.data,
+                localCache: model.getCache(),
                 cacheName: 'main',
                 rebuildIndex: false
             };

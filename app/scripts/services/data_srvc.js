@@ -26,7 +26,7 @@ angular.module('OneApp')
                 filter: 'z:row',
                 mapping: model.list.mapping,
                 mode: 'update',
-                target: model.data
+                target: model.getCache()
             };
 
             var settings = _.extend({}, defaults, options);
@@ -475,14 +475,14 @@ angular.module('OneApp')
          * @param {object} query
          * @param {object} [options]
          * @param {object} [options.deferred] - A reference to a deferred object
-         * @param {array} [options.target] - The target destination for returned entities
+         * @param {Array} [options.target] - The target destination for returned entities
          * @param {string} [options.offlineXML] - Alternate location to XML data file
          * @returns {object} promise - Returns reference to model
          */
         var executeQuery = function (model, query, options) {
 
             var defaults = {
-                target: model.data
+                target: model.getCache()
             };
 
             var deferred = $q.defer();
@@ -546,8 +546,8 @@ angular.module('OneApp')
 
         /**
          * Removes an entity from the local cache if it exists
-         * @param {array} entityArray
-         * @param {integer} entityId
+         * @param {Array} entityArray
+         * @param {Number} entityId
          * @returns {boolean}
          */
         function removeEntityFromLocalCache(entityArray, entityId) {
@@ -588,7 +588,7 @@ angular.module('OneApp')
          * GetListItemChangesSinceToken returns items that have been added as well as deleted so we need
          * to remove the deleted items from the local cache
          * @param {xml} responseXML
-         * @param {array} entityArray
+         * @param {Array} entityArray
          */
         function processDeletionsSinceToken(responseXML, entityArray) {
             var deleteCount = 0;
@@ -616,7 +616,7 @@ angular.module('OneApp')
          * Turns an array of, typically {lookupId: someId, lookupValue: someValue}, objects into a string
          * of delimited id's that can be passed to SharePoint for a multi select lookup or multi user selection
          * field
-         * @param {array} value - Array of objects
+         * @param {object[]} value - Array of objects
          * @param {string} idProperty - ID attribute
          * @returns {string}
          */
@@ -713,7 +713,7 @@ angular.module('OneApp')
          * @param {object} [options]
          * @param {string} [options.mode] - [update, replace, return]
          * @param {boolean} [options.buildValuePairs] - automatically generate pairs based on fields defined in model
-         * @param {array} [options.valuePairs] - precomputed value pairs to use instead of generating them
+         * @param {Array} [options.valuePairs] - precomputed value pairs to use instead of generating them
          * @returns {object} promise
          */
         var addUpdateItemModel = function (model, item, options) {
@@ -765,7 +765,7 @@ angular.module('OneApp')
                 if (!item.id) {
                     /** Creating new item so find next logical id to assign */
                     var maxId = 1;
-                    _.each(model.data, function (item) {
+                    _.each(model.getCache(), function (item) {
                         if (item.id > maxId) {
                             maxId = item.id;
                         }
@@ -777,11 +777,11 @@ angular.module('OneApp')
                         lookupValue: 'Generic User'
                     };
                     offlineDefaults.created = new Date();
-                    offlineDefaults.id = maxId++;
+                    offlineDefaults.id = maxId + 1;
 
                     /** Use factory to build new object */
                     var newItem = model.factory(_.defaults(item, offlineDefaults));
-                    model.data.push(newItem);
+                    model.getCache().push(newItem);
                     deferred.resolve(newItem);
                 } else {
                     /** Update existing record in local cache*/
@@ -814,14 +814,14 @@ angular.module('OneApp')
          * @param {object} model - model of the list item
          * @param {object} item - list item
          * @param {object} [options]
-         * @param {array} [options.target] - optional location to search through and remove the local cached copy
+         * @param {Array} [options.target] - optional location to search through and remove the local cached copy
          * @returns {object} promise
          */
         var deleteItemModel = function (model, item, options) {
             queueService.increase();
 
             var defaults = {
-                target: model.data
+                target: model.getCache()
             };
             var settings = _.extend({}, defaults, options);
 
