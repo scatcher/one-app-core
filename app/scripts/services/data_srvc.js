@@ -780,7 +780,8 @@ angular.module('OneApp')
                 if (!item.id) {
                     /** Creating new item so find next logical id to assign */
                     var maxId = 1;
-                    _.each(model.getCache(), function (entity) {
+                    var defaultCache = model.getCache();
+                    _.each(defaultCache, function (entity) {
                         if (entity.id > maxId) {
                             maxId = entity.id;
                         }

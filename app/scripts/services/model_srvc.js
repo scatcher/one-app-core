@@ -78,14 +78,15 @@ angular.module('OneApp')
 
         /**
          * Creates a new list item in SharePoint
-         * @param obj
+         * @param {object} entity - Contains attribute to use in the creation of the new list item
+         * @param {object} [options] - Pass additional options to the data service.
          * @example {title: "Some Title", date: new Date()}
          * @returns {promise}
          */
-        Model.prototype.addNewItem = function (obj) {
+        Model.prototype.addNewItem = function (entity, options) {
             var self = this;
             var deferred = $q.defer();
-            dataService.addUpdateItemModel(self, obj).then(function (response) {
+            dataService.addUpdateItemModel(self, entity, options).then(function (response) {
                 deferred.resolve(response);
                 /** Optionally broadcast change event */
                 registerChange(self);
@@ -170,7 +171,7 @@ angular.module('OneApp')
          */
         Model.prototype.isInitialised = function() {
             return _.isDate(this.lastServerUpdate);
-        }
+        };
 
         /**
          * @description Search functionality that allow for deeply searching an array of objects for the first
@@ -576,7 +577,6 @@ angular.module('OneApp')
             if(self.negotiatingWithServer) {
                 return self.promise;
             } else {
-
                 /** Set flag to prevent another call while this query is active */
                 self.negotiatingWithServer = true;
 
