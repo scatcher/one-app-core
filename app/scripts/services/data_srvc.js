@@ -799,7 +799,7 @@ angular.module('OneApp')
                         /** Add default attributes */
                         _.extend(item, offlineDefaults);
                         /** Use factory to build new object */
-                        newItem = model.factory(item);
+                        newItem = new model.factory(item);
                         query.cache.push(newItem);
                     });
 
