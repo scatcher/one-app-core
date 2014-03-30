@@ -778,26 +778,32 @@ angular.module('OneApp')
                 };
 
                 if (!item.id) {
-                    /** Creating new item so find next logical id to assign */
-                    var maxId = 1;
-                    var defaultCache = model.getCache();
-                    _.each(defaultCache, function (entity) {
-                        if (entity.id > maxId) {
-                            maxId = entity.id;
-                        }
-                    });
-
+                    var newItem;
                     /** Include standard mock fields for new item */
                     offlineDefaults.author = {
                         lookupId: 23,
                         lookupValue: 'Generic User'
                     };
                     offlineDefaults.created = new Date();
-                    offlineDefaults.id = maxId + 1;
 
-                    /** Use factory to build new object */
-                    var newItem = model.factory(_.defaults(item, offlineDefaults));
-                    model.getCache().push(newItem);
+                    /** We don't know which query cache to push it to so add it to all */
+                    _.each(model.queries, function(query) {
+                        /** Find next logical id to assign */
+                        var maxId = 1;
+                        _.each(query.cache, function (entity) {
+                            if (entity.id > maxId) {
+                                maxId = entity.id;
+                            }
+                        });
+                        offlineDefaults.id = maxId + 1;
+                        /** Add default attributes */
+                        _.extend(item, offlineDefaults);
+                        /** Use factory to build new object */
+                        newItem = model.factory(item);
+                        query.cache.push(newItem);
+                    });
+
+
                     deferred.resolve(newItem);
                 } else {
                     /** Update existing record in local cache*/
