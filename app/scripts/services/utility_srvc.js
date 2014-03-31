@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('utilityService', function() {
+    .service('utilityService', function () {
         // AngularJS will instantiate a singleton by calling "new" on this function
 
         /** Extend underscore with a simple helper function */
@@ -37,15 +37,15 @@ angular.module('OneApp')
 
                 // Bring back all mapped columns, even those with no value
                 _.each(opt.mapping, function (prop) {
-                    row[prop.mappedName] = "";
+                    row[prop.mappedName] = '';
                 });
 
                 // Parse through the element's attributes
                 for (attrNum = 0; attrNum < rowAttrs.length; attrNum++) {
                     var thisAttrName = rowAttrs[attrNum].name;
                     var thisMapping = opt.mapping[thisAttrName];
-                    var thisObjectName = typeof thisMapping !== "undefined" ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split("ows_")[1] : thisAttrName;
-                    var thisObjectType = typeof thisMapping !== "undefined" ? thisMapping.objectType : undefined;
+                    var thisObjectName = typeof thisMapping !== 'undefined' ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split('ows_')[1] : thisAttrName;
+                    var thisObjectType = typeof thisMapping !== 'undefined' ? thisMapping.objectType : undefined;
                     if (opt.includeAllAttrs || thisMapping !== undefined) {
                         row[thisObjectName] = attrToJson(rowAttrs[attrNum].value, thisObjectType);
                     }
@@ -72,44 +72,44 @@ angular.module('OneApp')
             var colValue;
 
             switch (objectType) {
-                case "DateTime":
-                case "datetime":	// For calculated columns, stored as datetime;#value
-                    // Dates have dashes instead of slashes: ows_Created="2009-08-25 14:24:48"
+                case 'DateTime':
+                case 'datetime':	// For calculated columns, stored as datetime;#value
+                    // Dates have dashes instead of slashes: ows_Created='2009-08-25 14:24:48'
                     colValue = dateToJsonObject(value);
                     break;
-                case "Lookup":
+                case 'Lookup':
                     colValue = lookupToJsonObject(value);
                     break;
-                case "User":
+                case 'User':
                     colValue = userToJsonObject(value);
                     break;
-                case "LookupMulti":
+                case 'LookupMulti':
                     colValue = lookupMultiToJsonObject(value);
                     break;
-                case "UserMulti":
+                case 'UserMulti':
                     colValue = userMultiToJsonObject(value);
                     break;
-                case "Boolean":
+                case 'Boolean':
                     colValue = booleanToJsonObject(value);
                     break;
-                case "Integer":
+                case 'Integer':
                     colValue = intToJsonObject(value);
                     break;
-                case "Counter":
+                case 'Counter':
                     colValue = intToJsonObject(value);
                     break;
-                case "MultiChoice":
+                case 'MultiChoice':
                     colValue = choiceMultiToJsonObject(value);
                     break;
-                case "Currency":
-                case "Number":
-                case "float":	// For calculated columns, stored as float;#value
+                case 'Currency':
+                case 'Number':
+                case 'float':	// For calculated columns, stored as float;#value
                     colValue = floatToJsonObject(value);
                     break;
-                case "Calc":
+                case 'Calc':
                     colValue = calcToJsonObject(value);
                     break;
-                case "JSON":
+                case 'JSON':
                     colValue = parseJSON(value);
                     break;
                 default:
@@ -137,11 +137,11 @@ angular.module('OneApp')
         }
 
         function booleanToJsonObject(s) {
-            return (s === "0" || s === "False") ? false : true;
+            return (s === '0' || s === 'False') ? false : true;
         }
 
         function dateToJsonObject(s) {
-            return new Date(s.replace(/-/g, "/"));
+            return new Date(s.replace(/-/g, '/'));
         }
 
         function userToJsonObject(s) {
@@ -157,9 +157,9 @@ angular.module('OneApp')
                 return null;
             } else {
                 var thisUserMultiObject = [];
-                var thisUserMulti = s.split(";#");
+                var thisUserMulti = s.split(';#');
                 for (var i = 0; i < thisUserMulti.length; i = i + 2) {
-                    var thisUser = userToJsonObject(thisUserMulti[i] + ";#" + thisUserMulti[i + 1]);
+                    var thisUser = userToJsonObject(thisUserMulti[i] + ';#' + thisUserMulti[i + 1]);
                     thisUserMultiObject.push(thisUser);
                 }
                 return thisUserMultiObject;
@@ -180,9 +180,9 @@ angular.module('OneApp')
                 return [];
             } else {
                 var thisLookupMultiObject = [];
-                var thisLookupMulti = s.split(";#");
+                var thisLookupMulti = s.split(';#');
                 for (var i = 0; i < thisLookupMulti.length; i = i + 2) {
-                    var thisLookup = lookupToJsonObject(thisLookupMulti[i] + ";#" + thisLookupMulti[i + 1]);
+                    var thisLookup = lookupToJsonObject(thisLookupMulti[i] + ';#' + thisLookupMulti[i + 1]);
                     thisLookupMultiObject.push(thisLookup);
                 }
                 return thisLookupMultiObject;
@@ -194,7 +194,7 @@ angular.module('OneApp')
                 return [];
             } else {
                 var thisChoiceMultiObject = [];
-                var thisChoiceMulti = s.split(";#");
+                var thisChoiceMulti = s.split(';#');
                 for (var i = 0; i < thisChoiceMulti.length; i++) {
                     if (thisChoiceMulti[i].length !== 0) {
                         thisChoiceMultiObject.push(thisChoiceMulti[i]);
@@ -208,7 +208,7 @@ angular.module('OneApp')
             if (s.length === 0) {
                 return null;
             } else {
-                var thisCalc = s.split(";#");
+                var thisCalc = s.split(';#');
                 // The first value will be the calculated column value type, the second will be the value
                 return attrToJson(thisCalc[1], thisCalc[0]);
             }
@@ -220,13 +220,13 @@ angular.module('OneApp')
 
         // Split values like 1;#value into id and value
         function SplitIndex(s) {
-            var spl = s.split(";#");
+            var spl = s.split(';#');
             this.id = parseInt(spl[0], 10);
             this.value = spl[1];
         }
 
         function toCamelCase(s) {
-            return s.replace(/(?:^\w|[A-Z]|\b\w)/g,function (letter, index) {
+            return s.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
                 return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
             }).replace(/\s+/g, '');
         }
@@ -251,11 +251,8 @@ angular.module('OneApp')
         function User(s) {
             var self = this;
             var thisUser = new SplitIndex(s);
-//                self.lookupId = thisUser.id;
-//                self.lookupValue = thisUser.value;
-//                return {userId: thisUser.id, lookupValue: thisUser.value};
 
-            var thisUserExpanded = thisUser.value.split(",#");
+            var thisUserExpanded = thisUser.value.split(',#');
             if (thisUserExpanded.length === 1) {
                 //Standard user columns only return a id,#value pair
                 self.lookupId = thisUser.id;
@@ -263,11 +260,11 @@ angular.module('OneApp')
             } else {
                 //Allow for case where user adds additional properties when setting up field
                 self.lookupId = thisUser.id;
-                self.lookupValue = thisUserExpanded[0].replace(/(,,)/g, ",");
-                self.loginName = thisUserExpanded[1].replace(/(,,)/g, ",");
-                self.email = thisUserExpanded[2].replace(/(,,)/g, ",");
-                self.sipAddress = thisUserExpanded[3].replace(/(,,)/g, ",");
-                self.title = thisUserExpanded[4].replace(/(,,)/g, ",");
+                self.lookupValue = thisUserExpanded[0].replace(/(,,)/g, ',');
+                self.loginName = thisUserExpanded[1].replace(/(,,)/g, ',');
+                self.email = thisUserExpanded[2].replace(/(,,)/g, ',');
+                self.sipAddress = thisUserExpanded[3].replace(/(,,)/g, ',');
+                self.title = thisUserExpanded[4].replace(/(,,)/g, ',');
             }
         }
 
@@ -275,10 +272,10 @@ angular.module('OneApp')
          *  We don't need the time portion of comparison so an int makes this easier to evaluate */
         function yyyymmdd(date) {
             var yyyy = date.getFullYear().toString();
-            var mm = (date.getMonth()+1).toString();
+            var mm = (date.getMonth() + 1).toString();
             var dd = date.getDate().toString();
             /** Add leading 0's to month and day if necessary */
-            return parseInt(yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]));
+            return parseInt(yyyy + (mm[1] ? mm : '0' + mm[0]) + (dd[1] ? dd : '0' + dd[0]));
         }
 
         /**
@@ -286,12 +283,12 @@ angular.module('OneApp')
          * falls within the date range provided
          * @param startDate
          * @param endDate
-         * @param dateToCheck - defaults to the current date
+         * @param [dateToCheck] - defaults to the current date
          * @returns {boolean}
          */
         function dateWithinRange(startDate, endDate, dateToCheck) {
             /** Ensure both a start and end date are provided **/
-            if(!startDate || !endDate) {
+            if (!startDate || !endDate) {
                 return false;
             }
 
