@@ -21,14 +21,14 @@ angular.module('OneApp')
                     templateUrl: templateUrl,
                     controller: controller,
                     resolve: {}
-                }
+                };
 
                 _.each(options.expectedArgs, function (argName, index) {
                     /** Only attempt to resolve arguments that were passed in */
                     if(args[index]) {
                         modalConfig.resolve[argName] = function() {
                             return args[index];
-                        }
+                        };
                     }
                 });
 
@@ -47,7 +47,7 @@ angular.module('OneApp')
                 }
 
                 return modalInstance.result;
-            }
+            };
         }
 
         /**
@@ -62,13 +62,14 @@ angular.module('OneApp')
                 userCanDelete: false,
                 userCanApprove: false,
                 fullControl: false
-            }
+            };
 
             if(_.isObject(entity) && _.isFunction(entity.resolvePermissions)) {
-                var userPermMask = $scope.requirement.resolvePermissions();
+                var userPermMask = entity.resolvePermissions();
                 userPermissions.userCanEdit = userPermMask.EditListItems;
                 userPermissions.userCanDelete = userPermMask.DeleteListItems;
                 userPermissions.userCanApprove = userPermMask.ApproveItems;
+                userPermissions.fullControl = userPermMask.FullMask;
             }
 
             return userPermissions;
@@ -88,9 +89,9 @@ angular.module('OneApp')
                 locked: false,
                 lockedBy: '',
                 displayMode: 'View' // New || Edit || View || Fork
-            }
+            };
 
-            var permissions = getPermissions();
+            var permissions = getPermissions(entity);
 
             /** Check if it's a new form */
             if(!entity || !entity.id) {
@@ -149,10 +150,11 @@ angular.module('OneApp')
         }
 
         return {
+            deleteEntity: deleteEntity,
             initializeState: initializeState,
             modalModelProvider: modalModelProvider,
             getPermissions: getPermissions,
             saveEntity: saveEntity
-        }
+        };
 
     });
