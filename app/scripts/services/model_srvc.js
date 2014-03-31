@@ -169,7 +169,7 @@ angular.module('OneApp')
          * Methods which allows us to easily determine if we've successfully made any queries this session
          * @returns {boolean}
          */
-        Model.prototype.isInitialised = function() {
+        Model.prototype.isInitialised = function () {
             return _.isDate(this.lastServerUpdate);
         };
 
@@ -189,6 +189,7 @@ angular.module('OneApp')
         Model.prototype.searchLocalCache = function (value, options) {
             var model = this;
             var self = model.searchLocalCache;
+
             var response;
 
             var defaults = {
@@ -197,15 +198,17 @@ angular.module('OneApp')
                 cacheName: 'main',
                 rebuildIndex: false
             };
-            options = _.extend({}, defaults, options);
+
+            /** Extend defaults with any provided options */
+            var opts = _.extend({}, defaults, options);
 
             /** Create a cache if it doesn't already exist */
             self.indexCache = self.indexCache || {};
-            self.indexCache[options.cacheName] = self.indexCache[options.cacheName] || {};
-            var cache = self.indexCache[options.cacheName];
+            self.indexCache[opts.cacheName] = self.indexCache[opts.cacheName] || {};
+            var cache = self.indexCache[opts.cacheName];
 
 
-            var properties = options.propertyPath.split('.');
+            var properties = opts.propertyPath.split('.');
             _.each(properties, function (attribute) {
                 cache[attribute] = cache[attribute] || {};
                 /** Update cache reference to another level down the cache object */
@@ -214,20 +217,20 @@ angular.module('OneApp')
 
             cache.map = cache.map || [];
             /** Remap if no existing map, the number of items in the array has changed, or the rebuild flag is set */
-            if (!_.isNumber(cache.count) || cache.count !== options.localCache.length || options.rebuildIndex) {
-                cache.map = _.deepPluck(options.localCache, options.propertyPath);
+            if (!_.isNumber(cache.count) || cache.count !== opts.localCache.length || opts.rebuildIndex) {
+                cache.map = _.deepPluck(opts.localCache, opts.propertyPath);
                 /** Store the current length of the array for future comparisons */
-                cache.count = options.localCache.length;
+                cache.count = opts.localCache.length;
             }
 
             /** Allow an array of values to be passed in */
             if (_.isArray(value)) {
                 response = [];
                 _.each(value, function (key) {
-                    response.push(options.localCache[cache.map.indexOf(key)]);
+                    response.push(opts.localCache[cache.map.indexOf(key)]);
                 });
             } else {
-                response = options.localCache[cache.map.indexOf(value)];
+                response = opts.localCache[cache.map.indexOf(value)];
             }
 
             return response;
@@ -268,12 +271,14 @@ angular.module('OneApp')
                 permissionLevel: 'FullMask'
             };
 
-            options = _.extend({}, defaults, options);
-            _.times(options.quantity, function () {
+            /** Extend defaults with any provided options */
+            var opts = _.extend({}, defaults, options);
+
+            _.times(opts.quantity, function () {
                 var mock = {};
                 /** Create an attribute with mock data for each field */
                 _.each(model.list.fields, function (field) {
-                    mock[field.mappedName] = field.getMockData(options);
+                    mock[field.mappedName] = field.getMockData(opts);
                 });
                 /** Use the factory on the model to extend the object */
                 mockData.push(new model.factory(mock));
@@ -574,7 +579,7 @@ angular.module('OneApp')
             var deferred = $q.defer();
 
             /** Return existing promise if request is already underway */
-            if(self.negotiatingWithServer) {
+            if (self.negotiatingWithServer) {
                 return self.promise;
             } else {
                 /** Set flag to prevent another call while this query is active */
@@ -615,18 +620,18 @@ angular.module('OneApp')
         /**
          * Simple wrapper that by default sets the search location to the local query cache
          * @param {*} value
-         * @param {object} searchOptions - Options to pass to Model.prototype.searchLocalCache
+         * @param {object} options - Options to pass to Model.prototype.searchLocalCache
          * @returns {object}
          */
-        Query.prototype.searchLocalCache = function (value, searchOptions) {
+        Query.prototype.searchLocalCache = function (value, options) {
             var self = this;
             var model = self.getModel();
             var defaults = {
                 cacheName: self.name,
                 localCache: self.cache
             };
-            var options = _.extend({}, defaults, searchOptions);
-            return model.searchLocalCache(value, options);
+            var opts = _.extend({}, defaults, options);
+            return model.searchLocalCache(value, opts);
         };
 
         /**

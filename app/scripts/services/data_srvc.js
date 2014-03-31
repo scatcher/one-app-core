@@ -29,29 +29,29 @@ angular.module('OneApp')
                 target: model.getCache()
             };
 
-            var settings = _.extend({}, defaults, options);
+            var opts = _.extend({}, defaults, options);
 
             /** Map returned XML to JS objects based on mapping from model */
-            var filteredNodes = $(responseXML).SPFilterNode(settings.filter);
-            var jsObjects = utilityService.xmlToJson(filteredNodes, { mapping: settings.mapping });
+            var filteredNodes = $(responseXML).SPFilterNode(opts.filter);
+            var jsObjects = utilityService.xmlToJson(filteredNodes, { mapping: opts.mapping });
 
             var entities = [];
 
             /** Use factory, typically on model, to create new object for each returned item */
             _.each(jsObjects, function (item) {
                 /** Allow us to reference the originating query that generated this object */
-                item.getQuery = settings.getQuery;
+                item.getQuery = opts.getQuery;
                 entities.push(new model.factory(item));
             });
 
-            if (settings.mode === 'replace') {
+            if (opts.mode === 'replace') {
                 /** Replace any existing data */
-                settings.target = entities;
+                opts.target = entities;
                 if (offline) {
-                    console.log(model.list.title + ' Replaced with ' + settings.target.length + ' new records.');
+                    console.log(model.list.title + ' Replaced with ' + opts.target.length + ' new records.');
                 }
-            } else if (settings.mode === 'update') {
-                var updateStats = updateLocalCache(settings.target, entities);
+            } else if (opts.mode === 'update') {
+                var updateStats = updateLocalCache(opts.target, entities);
                 if (offline) {
                     console.log(model.list.title + ' Changes (Create: ' + updateStats.created +
                         ' | Update: ' + updateStats.updated + ')');
@@ -189,10 +189,10 @@ angular.module('OneApp')
          */
         var getCollection = function (options) {
             queueService.increase();
-            options = options || {};
+            var opts = _.extend({}, options);
 
             /** Determine the XML node to iterate over if filterNode isn't provided */
-            var filterNode = options.filterNode || options.operation.split('Get')[1].split('Collection')[0];
+            var filterNode = opts.filterNode || opts.operation.split('Get')[1].split('Collection')[0];
 
             var deferred = $q.defer();
 
@@ -200,7 +200,7 @@ angular.module('OneApp')
             var processXML = function (serverResponse) {
                 var convertedItems = [];
                 /** Get attachments only returns the links associated with a list item */
-                if (options.operation === 'GetAttachmentCollection') {
+                if (opts.operation === 'GetAttachmentCollection') {
                     /** Unlike other call, get attachments only returns strings instead of an object with attributes */
                     $(serverResponse).SPFilterNode(filterNode).each(function () {
                         convertedItems.push($(this).text());
@@ -215,7 +215,7 @@ angular.module('OneApp')
             };
 
             if (offline) {
-                var offlineData = 'dev/' + options.operation + '.xml';
+                var offlineData = 'dev/' + opts.operation + '.xml';
 
                 /** Get offline data */
                 $.ajax(offlineData).then(
@@ -224,7 +224,7 @@ angular.module('OneApp')
                         /** Pass back the group array */
                         deferred.resolve(processXML(offlineData));
                     }, function (outcome) {
-                        toastr.error('You need to have a dev/' + options.operation + '.xml in order to get the group collection in offline mode.');
+                        toastr.error('You need to have a dev/' + opts.operation + '.xml in order to get the group collection in offline mode.');
                         deferred.reject(outcome);
                         queueService.decrease();
                     });
@@ -232,7 +232,7 @@ angular.module('OneApp')
                 var validPayload = true;
                 var payload = {};
 
-                _.extend(payload, options);
+                _.extend(payload, opts);
 
 
                 var verifyParams = function (params) {
@@ -246,7 +246,7 @@ angular.module('OneApp')
                 };
 
                 //Verify all required params are included
-                switch (options.operation) {
+                switch (opts.operation) {
                     case 'GetGroupCollectionFromUser':
                         verifyParams(['userLoginName']);
                         break;
@@ -291,15 +291,15 @@ angular.module('OneApp')
          *      Otherwise returns the server response
          */
         var serviceWrapper = function (options) {
-            queueService.increase();
-            options = options || {};
-
+            var opts = _.extend({}, options);
             var deferred = $q.defer();
+
+            queueService.increase();
 
             /** Convert the xml returned from the server into an array of js objects */
             var processXML = function (serverResponse) {
-                if (options.filterNode) {
-                    return $(serverResponse).SPFilterNode(options.filterNode).SPXmlToJson({
+                if (opts.filterNode) {
+                    return $(serverResponse).SPFilterNode(opts.filterNode).SPXmlToJson({
                         includeAllAttrs: true,
                         removeOws: false
                     });
@@ -310,7 +310,7 @@ angular.module('OneApp')
 
             if (offline) {
                 /** Debugging offline */
-                var offlineData = 'dev/' + options.operation + '.xml';
+                var offlineData = 'dev/' + opts.operation + '.xml';
 
                 /** Get offline data */
                 $.ajax(offlineData).then(
@@ -319,7 +319,7 @@ angular.module('OneApp')
                         /** Pass back the group array */
                         deferred.resolve(processXML(offlineData));
                     }, function (outcome) {
-                        toastr.error('You need to have a dev/' + options.operation + '.xml in order to get the group collection in offline mode.');
+                        toastr.error('You need to have a dev/' + opts.operation + '.xml in order to get the group collection in offline mode.');
                         deferred.reject(outcome);
                         queueService.decrease();
                     });
@@ -327,7 +327,7 @@ angular.module('OneApp')
                 /** Add in webURL to speed up call, set to default if not specified */
                 var payload = {};
 
-                _.extend(payload, options);
+                _.extend(payload, opts);
 
                 var webServiceCall = $().SPServices(payload);
 
@@ -353,13 +353,13 @@ angular.module('OneApp')
          * @returns {object} promise
          */
         var getList = function (options) {
-            options = options || {};
+            var opts = _.extend({}, opts);
             queueService.increase();
             var deferred = $q.defer();
 
             var webServiceCall = $().SPServices({
                 operation: 'GetList',
-                listName: options.listName
+                listName: opts.listName
             });
 
             webServiceCall.then(function () {
@@ -393,15 +393,15 @@ angular.module('OneApp')
          * @returns {promise}
          */
         var deleteAttachment = function (options) {
-            options = options || {};
+            var opts = _.extend({}, options);
             queueService.increase();
             var deferred = $q.defer();
 
             var webServiceCall = $().SPServices({
                 operation: 'DeleteAttachment',
-                listItemID: options.listItemId,
-                url: options.url,
-                listName: options.listName
+                listItemID: opts.listItemId,
+                url: opts.url,
+                listName: opts.listName
             });
 
             webServiceCall.then(function () {
@@ -435,17 +435,19 @@ angular.module('OneApp')
          * @returns {object} promise
          */
         var getView = function (options) {
-            queueService.increase();
+            var opts = _.extend({}, options);
             var deferred = $q.defer();
+
+            queueService.increase();
 
             var payload = {
                 operation: 'GetView',
-                listName: options.listName
+                listName: opts.listName
             };
 
             /** Set view name if provided in options, otherwise it returns default view */
-            if (options.viewName) {
-                payload.viewName = options.viewName;
+            if (opts.viewName) {
+                payload.viewName = opts.viewName;
             }
 
             var webServiceCall = $().SPServices(payload);
@@ -490,21 +492,20 @@ angular.module('OneApp')
             var deferred = $q.defer();
 
             /** Extend defaults **/
-            var queryOptions = _.extend({}, defaults, options);
+            var opts = _.extend({}, defaults, options);
 
             /** Allow a list item to reference the query which generated it */
-            queryOptions.getQuery = function() {
+            opts.getQuery = function() {
                 return query;
             };
 
             /** Trigger processing animation */
             queueService.increase();
 
-
             /** Simulate an web service call if working offline */
             if (offline) {
                 /** Optionally set alternate offline XML location but default to value in model */
-                var offlineData = queryOptions.offlineXML || 'dev/' + model.list.title + '.xml';
+                var offlineData = opts.offlineXML || 'dev/' + model.list.title + '.xml';
 
                 /** Only pull down offline xml if this is the first time the query is run */
                 if(query.lastRun) {
@@ -517,7 +518,7 @@ angular.module('OneApp')
                      *  Get offline data stored in the app/dev folder
                      */
                     $.ajax(offlineData).then(function (responseXML) {
-                        var entities = processListItems(model, responseXML, queryOptions);
+                        var entities = processListItems(model, responseXML, opts);
                         /** Set date time to allow for time based updates */
                         query.lastRun = new Date();
                         queueService.decrease();
@@ -543,10 +544,10 @@ angular.module('OneApp')
                         }
 
                         /** Change token query includes deleted items as well so we need to process them separately */
-                        processDeletionsSinceToken(responseXML, queryOptions.target);
+                        processDeletionsSinceToken(responseXML, opts.target);
                     }
                     /** Convert the XML into JS */
-                    var changes = processListItems(model, responseXML, queryOptions);
+                    var changes = processListItems(model, responseXML, opts);
 
                     /** Set date time to allow for time based updates */
                     query.lastRun = new Date();
@@ -737,21 +738,20 @@ angular.module('OneApp')
                 valuePairs: []
             };
             var deferred = $q.defer();
-            options = options || {};
-            var settings = _.extend(defaults, options);
+            var opts = _.extend({}, defaults, options);
 
             /** Display loading animation */
             queueService.increase();
 
-            if (settings.buildValuePairs === true) {
+            if (opts.buildValuePairs === true) {
                 var editableFields = _.where(model.list.fields, {readOnly: false});
-                settings.valuePairs = generateValuePairs(editableFields, item);
+                opts.valuePairs = generateValuePairs(editableFields, item);
             }
             var payload = {
                 operation: 'UpdateListItems',
                 webURL: model.list.webURL,
                 listName: model.list.guid,
-                valuepairs: settings.valuePairs
+                valuepairs: opts.valuePairs
             };
 
             if ((_.isObject(item) && _.isNumber(item.id))) {
@@ -817,7 +817,7 @@ angular.module('OneApp')
 
                 webServiceCall.then(function () {
                     /** Success */
-                    var output = processListItems(model, webServiceCall.responseXML, settings);
+                    var output = processListItems(model, webServiceCall.responseXML, opts);
                     deferred.resolve(output[0]);
                 }, function (outcome) {
                     /** In the event of an error, display toast */
@@ -845,7 +845,7 @@ angular.module('OneApp')
             var defaults = {
                 target: model.getCache()
             };
-            var settings = _.extend({}, defaults, options);
+            var opts = _.extend({}, defaults, options);
 
             var payload = {
                 operation: 'UpdateListItems',
@@ -859,17 +859,17 @@ angular.module('OneApp')
 
             if (offline) {
                 /** Simulate deletion and remove locally */
-                removeEntityFromLocalCache(settings.target, item.id);
+                removeEntityFromLocalCache(opts.target, item.id);
                 queueService.decrease();
-                deferred.resolve(settings.target);
+                deferred.resolve(opts.target);
             } else {
                 var webServiceCall = $().SPServices(payload);
 
                 webServiceCall.then(function () {
                     /** Success */
-                    removeEntityFromLocalCache(settings.target, item.id);
+                    removeEntityFromLocalCache(opts.target, item.id);
                     queueService.decrease();
-                    deferred.resolve(settings.target);
+                    deferred.resolve(opts.target);
                 }, function (outcome) {
                     //In the event of an error, display toast
                     toastr.error('There was an error deleting a list item from ' + model.list.title);
@@ -893,7 +893,6 @@ angular.module('OneApp')
             getView: getView,
             executeQuery: executeQuery,
             processListItems: processListItems,
-//            registerModels: registerModels,
             serviceWrapper: serviceWrapper
         });
 
