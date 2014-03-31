@@ -238,9 +238,10 @@ angular.module('OneApp')
 
         /**
          * @description Creates an object using the editable fields from the model, all attributes are empty
+         * @param {object} overrides - Optionally extend the new item with specific values.
          * @returns {object}
          */
-        Model.prototype.createEmptyItem = function () {
+        Model.prototype.createEmptyItem = function (overrides) {
             var self = this;
             var newItem = {};
             _.each(self.list.customFields, function (fieldDefinition) {
@@ -250,7 +251,7 @@ angular.module('OneApp')
                     newItem[fieldDefinition.mappedName] = fieldService.getDefaultValueForType(fieldDefinition.objectType);
                 }
             });
-            return newItem;
+            return _.extend({}, newItem, overrides);
         };
 
         /**
