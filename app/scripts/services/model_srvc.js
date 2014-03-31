@@ -242,16 +242,18 @@ angular.module('OneApp')
          * @returns {object}
          */
         Model.prototype.createEmptyItem = function (overrides) {
-            var self = this;
+            var model = this;
             var newItem = {};
-            _.each(self.list.customFields, function (fieldDefinition) {
+            _.each(model.list.customFields, function (fieldDefinition) {
                 /** Create attributes for each non-readonly field definition */
                 if (!fieldDefinition.readOnly) {
                     /** Create an attribute with the expected empty value based on field definition type */
                     newItem[fieldDefinition.mappedName] = fieldService.getDefaultValueForType(fieldDefinition.objectType);
                 }
             });
-            return _.extend({}, newItem, overrides);
+            /** Extend any values that should override the default empty values */
+            var rawObject = _.extend({}, newItem, overrides);
+            return new model.factory(rawObject);
         };
 
         /**
