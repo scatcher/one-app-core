@@ -155,13 +155,14 @@ angular.module('OneApp')
         /**
          * Reference to the function which executes a query
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
+         * @param {object} [options] - Pass options to the data service.
          * @returns {function}
          */
-        Model.prototype.executeQuery = function (queryName) {
+        Model.prototype.executeQuery = function (queryName, options) {
             var model = this;
             var query = model.getQuery(queryName);
             if (query) {
-                return query.execute();
+                return query.execute(options);
             }
         };
 
