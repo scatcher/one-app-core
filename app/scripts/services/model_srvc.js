@@ -247,7 +247,7 @@ angular.module('OneApp')
 
         /**
          * @description Creates an object using the editable fields from the model, all attributes are empty
-         * @param {object} overrides - Optionally extend the new item with specific values.
+         * @param {object} [overrides] - Optionally extend the new item with specific values.
          * @returns {object}
          */
         Model.prototype.createEmptyItem = function (overrides) {
@@ -365,7 +365,7 @@ angular.module('OneApp')
 
         /**
          * Deletes record directly from the object and removes record from user cache
-         * @param {object} options - optionally pass params to the dataService
+         * @param {object} [options] - optionally pass params to the dataService
          * @returns {promise}
          */
         ListItem.prototype.deleteItem = function (options) {
@@ -582,7 +582,7 @@ angular.module('OneApp')
         /**
          * Query SharePoint, pull down all initial records on first call
          * Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken")
-         * @param options - Any options that should be passed to dataService.executeQuery
+         * @param [options] - Any options that should be passed to dataService.executeQuery
          * @returns {function} - Array of list item objects
          */
         Query.prototype.execute = function (options) {
@@ -632,7 +632,7 @@ angular.module('OneApp')
         /**
          * Simple wrapper that by default sets the search location to the local query cache
          * @param {*} value
-         * @param {object} options - Options to pass to Model.prototype.searchLocalCache
+         * @param {object} [options] - Options to pass to Model.prototype.searchLocalCache
          * @returns {object}
          */
         Query.prototype.searchLocalCache = function (value, options) {
