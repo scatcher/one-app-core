@@ -4,31 +4,41 @@ angular.module('OneApp')
     .service('modalService', function ($modal, toastr) {
 
         /**
-         * Extends a model to allow us to easily attach a modal edit form
-         * @param {string} templateUrl - Reference to the modal view.
-         * @param {string} controller - Name of the modal controller.
-         * @param {object} [options]
-         * @param {string[]} [options.expectedArgs] - First argument name shoud be the item being edited.
+         * Extends a model to allow us to easily attach a modal form that accepts and injects a
+         * dynamic number of arguments.
+         * @param {object} options - Configuration object.
+         * @param {string} options.templateUrl - Reference to the modal view.
+         * @param {string} options.controller - Name of the modal controller.
+         * @param {string[]} [options.expectedArguments] - First argument name should be the item being edited.
          * @returns {openModal}
+         *
+         * @example
+         *  model.openModal = modalService.modalModelProvider({
+         *      templateUrl: 'modules/comp_request/views/comp_request_modal_view.html',
+         *      controller: 'compRequestModalCtrl',
+         *      expectedArguments: ['request']
+         *  });
          */
-        function modalModelProvider(templateUrl, controller, options) {
+        function modalModelProvider(options) {
             return function openModal() {
                 var self = openModal;
-                /** Reference all arguments that were provided */
-                var args = arguments;
-
-                var modalConfig = {
-                    templateUrl: templateUrl,
-                    controller: controller,
+                var defaults = {
+                    templateUrl: options.templateUrl,
+                    controller: options.controller,
                     resolve: {}
                 };
+                var modalConfig = _.extend({}, defaults, options);
 
-                _.each(options.expectedArgs, function (argName, index) {
-                    /** Only attempt to resolve arguments that were passed in */
-                    if(args[index]) {
-                        modalConfig.resolve[argName] = function() {
-                            return args[index];
-                        };
+                /** Store a reference to any arguments that were passed in */
+                var args = arguments;
+
+                /**
+                 * Create members to be resolved and passed to the controller as locals;
+                 *  Equivalent of the resolve property for AngularJS routes
+                 */
+                _.each(options.expectedArguments, function (argumentName, index) {
+                    modalConfig.resolve[argumentName] = function () {
+                        return args[index];
                     }
                 });
 
@@ -64,7 +74,7 @@ angular.module('OneApp')
                 fullControl: false
             };
 
-            if(_.isObject(entity) && _.isFunction(entity.resolvePermissions)) {
+            if (_.isObject(entity) && _.isFunction(entity.resolvePermissions)) {
                 var userPermMask = entity.resolvePermissions();
                 userPermissions.userCanEdit = userPermMask.EditListItems;
                 userPermissions.userCanDelete = userPermMask.DeleteListItems;
@@ -80,6 +90,12 @@ angular.module('OneApp')
          * @param entity
          * @param options
          * @returns {Object}
+         *
+         * @example
+         *  $scope.state = modalService.initializeState(request, {
+         *      dateExceedsBoundary: false,
+         *      enableApproval: false
+         *  });
          */
         function initializeState(entity, options) {
             var state = {
@@ -94,9 +110,9 @@ angular.module('OneApp')
             var permissions = getPermissions(entity);
 
             /** Check if it's a new form */
-            if(!entity || !entity.id) {
+            if (!entity || !entity.id) {
                 state.displayMode = 'New';
-            } else if(state.userCanEdit) {
+            } else if (state.userCanEdit) {
                 state.displayMode = 'Edit';
             }
 
@@ -108,6 +124,11 @@ angular.module('OneApp')
          * @param {object} entity
          * @param {object} state
          * @param {object} $modalInstance
+         *
+         * @example
+         *  $scope.deleteRequest = function () {
+         *      modalService.deleteEntity($scope.request, $scope.state, $modalInstance);
+         *  };
          */
         function deleteEntity(entity, state, $modalInstance) {
             var confirmation = window.confirm('Are you sure you want to delete this record?');
@@ -129,6 +150,11 @@ angular.module('OneApp')
          * @param {object} model
          * @param {object} state
          * @param {object} $modalInstance
+         *
+         * @example
+         *  $scope.saveRequest = function () {
+         *      modalService.saveEntity($scope.request, compRequestsModel, $scope.state, $modalInstance);
+         *  };
          */
         function saveEntity(entity, model, state, $modalInstance) {
             if (entity.id) {
