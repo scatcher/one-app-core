@@ -22,6 +22,14 @@ angular.module('OneApp')
          * - adds "getAllListItems" function
          * - adds "addNewItem" function
          * @param {object} options
+         * @param {object} [options.factory=StandardListItem] - Constructor function for individual list items.
+         * @param {object} options.list - Definition of the list in SharePoint; This object will
+         * be passed to the list constructor to extend further
+         * @param {string} options.list.title - List name, no spaces.  Offline XML file will need to be
+         * named the same (ex: CustomList so xml file would be /dev/CustomList.xml)
+         * @param {string} options.list.guid - Unique SharePoint ID (ex: '{3DBEB25A-BEF0-4213-A634-00DAF46E3897}')
+         * @param {object[]} options.list.customFields - Maps SharePoint fields with names we'll use within the
+         * application.  Identifies field types and formats accordingly.  Also denotes if a field is read only.
          * @constructor
          */
         function Model(options) {
@@ -307,7 +315,7 @@ angular.module('OneApp')
 
         /**
          * Updates record directly from the object
-         * @param {object} options - optionally pass params to the dataService
+         * @param {object} [options] - optionally pass params to the dataService
          * @returns {promise}
          */
         ListItem.prototype.saveChanges = function (options) {
