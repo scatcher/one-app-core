@@ -353,7 +353,7 @@ angular.module('OneApp')
          * @returns {object} promise
          */
         var getList = function (options) {
-            var opts = _.extend({}, opts);
+            var opts = _.extend({}, options);
             queueService.increase();
             var deferred = $q.defer();
 
