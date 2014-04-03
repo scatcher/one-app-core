@@ -33,7 +33,7 @@ angular.module('OneApp')
          * @constructor
          */
         function Model(options) {
-            var self = this;
+            var model = this;
             var defaults = {
                 data: [],
                 factory: StandardListItem,
@@ -42,20 +42,20 @@ angular.module('OneApp')
                 queries: {}
             };
 
-            _.extend(self, defaults, options);
+            _.extend(model, defaults, options);
 
             /** Use list constructor to decorate */
-            self.list = new List(self.list);
+            model.list = new List(model.list);
 
             /** Set the constructor's prototype to inherit from ListItem so we can inherit functionality */
-            self.factory.prototype = new ListItem();
+            model.factory.prototype = new ListItem();
 
             /** Make the model directly accessible from the list item */
-            self.factory.prototype.getModel = function () {
-                return self;
+            model.factory.prototype.getModel = function () {
+                return model;
             };
 
-            return self;
+            return model;
         }
 
         /**
@@ -92,12 +92,12 @@ angular.module('OneApp')
          * @returns {promise}
          */
         Model.prototype.addNewItem = function (entity, options) {
-            var self = this;
+            var model = this;
             var deferred = $q.defer();
-            dataService.addUpdateItemModel(self, entity, options).then(function (response) {
+            dataService.addUpdateItemModel(model, entity, options).then(function (response) {
                 deferred.resolve(response);
                 /** Optionally broadcast change event */
-                registerChange(self);
+                registerChange(model);
             });
 
             return deferred.promise;
@@ -119,7 +119,7 @@ angular.module('OneApp')
 
             queryOptions = _.extend({}, defaults, queryOptions);
 
-            model.queries[queryOptions.name] = new Query(queryOptions, this);
+            model.queries[queryOptions.name] = new Query(queryOptions, model);
 
             /** Return the newly created query */
             return model.queries[queryOptions.name];
@@ -319,11 +319,11 @@ angular.module('OneApp')
          * @returns {promise}
          */
         ListItem.prototype.saveChanges = function (options) {
-            var self = this;
-            var model = self.getModel();
+            var listItem = this;
+            var model = listItem.getModel();
             var deferred = $q.defer();
 
-            dataService.addUpdateItemModel(model, self, options).then(function (response) {
+            dataService.addUpdateItemModel(model, listItem, options).then(function (response) {
                 deferred.resolve(response);
                 /** Optionally broadcast change event */
                 registerChange(model);
@@ -339,8 +339,8 @@ angular.module('OneApp')
          * @returns {promise}
          */
         ListItem.prototype.saveFields = function (fieldArray) {
-            var self = this;
-            var model = self.getModel();
+            var listItem = this;
+            var model = listItem.getModel();
             var deferred = $q.defer();
             var definitions = [];
             /** Find the field definition for each of the requested fields */
@@ -351,9 +351,9 @@ angular.module('OneApp')
                 }
             });
 
-            var valuePairs = dataService.generateValuePairs(definitions, self);
+            var valuePairs = dataService.generateValuePairs(definitions, listItem);
 
-            dataService.addUpdateItemModel(model, self, {buildValuePairs: false, valuePairs: valuePairs})
+            dataService.addUpdateItemModel(model, listItem, {buildValuePairs: false, valuePairs: valuePairs})
                 .then(function (response) {
                     deferred.resolve(response);
                     /** Optionally broadcast change event */
@@ -369,11 +369,11 @@ angular.module('OneApp')
          * @returns {promise}
          */
         ListItem.prototype.deleteItem = function (options) {
-            var self = this;
-            var model = self.getModel();
+            var listItem = this;
+            var model = listItem.getModel();
             var deferred = $q.defer();
 
-            dataService.deleteItemModel(model, self, options).then(function (response) {
+            dataService.deleteItemModel(model, listItem, options).then(function (response) {
                 deferred.resolve(response);
                 /** Optionally broadcast change event */
                 registerChange(model);
@@ -402,11 +402,11 @@ angular.module('OneApp')
          * @returns {promise} - containing updated attachment collection
          */
         ListItem.prototype.deleteAttachment = function (url) {
-            var self = this;
+            var listItem = this;
             return dataService.deleteAttachment({
-                listItemId: self.id,
+                listItemId: listItem.id,
                 url: url,
-                listName: self.getModel().list.guid
+                listName: listItem.getModel().list.guid
             });
         };
 
@@ -426,8 +426,8 @@ angular.module('OneApp')
         ListItem.prototype.getFieldVersionHistory = function (fieldNames) {
             var deferred = $q.defer();
             var promiseArray = [];
-            var self = this;
-            var model = this.getModel();
+            var listItem = this;
+            var model = listItem.getModel();
 
             /** Constructor that creates a promise for each field */
             var createPromise = function (fieldName) {
@@ -438,7 +438,7 @@ angular.module('OneApp')
                     operation: 'GetVersionCollection',
                     webURL: configService.defaultUrl,
                     strlistID: model.list.guid,
-                    strlistItemID: self.id,
+                    strlistItemID: listItem.id,
                     strFieldName: fieldDefinition.internalName
                 };
 
@@ -524,7 +524,7 @@ angular.module('OneApp')
          * @constructor
          */
         function Query(queryOptions, model) {
-            var self = this;
+            var query = this;
             var defaults = {
                 /** Container to hold returned entities */
                 cache: [],
@@ -555,7 +555,7 @@ angular.module('OneApp')
                 viewFields: model.list.viewFields,
                 webURL: configService.defaultUrl
             };
-            _.extend(self, defaults, queryOptions);
+            _.extend(query, defaults, queryOptions);
 
             /** Key/Value mapping of SharePoint properties to SPServices properties */
             var mapping = [
@@ -567,14 +567,14 @@ angular.module('OneApp')
             ];
 
             _.each(mapping, function (map) {
-                if (self[map[0]] && !self[map[1]]) {
+                if (query[map[0]] && !query[map[1]]) {
                     /** Ensure SPServices properties are added in the event the true property name is used */
-                    self[map[1]] = self[map[0]];
+                    query[map[1]] = query[map[0]];
                 }
             });
 
             /** Allow the model to be referenced at a later time */
-            self.getModel = function () {
+            query.getModel = function () {
                 return model;
             };
         }
@@ -586,35 +586,35 @@ angular.module('OneApp')
          * @returns {function} - Array of list item objects
          */
         Query.prototype.execute = function (options) {
-            var self = this;
-            var model = self.getModel();
+            var query = this;
+            var model = query.getModel();
             var deferred = $q.defer();
 
             /** Return existing promise if request is already underway */
-            if (self.negotiatingWithServer) {
-                return self.promise;
+            if (query.negotiatingWithServer) {
+                return query.promise;
             } else {
                 /** Set flag to prevent another call while this query is active */
-                self.negotiatingWithServer = true;
+                query.negotiatingWithServer = true;
 
                 /** Set flag if this if the first time this query has been run */
-                var firstRunQuery = _.isNull(self.lastRun);
+                var firstRunQuery = _.isNull(query.lastRun);
 
                 var defaults = {
                     /** Designate the central cache for this query if not already set */
-                    target: self.cache
+                    target: query.cache
                 };
 
                 /** Extend defaults with any options */
                 var queryOptions = _.extend({}, defaults, options);
 
-                dataService.executeQuery(model, self, queryOptions).then(function (results) {
+                dataService.executeQuery(model, query, queryOptions).then(function (results) {
                     if (firstRunQuery) {
                         /** Promise resolved the first time query is completed */
-                        self.initialized.resolve(queryOptions.target);
+                        query.initialized.resolve(queryOptions.target);
 
                         /** Remove lock to allow for future requests */
-                        self.negotiatingWithServer = false;
+                        query.negotiatingWithServer = false;
                     }
 
                     /** Store query completion date/time on model to allow us to identify age of data */
@@ -624,7 +624,7 @@ angular.module('OneApp')
                 });
 
                 /** Save reference on the query **/
-                self.promise = deferred.promise;
+                query.promise = deferred.promise;
                 return deferred.promise;
             }
         };
@@ -636,11 +636,11 @@ angular.module('OneApp')
          * @returns {object}
          */
         Query.prototype.searchLocalCache = function (value, options) {
-            var self = this;
-            var model = self.getModel();
+            var query = this;
+            var model = query.getModel();
             var defaults = {
-                cacheName: self.name,
-                localCache: self.cache
+                cacheName: query.name,
+                localCache: query.cache
             };
             var opts = _.extend({}, defaults, options);
             return model.searchLocalCache(value, opts);
