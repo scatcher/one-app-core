@@ -477,6 +477,7 @@ angular.module('OneApp')
          * Takes in the model and a query that
          * @param {object} model
          * @param {object} query
+         * @param {string} [query.offlineXML] - Allow an offline file to spe specified when a query is created
          * @param {object} [options]
          * @param {object} [options.deferred] - A reference to a deferred object
          * @param {Array} [options.target] - The target destination for returned entities
@@ -505,7 +506,7 @@ angular.module('OneApp')
             /** Simulate an web service call if working offline */
             if (offline) {
                 /** Optionally set alternate offline XML location but default to value in model */
-                var offlineData = opts.offlineXML || 'dev/' + model.list.title + '.xml';
+                var offlineData = opts.offlineXML || query.offlineXML || 'dev/' + model.list.title + '.xml';
 
                 /** Only pull down offline xml if this is the first time the query is run */
                 if(query.lastRun) {
