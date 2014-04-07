@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @ngdoc service
+ * @ngdoc api
  * @name modalService
  * @description
  * Extends a modal form to include many standard functions
@@ -10,7 +10,7 @@ angular.module('OneApp')
     .service('modalService', function ($modal, toastr) {
 
         /**
-         * @ngdoc constructor
+         * @ngdoc function
          * @name modalService.modalModelProvider
          * @description
          * Extends a model to allow us to easily attach a modal form that accepts and injects a
@@ -70,7 +70,7 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc
+         * @ngdoc function
          * @name modalService.getPermissions
          * @description
          * Returns an object containing the permission levels for the current user
@@ -98,7 +98,7 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc
+         * @ngdoc function
          * @name modalService.initializeState
          * @description
          * Creates a state object, populates permissions for curent user, and sets display mode
@@ -135,7 +135,7 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc
+         * @ngdoc function
          * @name modalService.deleteEntity
          * @description
          * Prompts for confirmation of deletion, then deletes and closes modal
@@ -163,7 +163,7 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc
+         * @ngdoc function
          * @name modalService.saveEntity
          * @description
          * Creates a new record if necessary, otherwise updates the existing record

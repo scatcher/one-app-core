@@ -1,17 +1,13 @@
 'use strict';
 
 /**
- * @ngdoc factory
+ * @ngdoc service
  * @name modelFactory
  * @description
  *
  * # ngRoute
  *
  * The `modelFactory` provides a common base prototype for Model, Query, and List Item.
- *
- * ## Example
- *
- * <div doc-module-components="ngRoute"></div>
  */
 angular.module('OneApp')
     .factory('modelFactory', function ($q, $timeout, configService, dataService, fieldService) {
@@ -26,7 +22,7 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc prototype
+         * @ngdoc function
          * @name Model
          * @description
          * Model Constructor
@@ -349,7 +345,7 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc prototype
+         * @ngdoc function
          * @name ListItem
          * @description
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
@@ -570,7 +566,7 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc prototype
+         * @ngdoc function
          * @name List
          * @description
          * List Object Constructor
@@ -599,7 +595,7 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc prototype
+         * @ngdoc function
          * @name Query
          * @description
          * Decorates query optional attributes

@@ -55,6 +55,9 @@
         "jshint-stylish": "~0.1.5",
         "node-html-encoder": "0.0.2",
         "shelljs": "~0.2.6",
+        "cp-r": "latest",
+        "mkdirp": "mkdirp",
+        "semver": "~2",
 
         "gulp-load-plugins": "~0.3.0",
         "gulp-util": "~2.2.9",

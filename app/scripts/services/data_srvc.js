@@ -152,7 +152,7 @@ angular.module('OneApp')
         /**
          * @ngdoc function
          * @name dataService.getCollection
-         *
+         * @description
          * Used to handle any of the Get[filterNode]Collection calls to SharePoint
          *
          * @param {object} options - object used to extend payload and needs to include all SPServices required attributes
