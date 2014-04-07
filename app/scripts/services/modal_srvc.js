@@ -1,9 +1,18 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name modalService
+ * @description
+ * Extends a modal form to include many standard functions
+ */
 angular.module('OneApp')
     .service('modalService', function ($modal, toastr) {
 
         /**
+         * @ngdoc constructor
+         * @name modalService.modalModelProvider
+         * @description
          * Extends a model to allow us to easily attach a modal form that accepts and injects a
          * dynamic number of arguments.
          * @param {object} options - Configuration object.
@@ -13,11 +22,11 @@ angular.module('OneApp')
          * @returns {openModal}
          *
          * @example
-         *  model.openModal = modalService.modalModelProvider({
-         *      templateUrl: 'modules/comp_request/views/comp_request_modal_view.html',
-         *      controller: 'compRequestModalCtrl',
-         *      expectedArguments: ['request']
-         *  });
+            model.openModal = modalService.modalModelProvider({
+                templateUrl: 'modules/comp_request/views/comp_request_modal_view.html',
+                controller: 'compRequestModalCtrl',
+                expectedArguments: ['request']
+            });
          */
         function modalModelProvider(options) {
             return function openModal() {
@@ -39,7 +48,7 @@ angular.module('OneApp')
                 _.each(options.expectedArguments, function (argumentName, index) {
                     modalConfig.resolve[argumentName] = function () {
                         return args[index];
-                    }
+                    };
                 });
 
                 var modalInstance = $modal.open(modalConfig);
@@ -61,6 +70,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc
+         * @name modalService.getPermissions
+         * @description
          * Returns an object containing the permission levels for the current user
          * @param {object} entity - list item
          * @returns {{userCanEdit: boolean, userCanDelete: boolean, userCanApprove: boolean, fullControl: boolean}}
@@ -86,16 +98,19 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc
+         * @name modalService.initializeState
+         * @description
          * Creates a state object, populates permissions for curent user, and sets display mode
          * @param entity
          * @param options
          * @returns {Object}
          *
          * @example
-         *  $scope.state = modalService.initializeState(request, {
-         *      dateExceedsBoundary: false,
-         *      enableApproval: false
-         *  });
+         $scope.state = modalService.initializeState(request, {
+             dateExceedsBoundary: false,
+             enableApproval: false
+         });
          */
         function initializeState(entity, options) {
             var state = {
@@ -120,6 +135,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc
+         * @name modalService.deleteEntity
+         * @description
          * Prompts for confirmation of deletion, then deletes and closes modal
          * @param {object} entity
          * @param {object} state
@@ -145,6 +163,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc
+         * @name modalService.saveEntity
+         * @description
          * Creates a new record if necessary, otherwise updates the existing record
          * @param {object} entity
          * @param {object} model

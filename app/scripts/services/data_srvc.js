@@ -8,7 +8,7 @@ angular.module('OneApp')
         var offline = window.location.href.indexOf('localhost') > -1;
 
         /**
-         * @description Post processing of data after returning list items from server
+         *  Post processing of data after returning list items from server
          * @param {object} model - reference to allow updating of model
          * @param {xml} responseXML - Resolved promise from web service call
          * @param {object} [options]
@@ -117,7 +117,7 @@ angular.module('OneApp')
         }
 
         /**
-         * @description Returns the version history for a field in a list item
+         * Returns the version history for a field in a list item
          * @param {object} payload
          * @param {object} fieldDefinition - field definition object from the model
          * @returns {promise} - Array of list item changes for the specified field
@@ -152,7 +152,7 @@ angular.module('OneApp')
         /**
          * @ngdoc function
          * @name dataService.getCollection
-         * @description
+         *
          * Used to handle any of the Get[filterNode]Collection calls to SharePoint
          *
          * @param {object} options - object used to extend payload and needs to include all SPServices required attributes
@@ -160,15 +160,15 @@ angular.module('OneApp')
          *  - GetUserCollectionFromSite
          *  - GetGroupCollectionFromSite
          *  - GetGroupCollectionFromUser
-         *      @requires options.userLoginName
+         *      @param options.userLoginName
          *  - GetUserCollectionFromGroup
-         *      @requires options.groupName
+         *      @param options.groupName
          *  - GetListCollection
          *  - GetViewCollection
-         *      @requires options.listName
+         *      @param options.listName
          *  - GetAttachmentCollection
-         *      @requires options.listName
-         *      @requires options.ID
+         *      @param options.listName
+         *      @param options.ID
          *
          *  @param {string} [options.filterNode] - Value to iterate over in returned XML
          *         if not provided it's extracted from the name of the operation
@@ -385,7 +385,7 @@ angular.module('OneApp')
         };
 
         /**
-         * @description Deletes and attachment on a list item
+         * Deletes and attachment on a list item
          * @param {object} options
          * @param {string} options.listItemId
          * @param {string} options.url

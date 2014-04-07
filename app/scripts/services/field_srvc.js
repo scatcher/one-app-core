@@ -205,7 +205,6 @@ angular.module('OneApp')
 
         /**
          * Read only fields that should be included in all lists
-         * @type {Array}
          */
         var defaultFields = [
             { internalName: 'ID', objectType: 'Counter', mappedName: 'id', readOnly: true},

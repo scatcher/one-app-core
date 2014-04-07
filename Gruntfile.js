@@ -6,6 +6,9 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
+var shelljs = require('shelljs');
+
+
 module.exports = function (grunt) {
 
     // Load grunt tasks automatically
@@ -112,6 +115,18 @@ module.exports = function (grunt) {
             }
         },
 
+//        ngdoc : {
+//            options: {
+//                html5Mode: false,
+//                title: 'OneApp Core Documentation',
+//                scripts: ['<%= config.app %>/scripts/services/*.js']
+//            },
+//            all: {
+//                src: ['<%= config.app %>/scripts/services/*.js'],
+//                title: 'Services'
+//            }
+//        },
+//
         // Empties folders to start fresh
         clean: {
             dist: {
@@ -126,6 +141,7 @@ module.exports = function (grunt) {
                     }
                 ]
             },
+            docs: '<%= config.dist %>/docs/*',
             server: '.tmp'
         },
 
@@ -145,7 +161,6 @@ module.exports = function (grunt) {
                 ]
             }
         },
-
 
         // Renames files for browser caching purposes
         rev: {
@@ -433,6 +448,30 @@ module.exports = function (grunt) {
 //        'rev',
         'usemin',
         'htmlmin'
+    ]);
+
+    grunt.registerTask('ngdoc', 'Create ngdocs.', function() {
+        var dgeni = require('dgeni');
+        var done = this.async();
+
+        dgeni('docs/docs.config.js')
+            .generateDocs()
+            .then(done);
+    });
+
+//    grunt.registerTask('default', ['dgeni']);
+
+//    grunt.registerTask('docs', 'create docs', function(){
+//        var gruntProc = shelljs.exec('"node_modules/.bin/gulp" --gulpfile gulpfile.js');
+//        if (gruntProc.code !== 0) {
+//            throw new Error('doc generation failed');
+//        }
+//    });
+
+
+    grunt.registerTask('doc', [
+        'clean:docs',
+        'ngdoc'
     ]);
 
     grunt.registerTask('default', [

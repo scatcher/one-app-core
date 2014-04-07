@@ -1,0 +1,165 @@
+<!--My doc:-->
+
+<!--<h1>{$ doc.name $}</h1>-->
+<!--<p>{$ doc.description $}</p>-->
+
+        <!--<pre>{$ doc | json $}</pre>-->
+
+{% macro typeList(types) -%}
+{% for typeName in types %}<a href="" class="{$ typeName | typeClass $}">{$ typeName | escape $}</a>{% endfor %}
+{%- endmacro -%}
+
+{%- macro paramTable(params) %}
+<table class="variables-matrix input-arguments">
+    <thead>
+    <tr>
+        <th>Param</th>
+        <th>Type</th>
+        <th>Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for param in params %}
+    <tr>
+        <td>
+            {$ param.name $}
+            {% if param.alias %}| {$ param.alias $}{% endif %}
+            {% if param.type.optional %}<div><em>(optional)</em></div>{% endif %}
+        </td>
+        <td>
+            {$ typeList(param.typeList) $}
+        </td>
+        <td>
+            {$ param.description | marked $}
+            {% if param.default %}<p><em>(default: {$ param.default $})</em></p>{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endmacro -%}
+
+
+{%- macro directiveParam(name, type, join, sep) %}
+{%- if type.optional %}[{% endif -%}
+{$ name | dashCase $}{$ join $}{$ type.description $}{$ sep $}
+{%- if type.optional %}]{% endif -%}
+{% endmacro -%}
+
+{%- macro functionSyntax(fn) %}
+{%- set sep = joiner(', ') -%}
+{% marked -%}
+`{$ fn.name $}({%- for param in fn.params %}{$ sep() $}
+{%- if param.type.optional %}[{% endif -%}
+{$ param.name $}
+{%- if param.type.optional %}]{% endif -%}
+{% endfor %});`
+{%- endmarked %}
+{% endmacro -%}
+
+{%- macro typeInfo(fn) -%}
+<table class="variables-matrix return-arguments">
+    <tr>
+        <td>{$ typeList(fn.typeList) $}</td>
+        <td>{$ fn.description | marked $}</td>
+    </tr>
+</table>
+{%- endmacro -%}
+
+<!--{% extends "api/api.template.html" %}-->
+
+{% block additional %}
+
+{% if doc.params or doc.returns or doc.this or doc.kind == 'function' -%}
+<h2 id="usage">Usage</h2>
+{% if doc.usage %}
+{$ doc.usage | code $}
+{% else %}
+{$ functionSyntax(doc) $}
+{% endif %}
+
+{%- if doc.params %}
+<section class="api-section">
+    <h3>Arguments</h3>
+    {$ paramTable(doc.params) $}
+</section>
+{%- endif -%}
+
+{% if doc.this %}
+<h3>Method's {% code %}this{% endcode %}</h3>
+{$ doc.this | marked $}
+{% endif %}
+
+{% if doc.returns -%}
+<h3>Returns</h3>
+{$ typeInfo(doc.returns) $}
+{%- endif %}
+{%- endif %}
+
+{%- if doc.methods %}
+<h2>Methods</h2>
+<ul class="methods">
+    {%- for method in doc.methods %}
+    <li id="{$ method.name $}">
+        <h3>{$ functionSyntax(method) $}</h3>
+        <div>{$ method.description | marked $}</div>
+
+        {% if method.params %}
+        <h4>Parameters</h4>
+        {$ paramTable(method.params) $}
+        {% endif %}
+
+        {% if method.this %}
+        <h4>Method's {% code %}this{% endcode %}</h4>
+        {$ method.this | marked $}
+        {% endif %}
+
+        {% if method.returns %}
+        <h4>Returns</h4>
+        {$ typeInfo(method.returns) $}
+        {% endif %}
+
+    </li>
+    {% endfor -%}
+</ul>
+{%- endif -%}
+
+{%- if doc.events %}
+<h2>Events</h2>
+<ul class="events">
+    {%- for event in doc.events %}
+    <li id="{$ event.name $}">
+        <h3>{$ event.name $}</h3>
+        <div>{$ event.description | marked $}</div>
+        {%- if event.eventType == 'listen' %}
+        <div class="inline">
+            <h4>Listen on: {$ event.eventTarget $}</h4>
+        </div>
+        {%- else %}
+        <div class="inline">
+            <h4>Type:</h4>
+            <div class="type">{$ event.eventType $}</div>
+        </div>
+        <div class="inline">
+            <h4>Target:</h4>
+            <div class="target">{$ event.eventTarget $}</div>
+        </div>
+        {% endif -%}
+    </li>
+    {% endfor -%}
+</ul>
+{% endif -%}
+
+{%- if doc.properties %}
+<h2>Properties</h2>
+<ul class="properties">
+    {%- for property in doc.properties %}
+    <li id="{$ property.name $}">
+        <h3>{$ property.name | code $}</h3>
+        {$ typeInfo(property) $}
+    </li>
+    {% endfor -%}
+</ul>
+{%- endif -%}
+
+{% endblock %}
