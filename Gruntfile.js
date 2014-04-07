@@ -141,7 +141,7 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            docs: '<%= config.dist %>/docs/*',
+            docs: 'docs/app/*',
             server: '.tmp'
         },
 
