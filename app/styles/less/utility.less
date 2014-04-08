@@ -1,0 +1,557 @@
+@import "variables.less";
+@import "mixins.less";
+
+
+/*
+@colorPallete: 'blueStandard', 'blueSky', 'blue', 'blueLight', 'blueDark', 'green',  'greenLight', 'greenDark',
+'greenBright', 'magenta', 'orange', 'orangeDark', 'pink', 'pinkDark', 'purple', 'red', 'redLight', 'redBright', 'teal',
+'tealLight', 'yellow', 'white', 'darken', 'lighten', 'metroPurple', 'metroMagenta', 'metroTeal', 'metroLime',
+'metroBrown', 'metroPink', 'metroOrange', 'metroBlue', 'metroRed', 'metroGreen';
+*/
+/*
+ * TEXT COLOR
+ */
+// ............................................................
+// .Loop through each defined color and create
+// .txt-color-@color {
+//    color: @color !important;
+//  }
+
+.text-color-constructor(@colorPallete);
+
+/*
+ * BACKGROUNDS
+ */
+
+// ............................................................
+// .Loop through each defined color and create
+// .bg-color-@color {
+//    background-color: @color !important;
+//  }
+.background-color-constructor(@colorPallete);
+
+
+
+
+.no-space {
+  margin:0;
+}
+
+.no-space > [class*="col-"] {
+  margin: 0 !important;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.no-content-padding {
+  margin: -10px -14px 0 -14px; /*used with content >:first-child */
+}
+
+.no-padding {
+  padding:0px !important;
+  & > pre {
+    margin:30px;
+  }
+}
+.no-padding-bottom {
+  padding-bottom:0px !important;
+}
+
+.padding-5 {
+  padding:5px !important;
+}
+
+.padding-7 {
+  padding:7px !important;
+}
+
+.padding-10 {
+  padding:10px !important;
+}
+
+.padding-top-10 {
+  padding-top:10px !important;
+}
+
+.padding-bottom-10 {
+  padding-bottom:10px !important;
+}
+
+
+/*
+ * Forced text alignments
+ */
+
+.text-align-center, .text-center {
+  text-align:center !important
+}
+.text-align-left, .text-left {
+  text-align:left !important
+}
+.text-align-right, .text-right {
+  text-align:right !important
+}
+
+/*
+ * Font Weights
+ */
+
+.semi-bold {
+  font-weight:400 !important;
+}
+
+.ultra-light {
+  font-weight:300 !important;
+}
+
+/*
+ * Font Sizes
+ */
+
+
+.font-xs {
+  font-size:85% !important;
+}
+
+.font-sm {
+  font-size:95% !important;
+}
+
+.font-md {
+  font-size:130% !important;
+}
+
+.font-lg {
+  font-size:160% !important;
+}
+
+.font-xl {
+  font-size:200% !important;
+}
+
+.font-400 {
+  font-size:400% !important;
+}
+
+/*
+ * Margins
+ */
+
+.no-margin {
+  margin:0px !important;
+}
+
+.margin-top-5 {
+  margin-top:5px !important;
+}
+
+.margin-top-10 {
+  margin-top:10px !important;
+}
+
+.margin-bottom-5 {
+  margin-bottom:5px !important;
+}
+
+.margin-bottom-10 {
+  margin-bottom:10px !important;
+}
+
+.margin-right-5 {
+  margin-right:5px !important;
+}
+
+
+/*
+ * No border
+ */
+
+.no-border, .well[class*=" bg-"].no-border {
+  border-width:0px !important;
+}
+
+.no-border-transparent {
+  border-color:transparent !important;
+}
+
+.no-border-radius {
+  border-radius:0px;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+}
+
+/*
+ * Inlines
+ */
+.display-inline {
+  display:inline-block !important;
+}
+
+.display-normal {
+  display:inline !important;
+}
+
+
+/*
+ * JUST A BORDER
+ */
+.bordered {
+  border:1px solid rgba(red(@black), green(@black), blue(@black),.2);
+}.bordered:hover {
+   border:1px solid rgba(red(@black), green(@black), blue(@black),.4);
+ }
+
+/*
+ * CURSORS
+ */
+.cursor-pointer {
+  cursor:pointer;
+}
+
+/*
+ * HEADER NAV DROPDOWN LIST
+ */
+
+.header-dropdown-list {
+  list-style:none;
+  float:right;
+  position:relative;
+  margin:0;
+  & > li {
+    display: inline-block;
+    padding-right: 5px;
+    & > .dropdown-toggle {
+      margin-top:16px;
+      display:block;
+    }
+  }
+}
+
+
+
+/*
+ * HR
+ */
+
+hr.simple {
+  margin-top:10px;
+  margin-bottom:10px;
+  border-style:dashed;
+}
+
+/*
+ * Timeline Seperator
+ */
+
+.timeline-seperator {
+  display:block;
+  text-align:center;
+  color:@gray-light;
+  margin:20px 0 0;
+  & > :first-child {
+    padding:4px 5px;
+    border:1px dashed rgba(red(@black), green(@black), blue(@black), 0.1);
+    background:@white;
+    font-size:11px;
+    border-radius:4px;
+  }
+}.timeline-seperator .btn, .timeline-seperator .btn + .dropdown-menu {
+   margin-right:15px;
+ }
+
+.timeline-seperator:after {
+  display:block;
+  content:" ";
+  margin:0 20px;
+  border-bottom:1px dashed rgba(red(@black), green(@black), blue(@black), 0.1);
+  margin-top:-8px;
+}
+
+
+
+
+
+/*
+ * MINIFIED MENU
+ */
+
+.minified .inbox-badge {
+  border-radius: 50%;
+  font-size: 9px;
+  padding: 2px;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ED1C24;
+  min-width:13px;
+}
+
+.minifyme {
+  border-bottom: 1px solid #302F2F;
+  background: #454545;
+  color: #A8A8A8;
+  text-align: center;
+  padding: 0;
+  width: 36px;
+  height: 28px;
+  display: block;
+  position: absolute;
+  right: -3px;
+  border-radius: 5px 0px 0px 5px;
+  cursor: pointer;
+  margin-top: 5px;
+  font-size: 19px;
+  transition: all 0.1s linear 0s;
+}
+.minifyme:hover {
+  background:#646464;
+  color:#E4E4E4;
+  right: 0px;
+}
+
+.minified .minifyme {
+  right: 0px;
+  color: #A8A8A8;
+  position: relative;
+  width: 100%;
+  border-radius: 0px;
+  margin: 0;
+  height: 34px;
+  font-size: 23px;
+}
+
+.minified .minifyme .fa:before {
+  content:"\f0a9";
+}
+
+.minified .login-info a span, .minified .login-info a i {
+  display: none;
+}
+
+.minified .login-info span {
+  padding: 0px 5px;
+  text-align:center;
+}
+.minified .login-info img {
+  margin: -2px 0 0;
+  width: 30px;
+}
+
+.minified .login-info {
+  height: 38px;
+  border-bottom: 1px solid #181818;
+}
+
+.minified #left-panel {
+  width: 45px;
+}
+
+.minified #main {
+  margin-left: 45px;
+}
+
+/*
+ * Minified NAV
+ */
+
+.minified #left-panel, .minified nav > ul > li {
+  overflow: visible;
+}
+
+.minified nav > ul > ul {
+  min-height: 100px !important;
+  max-height: 180px !important;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: #ed1c24 !important;
+}
+
+.minified nav > ul > li, .minified nav > ul > li a {
+  position: relative;
+}
+
+.minified nav ul > li > a {
+  padding: 10px 11px;
+  display:block
+}
+
+.minified nav > ul > li > a .fa.fa-fw {
+  display: block;
+  width: auto;
+  text-align: center;
+  padding:0;
+}
+
+.minified nav > ul > li > a > i {
+  text-align:center;
+  margin:0;
+  display:block;
+}
+
+.minified nav > ul > li.active > a::before {
+  content: "\f0d9";
+}
+
+.minified nav ul ul li a {
+  padding-left: 14px;
+}
+.minified nav ul ul li li a {
+  padding-left: 25px;
+}
+
+.minified nav > ul ul li::before {
+  left: 12px;
+}
+.minified nav > ul > li > ul::before {
+  left: 12px;
+}
+
+.minified nav > ul > li > a .menu-item-parent, .minified nav > ul > li > a > b {
+  display: none;
+}
+
+.minified nav > ul > li > a > .menu-item-parent {
+  display: none;
+  position: absolute;
+  left: 40px;
+  top: -3px;
+  width: @asideWidth - 34px;
+  height: 38px;
+  line-height: 38px;
+  background-color: whiteSmoke;
+  color: @gray-dark;
+  z-index: 3;
+  -webkit-box-shadow: 2px 1px 2px 0 rgba(red(@black), green(@black), blue(@black), 0.2);
+  -moz-box-shadow: 2px 1px 2px 0 rgba(red(@black), green(@black), blue(@black),0.2);
+  box-shadow: 2px 1px 2px 0 rgba(red(@black), green(@black), blue(@black), 0.2);
+  border-left: 1px solid @gray-mid-light;
+  border-top: 1px solid #D8D4D4;
+  border-bottom: 1px solid @white;
+  padding-left: 12px;
+}
+
+.minified nav > ul > li > ul {
+  display: none !important;
+  position: absolute;
+  left: 40px;
+  width: @asideWidth - 20px;
+  z-index: 5;
+  border: 1px solid @gray-mid-light;
+  min-height: 180px;
+  -webkit-box-shadow: 1px 1px 2px 0 rgba(red(@black), green(@black), blue(@black), 0.2);
+  -moz-box-shadow: 1px 1px 2px 0 rgba(red(@black), green(@black), blue(@black),0.2);
+  box-shadow: 1px 1px 2px 0 rgba(red(@black), green(@black), blue(@black), 0.2);
+  background: #3A3633;
+  margin-top: -3px;
+}
+
+
+.minified nav ul > li > ul > li > ul {
+  position: relative;
+  left: 13px;
+  border: none;
+  width: auto;
+  margin-left: -12px;
+  width: @asideWidth - 23px;
+}
+
+.minified nav > ul > li:hover > a > .menu-item-parent, .minified nav > ul > li:hover > ul {
+  display: block !important;
+}
+
+.minified nav > ul > li > ul > li {
+  background-color: rgba(69, 69, 69, .9);
+}
+.minified nav > ul > li > ul > li > ul > li {
+  background-color: #484B50;
+}
+
+.minified nav > ul > li {
+  border-bottom: 1px solid #1A1817;
+  border-top: 1px solid #525151;
+}
+
+.minified nav > ul > li > ul::before {
+  border-left: none;
+}
+
+.minified nav > ul ul li::before {
+  border: none;
+}
+
+.slimScrollDiv, .slimScrollDiv > :first-child {
+  overflow: hidden;
+}
+
+.minified .slimScrollDiv, .minified .slimScrollDiv > :first-child {
+  overflow: visible !important;
+}
+
+.minified .slimScrollBar, .minified .slimScrollRail {
+  display: none;
+}
+
+.minified nav > ul > li > ul > li > a {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.minified nav > ul > li > ul > li > ul > li > a {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.minified nav > ul > li > ul > li > ul > li a {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Fourth Level: A */
+.minified nav ul ul ul ul li a {
+  padding-left: 45px;
+}
+
+/* Fifth Level: A */
+.minified nav ul ul ul ul ul li a {
+  padding-left: 62px;
+}
+
+/* Sixth Level: A */
+.minified nav ul ul ul ul ul ul li a {
+  padding-left: 82px;
+}
+
+
+
+
+
+
+
+
+.selected {
+  border: 1px solid @blueSky !important;
+}
+
+.selected:before {
+  display:block;
+  position: absolute;
+  content: "\f00c";
+  color: @white;
+  right: 4px;
+  font-family: FontAwesome;
+  z-index: 2;
+}
+
+.selected:after {
+  display:block;
+  width: 0;
+  height: 0;
+  border-top: 35px solid @blueSky;
+  border-left: 35px solid rgba(red(@black), green(@black), blue(@black), 0);
+  position: absolute;
+  display: block;
+  right: 0;
+  content: ".";
+  top: 0;
+  z-index: 1;
+}

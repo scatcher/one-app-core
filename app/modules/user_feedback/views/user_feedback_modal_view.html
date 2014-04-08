@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" aria-hidden="true">&times;</button>
+    <h3>Feedback</h3>
+    <!--<p>From 1App URL: {{ tempUserFeedback.topic }}</p>-->
+</div>
+<div class="modal-body">
+    <form role="form" class="form">
+        <div class="alert alert-info">
+            <p>Enter your suggestion or issue below.  Please provide a detailed explanation including all
+                relevant information pertaining to your suggestion or issue.  If you are reporting an issue,
+                please include steps to be followed to reproduce the problem, if possible.</p>
+        </div>
+        <div class="form-group">
+            <label>Issue/Suggestion</label>
+            <input type="text" class="form-control" ng-model="tempUserFeedback.title"/>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea rows="4" cols="50" class="form-control"
+                      ng-model="tempUserFeedback.description"></textarea>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="pull-left">
+        <button class="btn btn-danger" ng-click="deleteRecord()" ng-show="tempUserFeedback.id"
+                title="Delete this task request">
+            <i class="fa fa-trash-o"></i>
+        </button>
+    </div>
+    <button class="btn btn-primary" ng-click="ok()" ng-disabled="tempUserFeedback.title.length === 0">OK</button>
+    <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+</div>

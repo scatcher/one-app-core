@@ -1,0 +1,63 @@
+// Add anything custom here -- mixins, variable overrides.
+// by adding things here instead of overriding existing .LESS files, it makes merging changes on product updates easier
+@import "variables.less";
+
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+//[ Application loader and main body ]
+.application-content{
+  margin-top: @navbar-height + 10;
+}
+
+.splash {
+  text-align: center;
+  margin: 10% 0 0 0;
+  .message {
+    font-size: 5em;
+    line-height: 1.5em;
+    -webkit-text-shadow: rgba(0, 0, 0, 0.5) 0px 0px 15px;
+    text-shadow: rgba(0, 0, 0, 0.5) 0px 0px 15px;
+    text-transform: uppercase;
+  }
+  .icon-spinner {
+    text-align: center;
+    display: inline-block;
+    font-size: 5em;
+    margin-top: 50px;
+  }
+}
+
+.loader {
+  margin: 6px 8px 4px 8px;
+  visibility: hidden;
+  & .active {
+    visibility: visible;
+  }
+}
+
+.page-content {
+  margin: 0;
+  padding: 8px;
+}
+
+BODY{
+  overflow:inherit;
+  height:auto;
+  background: url("../images/mybg.png") #fff;
+}
+
+//Temporary hack to work with the updated .modal-lg and .modal-sm that were introduced into bootstrap but not
+//yet added to ui-bootstrap
+.modal-lg-hack {
+  .modal-dialog {
+    width: @modal-lg;
+  }
+}
+.modal-sm-hack {
+  .modal-dialog {
+    width: @modal-sm;
+  }
+}
