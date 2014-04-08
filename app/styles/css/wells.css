@@ -1,0 +1,51 @@
+/* Metro Colors */
+/* left side */
+/* right side */
+/* the color that flashes when you click on the first nav element */
+/* the plus icon that appears on the parent nav when expanding and collapsing */
+/* these values will only address the first parent in the entire nav */
+/*
+* WELLS
+*/
+.well {
+  background: #fbfbfb;
+  border: 1px solid #dddddd;
+  box-shadow: 0 1px 1px #ececec;
+  -webkit-box-shadow: 0 1px 1px #ececec;
+  -moz-box-shadow: 0 1px 1px #ececec;
+  position: relative;
+}
+.well.well-clean {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+.well.well-glass {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border-color: transparent;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+.well.well-light {
+  background: #ffffff;
+  border: 1px solid #e2e2e2;
+}
+.widget-body .well {
+  margin-bottom: 0px;
+}
+.well.transparent {
+  border: none !important;
+  background: none !important;
+}
+.jarviswidget.well.transparent > div,
+.jarviswidget.well.transparent > div .widget-body {
+  padding: 0px !important;
+}
+/* any wells with custom bg the border will be darkened */
+.well[class^="bg-"],
+.well[class*=" bg-"] {
+  border: 1px solid #555555 !important;
+}
