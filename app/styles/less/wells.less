@@ -1,0 +1,54 @@
+@import "variables.less";
+/*
+* WELLS
+*/
+
+.well {
+  background: darken(@white, 1.5%);
+  border: 1px solid darken(@gray-lighter, 7%);
+  box-shadow: 0 1px 1px darken(@gray-lighter, 1%);
+  -webkit-box-shadow: 0 1px 1px darken(@gray-lighter, 1%);
+  -moz-box-shadow: 0 1px 1px darken(@gray-lighter, 1%);
+  position:relative;
+}
+
+.well.well-clean {
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+  box-shadow:none;
+  border-color:transparent;
+}
+
+.well.well-glass {
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+  box-shadow:none;
+  border-color:transparent;
+  background-color:rgba(red(@white), green(@white), blue(@white),.25);
+  color:@white;
+}
+
+.well.well-light {
+  background: @white;
+  border: 1px solid darken(@gray-lighter, 5%);
+}
+
+.widget-body {
+  .well {
+    margin-bottom:0px;
+  }
+}
+
+.well.transparent {
+  border:none !important;
+  background:none !important;
+}
+
+.jarviswidget.well.transparent > div, .jarviswidget.well.transparent > div .widget-body {
+  padding:0px !important;
+}
+
+/* any wells with custom bg the border will be darkened */
+.well[class^="bg-"], .well[class*=" bg-"]{
+  border: 1px solid @gray !important;
+}
