@@ -103,7 +103,7 @@ angular.module('OneApp')
          * @description
          * Creates a state object, populates permissions for curent user, and sets display mode
          * @param entity
-         * @param options
+         * @param [options]
          * @returns {Object}
          *
          * @example
