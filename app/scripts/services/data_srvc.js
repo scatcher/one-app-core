@@ -296,7 +296,10 @@ angular.module('OneApp')
          *      Otherwise returns the server response
          */
         var serviceWrapper = function (options) {
-            var opts = _.extend({}, options);
+            var defaults = {
+                webURL: defaultUrl
+            };
+            var opts = _.extend({}, defaults, options);
             var deferred = $q.defer();
 
             queueService.increase();
