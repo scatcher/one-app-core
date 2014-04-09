@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('OneApp')
-    .service('dataService', function ($q, $timeout, queueService, utilityService, toastr) {
+    .service('dataService', function ($q, $timeout, queueService, configService, utilityService, toastr) {
         var dataService = {};
 
         /** Flag to use cached XML files from the app/dev folder */
         var offline = window.location.href.indexOf('localhost') > -1;
+
+        var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
 
         /**
          *  Post processing of data after returning list items from server
@@ -189,7 +191,10 @@ angular.module('OneApp')
          */
         var getCollection = function (options) {
             queueService.increase();
-            var opts = _.extend({}, options);
+            var defaults = {
+                webURL: defaultUrl
+            };
+            var opts = _.extend({}, defaults, options);
 
             /** Determine the XML node to iterate over if filterNode isn't provided */
             var filterNode = opts.filterNode || opts.operation.split('Get')[1].split('Collection')[0];
