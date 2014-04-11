@@ -44,7 +44,9 @@ angular.module('OneApp')
                 /** Allow us to reference the originating query that generated this object */
                 item.getQuery = opts.getQuery;
                 /** Create Reference to the containing array */
-                item.$parent = opts.target;
+                item.getContainer = function() {
+                    return opts.target;
+                };
                 entities.push(new model.factory(item));
             });
 
@@ -854,7 +856,7 @@ angular.module('OneApp')
             queueService.increase();
 
             var defaults = {
-                target: item.$parent
+                target: item.getContainer()
             };
             var opts = _.extend({}, defaults, options);
 
