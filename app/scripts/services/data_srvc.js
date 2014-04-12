@@ -539,7 +539,7 @@ angular.module('OneApp')
                     }, function () {
                         var mockData = model.generateMockData();
                         deferred.resolve(mockData);
-//                        toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
+                        toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
                     });
                 }
             } else {
