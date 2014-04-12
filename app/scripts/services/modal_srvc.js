@@ -127,7 +127,7 @@ angular.module('OneApp')
             /** Check if it's a new form */
             if (!entity || !entity.id) {
                 state.displayMode = 'New';
-            } else if (state.userCanEdit) {
+            } else if (permissions.userCanEdit) {
                 state.displayMode = 'Edit';
             }
 
