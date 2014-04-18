@@ -10,7 +10,7 @@
  * The `modelFactory` provides a common base prototype for Model, Query, and List Item.
  */
 angular.module('OneApp')
-    .factory('modelFactory', function ($q, $timeout, configService, dataService, fieldService) {
+    .factory('modelFactory', function ($q, $timeout, configService, dataService, fieldService, toastr) {
 
         var defaultQueryName = 'primary';
 
@@ -346,6 +346,79 @@ angular.module('OneApp')
 
         /**
          * @ngdoc function
+         * @name Model.validateEntity
+         * @description
+         * Uses the custom fields defined in an model to ensure each field (required = true) is evaluated
+         * based on field type
+         *
+         * @param {object} entity
+         * @param {object} [options]
+         * @param {boolean} [options.toast=true] - Should toasts be generated to alert the user of issues
+         * @returns {boolean}
+         */
+        Model.prototype.validateEntity = function (entity, options) {
+            var valid = true,
+                model = this;
+
+            var defaults = {
+                toast: true
+            };
+
+            /** Extend defaults with any provided options */
+            var opts = _.extend({}, defaults, options);
+
+            var checkObject = function(fieldValue) {
+                return _.isObject(fieldValue) && _.isNumber(fieldValue.lookupId);
+            };
+
+            _.each(model.list.customFields, function (fieldDefinition) {
+                var fieldValue = entity[fieldDefinition.mappedName];
+                var fieldDescriptor = '"' + fieldDefinition.objectType + '" value.';
+                /** Only evaluate required fields */
+                if (fieldDefinition.required && valid) {
+                    switch (fieldDefinition.objectType) {
+                        case 'DateTime':
+                            valid = _.isDate(fieldValue);
+                            break;
+                        case 'Lookup':
+                        case 'User':
+                            valid = checkObject(fieldValue);
+                            break;
+                        case 'LookupMulti':
+                        case 'UserMulti':
+                            /** Ensure it's a valid array containing objects */
+                            valid = _.isArray(fieldValue) && fieldValue.length > 0;
+                            if(valid){
+                                /** Additionally check that each lookup/person contains a lookupId */
+                                _.each(fieldValue, function(fieldObject) {
+                                    if(valid) {
+                                        valid = checkObject(fieldObject);
+                                    } else {
+                                        /** Short circuit */
+                                        return false;
+                                    }
+                                });
+                            }
+                            break;
+                        default:
+                            /** Evaluate everything else as a string */
+                            valid = !_.isEmpty(fieldValue);
+
+                    }
+                    if (!valid && opts.toast) {
+                        var fieldName = fieldDefinition.label || fieldDefinition.internalName;
+                        toastr.error(fieldName + ' does not appear to be a valid ' + fieldDescriptor);
+                    }
+                }
+                if (!valid) {
+                    return false;
+                }
+            });
+            return valid;
+        };
+
+        /**
+         * @ngdoc function
          * @name ListItem
          * @description
          * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
@@ -441,6 +514,22 @@ angular.module('OneApp')
             });
 
             return deferred.promise;
+        };
+
+        /**
+         * @ngdoc function
+         * @name ListItem.validateEntity
+         * @description
+         * Helper function that passes the current item to Model.validateEntity
+         *
+         * @param {object} [options]
+         * @param {boolean} [options.toast=true]
+         * @returns {boolean}
+         */
+        ListItem.prototype.validateEntity = function(options) {
+            var listItem = this,
+                model = listItem.getModel();
+            return model.validateEntity(listItem, options);
         };
 
         /**

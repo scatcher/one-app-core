@@ -44,7 +44,9 @@ angular.module('OneApp')
                 /** Allow us to reference the originating query that generated this object */
                 item.getQuery = opts.getQuery;
                 /** Create Reference to the containing array */
-                item.$parent = opts.target;
+                item.getContainer = function() {
+                    return opts.target;
+                };
                 entities.push(new model.factory(item));
             });
 
@@ -535,6 +537,8 @@ angular.module('OneApp')
                         queueService.decrease();
                         deferred.resolve(entities);
                     }, function () {
+                        var mockData = model.generateMockData();
+                        deferred.resolve(mockData);
                         toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
                     });
                 }
@@ -854,7 +858,7 @@ angular.module('OneApp')
             queueService.increase();
 
             var defaults = {
-                target: item.$parent
+                target: item.getContainer()
             };
             var opts = _.extend({}, defaults, options);
 

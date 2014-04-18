@@ -9,7 +9,6 @@
   "distPath": "dist",
   "description": "Shared components of OneApp.",
   "license": "MIT",
-  "private": true,
   "dependencies": {
     "angular": "~1.2",
     "angular-animate": "~1.2",
@@ -18,7 +17,6 @@
     "angular-google-chart": "git://github.com/scatcher/angular-google-chart.git#master",
     "angular-resource": "~1.2",
     "angular-route": "~1.2",
-    "angular-round-progress": "git://github.com/scatcher/angular-round-progress.git",
     "angular-sanitize": "~1.2",
     "angular-spinner": "latest",
     "angular-toastr": "latest",
@@ -50,14 +48,12 @@
     "ng-table-export": "latest",
     "respond": "latest",
     "select2": "latest",
-    "SPServices": "https://github.com/sympmarc/SPServices.git#master"
+    "SPServices": "https://github.com/scatcher/SPServices.git"
   },
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "bower_components"
   ],
   "resolutions": {
     "jquery": "~1.11"
