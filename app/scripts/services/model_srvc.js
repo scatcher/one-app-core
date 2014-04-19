@@ -176,9 +176,6 @@ angular.module('spAngular')
          * @returns {Query}
          *
          * @example Could be placed on the projectModel and creates the query but doesn't call it
-         *
-         * '''
-         *
          *  projectModel.registerQuery({
          *       name: 'primary',
          *       query: '' +
@@ -188,21 +185,15 @@ angular.module('spAngular')
          *           '   </OrderBy>' +
          *           '</Query>'
          *   });
-         * '''
          * @example To call the query or check for changes since the last call
-         * <pre>
          * projectModel.executeQuery('primary').then(function(entities) {
          *     //We now have a reference to array of entities stored in the local cache
          *     //These inherit from the ListItem prototype as well as the Project prototype on the model
          *     $scope.projects = entities;
          * });
-         * </pre>
          *
          * @example Advanced functionality that would allow us to dynamically create queries for list items with a
          * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
-         *
-         * '''
-         *
          *      model.queryByProjectId(projectId) {
          *          // Unique query name
          *          var queryKey = 'pid' + projectId;
@@ -235,7 +226,6 @@ angular.module('spAngular')
          *          //Still using execute query but now we have a custom query
          *          return model.executeQuery(queryKey);
          *      };
-         * '''
          *
          */
         Model.prototype.registerQuery = function (queryOptions) {
