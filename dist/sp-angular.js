@@ -1641,17 +1641,18 @@ angular.module('spAngular').factory('modelFactory', [
          *
          * @example Could be placed on the projectModel and creates the query but doesn't call it
          *
-         *<pre>
+         * '''
+         *
          *  projectModel.registerQuery({
          *       name: 'primary',
          *       query: '' +
-         *           '\<Query\>' +
-         *           '   \<OrderBy>\' +
-         *           '       \<FieldRef Name="Title" Ascending="TRUE"/\>' +
-         *           '   \</OrderBy\>' +
-         *           '\</Query\>'
+         *           '<Query>' +
+         *           '   <OrderBy>' +
+         *           '       <FieldRef Name="Title" Ascending="TRUE"/>' +
+         *           '   </OrderBy>' +
+         *           '</Query>'
          *   });
-         </pre>
+         * '''
          * @example To call the query or check for changes since the last call
          * <pre>
          * projectModel.executeQuery('primary').then(function(entities) {
@@ -1665,6 +1666,7 @@ angular.module('spAngular').factory('modelFactory', [
          * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
          *
          * '''
+         *
          *      model.queryByProjectId(projectId) {
          *          // Unique query name
          *          var queryKey = 'pid' + projectId;
