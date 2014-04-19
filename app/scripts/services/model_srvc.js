@@ -200,7 +200,7 @@ angular.module('spAngular')
          * @example Advanced functionality that would allow us to dynamically create queries for list items with a
          * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
          *
-         * <pre>
+         * '''
          *      model.queryByProjectId(projectId) {
          *          // Unique query name
          *          var queryKey = 'pid' + projectId;
@@ -233,7 +233,7 @@ angular.module('spAngular')
          *          //Still using execute query but now we have a custom query
          *          return model.executeQuery(queryKey);
          *      };
-         * </pre>
+         * '''
          *
          */
         Model.prototype.registerQuery = function (queryOptions) {

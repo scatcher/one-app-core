@@ -1640,6 +1640,7 @@ angular.module('spAngular').factory('modelFactory', [
          * @returns {Query}
          *
          * @example Could be placed on the projectModel and creates the query but doesn't call it
+         *
          *<pre>
          *  projectModel.registerQuery({
          *       name: 'primary',
@@ -1662,40 +1663,41 @@ angular.module('spAngular').factory('modelFactory', [
          *
          * @example Advanced functionality that would allow us to dynamically create queries for list items with a
          * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
-         * <pre>
-         * model.queryByProjectId(projectId) {
-         *     // Unique query name
-         *     var queryKey = 'pid' + projectId;
          *
-         *     // Register project query if it doesn't exist
-         *     if (!_.isObject(model.queries[queryKey])) {
-         *         model.registerQuery({
-         *             name: queryKey,
-         *             query: '' +
-         *                 '<Query>' +
-         *                 '   <OrderBy>' +
-         *                 '       <FieldRef Name="ID" Ascending="TRUE"/>' +
-         *                 '   </OrderBy>' +
-         *                 '   <Where>' +
-         *                 '       <And>' +
-         *             // Prevents any records from being returned if user doesn't have permissions on project
-         *                 '           <IsNotNull>' +
-         *                 '               <FieldRef Name="Project"/>' +
-         *                 '           </IsNotNull>' +
-         *             // Return all records for the project matching param projectId
-         *                 '           <Eq>' +
-         *                 '               <FieldRef Name="Project" LookupId="TRUE"/>' +
-         *                 '               <Value Type="Lookup">' + projectId + '</Value>' +
-         *                 '           </Eq>' +
-         *                 '       </And>' +
-         *                 '   </Where>' +
-         *                 '</Query>'
-         *         });
-         *     }
-         *     //Still using execute query but now we have a custom query
-         *     return model.executeQuery(queryKey);
-         * };
-         * </pre>
+         * '''
+         *      model.queryByProjectId(projectId) {
+         *          // Unique query name
+         *          var queryKey = 'pid' + projectId;
+         *
+         *          // Register project query if it doesn't exist
+         *          if (!_.isObject(model.queries[queryKey])) {
+         *              model.registerQuery({
+         *                  name: queryKey,
+         *                  query: '' +
+         *                      '<Query>' +
+         *                      '   <OrderBy>' +
+         *                      '       <FieldRef Name="ID" Ascending="TRUE"/>' +
+         *                      '   </OrderBy>' +
+         *                      '   <Where>' +
+         *                      '       <And>' +
+         *                  // Prevents any records from being returned if user doesn't have permissions on project
+         *                      '           <IsNotNull>' +
+         *                      '               <FieldRef Name="Project"/>' +
+         *                      '           </IsNotNull>' +
+         *                  // Return all records for the project matching param projectId
+         *                      '           <Eq>' +
+         *                      '               <FieldRef Name="Project" LookupId="TRUE"/>' +
+         *                      '               <Value Type="Lookup">' + projectId + '</Value>' +
+         *                      '           </Eq>' +
+         *                      '       </And>' +
+         *                      '   </Where>' +
+         *                      '</Query>'
+         *              });
+         *          }
+         *          //Still using execute query but now we have a custom query
+         *          return model.executeQuery(queryKey);
+         *      };
+         * '''
          *
          */
     Model.prototype.registerQuery = function (queryOptions) {
@@ -1719,10 +1721,12 @@ angular.module('spAngular').factory('modelFactory', [
          * var primaryQuery = projectModel.getQuery();
          * </pre>
          * :--or--:
+         * @example
          * <pre>
          * var primaryQuery = projectModel.getQuery('primary');
          * </pre>
          * :--or--:
+         * @example
          * <pre>
          * var namedQuery = projectModel.getQuery('customQuery');
          * </pre>
