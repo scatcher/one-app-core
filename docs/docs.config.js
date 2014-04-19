@@ -19,7 +19,7 @@ module.exports = function (config) {
 
     config.set('basePath', __dirname);
     config.set('source.projectPath', '.');
-    config.set('rendering.outputFolder', '../dist');
+    config.set('rendering.outputFolder', '..');
 
     var versionData = require('./generate-versions')(config);
     config.set('versionData', versionData);
@@ -27,7 +27,8 @@ module.exports = function (config) {
 //    config.set('rendering.contentsFolder', path.join('docs', versionData.current.folder));
 
     config.set('processing.api-docs', {
-        outputPath: 'api/${docType}/${name}/index.md',
+        outputPath: 'api/${docType}/${name}.md',
+//        outputPath: 'api/${docType}/${name}/index.md',
         path: 'api/${docType}/${name}/',
         moduleOutputPath: 'api/module/${name}/index.md',
         modulePath: 'api/module/${name}/'
