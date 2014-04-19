@@ -10,6 +10,12 @@ doc: "queueService"
 docType: "service"
 ---
 
+##[queueService]()
+
+Simple service to monitor the number of active requests we have open with SharePoint
+Typical use is to display a loading animation of some sort
+
+
 <div class="improve-docs">
   <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/queue_srvc.js#L3'>
     View Me
@@ -25,13 +31,13 @@ docType: "service"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   queueService
 
 
 
-</h1>
+</h3>
 
 
 
@@ -71,6 +77,7 @@ Increase the counter by 1.
 
 
 
+###Example
 
 
 
@@ -95,6 +102,7 @@ Decrease the counter by 1.
 
 
 
+###Example
 
 
 
@@ -119,13 +127,14 @@ Reset counter to 0.
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>registerObserverCallback(callback)</code>
+  <code>registerObserverCallback(callback, callback)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/queue_srvc.js#L57'>view</a>
@@ -134,6 +143,7 @@ Reset counter to 0.
 Register an observer
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -161,6 +171,22 @@ Register an observer
       </td>
     </tr>
     
+    <tr>
+      <td>
+        callback
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
   </tbody>
 </table>
 
@@ -171,6 +197,7 @@ Register an observer
 
 
 
+###Example
 
 
 

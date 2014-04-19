@@ -138,7 +138,6 @@ angular.module('spAngular')
          * Creates a new list item in SharePoint
          * @param {object} entity - Contains attribute to use in the creation of the new list item
          * @param {object} [options] - Pass additional options to the data service.
-         * @example {title: "Some Title", date: new Date()}
          * @returns {promise}
          *
          * @example
@@ -173,6 +172,9 @@ angular.module('spAngular')
          * @returns {Query}
          *
          * @example
+         * '''js
+         *
+         *
          * //Could be placed on the projectModel and creates the query but doesn't call it
          *
          *    projectModel.registerQuery({
@@ -184,8 +186,9 @@ angular.module('spAngular')
          *            '   </OrderBy>' +
          *            '</Query>'
          *    });
+         *'''
          *
-         * @example
+         * '''js
          * //To call the query or check for changes since the last call
          *
          *    projectModel.executeQuery('primary').then(function(entities) {
@@ -193,8 +196,9 @@ angular.module('spAngular')
          *        //These inherit from the ListItem prototype as well as the Project prototype on the model
          *        $scope.projects = entities;
          *    });
+         *'''
          *
-         * @example
+         * '''js
          * //Advanced functionality that would allow us to dynamically create queries for list items with a
          * //lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
          *
@@ -260,13 +264,11 @@ angular.module('spAngular')
          * <pre>
          * var primaryQuery = projectModel.getQuery();
          * </pre>
-         * :--or--:
-         * @example
+         * --or--
          * <pre>
          * var primaryQuery = projectModel.getQuery('primary');
          * </pre>
-         * :--or--:
-         * @example
+         * --or--
          * <pre>
          * var namedQuery = projectModel.getQuery('customQuery');
          * </pre>

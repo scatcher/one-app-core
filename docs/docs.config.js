@@ -3,13 +3,19 @@ var basePath = path.resolve(__dirname, '..');
 
 var _ = require('lodash');
 
-var basePackage = require('dgeni-packages/ngdoc');
+var basePackage = require('dgeni-packages/jsdoc');
+var supplementalPackage = require('dgeni-packages/ngdoc');
+//var examplesPackage = require('dgeni-packages/examples');
 var pkg = require('../package.json');
 
 module.exports = function (config) {
     config.set('currentVersion', pkg.version);
 
     config = basePackage(config);
+    config = supplementalPackage(config);
+
+    console.log(config);
+//    config = examplesPackage(config);
 
     config.set('logging.level', 'info');
 
@@ -50,6 +56,26 @@ module.exports = function (config) {
     config.append('processing.inlineTagDefinitions', [
         require('./inline-tag-defs/link')
     ]);
+
+//    // Configure the tags that will be parsed from the jsDoc.
+//    var tagDefs = require('dgeni-packages/ngdoc/tag-defs');
+//
+//    // Parse the following annotations.
+//    tagDefs.push({name: 'alias'});
+//    tagDefs.push({name: 'augments'});
+//    tagDefs.push({name: 'deprecated'});
+//    tagDefs.push({name: 'description'});
+//    tagDefs.push({name: 'example'});
+//    tagDefs.push({name: 'private'});
+//    tagDefs.push({name: 'see'});
+//    tagDefs.push({name: 'type'});
+//    tagDefs.push({name: 'view'});
+//
+//    // The name tag should not be required.
+//    var nameTag = _.find(tagDefs, {name: 'name'});
+//    nameTag.required = false;
+//
+//    config.set('processing.tagDefinitions', tagDefs);
 
     config.append('processing.tagDefinitions', require('./tag-defs'));
 

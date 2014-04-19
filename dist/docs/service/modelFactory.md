@@ -10,6 +10,11 @@ doc: "modelFactory"
 docType: "service"
 ---
 
+##[modelFactory]()
+
+The `modelFactory` provides a common base prototype for Model, Query, and List Item.
+
+
 <div class="improve-docs">
   <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L3'>
     View Me
@@ -25,13 +30,13 @@ docType: "service"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   modelFactory
 
 
 
-</h1>
+</h3>
 
 
 
@@ -55,7 +60,7 @@ The `modelFactory` provides a common base prototype for Model, Query, and List I
 
 
 <h4>
-  <code>registerChange(model)</code>
+  <code>registerChange(model, model)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L120'>view</a>
@@ -64,6 +69,7 @@ The `modelFactory` provides a common base prototype for Model, Query, and List I
 If online and sync is being used, notify all online users that a change has been made
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -92,6 +98,23 @@ If online and sync is being used, notify all online users that a change has been
       </td>
     </tr>
     
+    <tr>
+      <td>
+        model
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        <p>event</p>
+
+        
+      </td>
+    </tr>
+    
   </tbody>
 </table>
 
@@ -102,21 +125,23 @@ If online and sync is being used, notify all online users that a change has been
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>resolvePermissions(permissionsMask)</code>
+  <code>resolvePermissions(permissionsMask, permissionsMask)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L962'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L964'>view</a>
 
 
 Converts permMask into something usable to determine permission level for current user
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -127,6 +152,24 @@ Converts permMask into something usable to determine permission level for curren
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        permissionsMask
+        
+        
+      </td>
+      <td>
+        
+  <code>string</code>
+      </td>
+      <td>
+        <p>The WSS Rights Mask is an 8-byte, unsigned integer that specifies
+the rights that can be assigned to a user or site group. This bit mask can have zero or more flags set.</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -161,10 +204,9 @@ link: http://spservices.codeplex.com/discussions/208708
 
 
 
-<h2>Example</h2><code>
-    <p>&#39;0x0000000000000010&#39;</p>
-
-</code>
+###Example```javascript
+'0x0000000000000010'
+```
 
 
 

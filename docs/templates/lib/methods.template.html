@@ -12,6 +12,7 @@
 <$ method.description $>
 
 <@ if method.params @>
+###Params
 <$ paramTable(method.params) $>
 <@ endif @>
 
@@ -25,15 +26,12 @@
 <@ endif @>
 
 <@ block examples @>
+###Example
 <@- if method.examples @>
-<h2>Example</h2>
-
 <@- for example in method.examples -@>
-
-<code>
-    <$ example | marked $>
-</code>
-
+```javascript
+<$ example $>
+```
 <@- endfor -@>
 <@ endif -@>
 <@ endblock @>

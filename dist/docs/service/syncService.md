@@ -10,6 +10,13 @@ doc: "syncService"
 docType: "service"
 ---
 
+##[syncService]()
+
+Supports 3-way data binding if you decide to incorporate firebase (any change by any user
+to a list item is mirrored across users). The data isn't saved to firebase but the change
+event is so all subscribers are notified to request an update from SharePoint.
+
+
 <div class="improve-docs">
   <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/sync_srvc.js#L3'>
     View Me
@@ -25,13 +32,13 @@ docType: "service"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   syncService
 
 
 
-</h1>
+</h3>
 
 
 
@@ -57,7 +64,7 @@ event is so all subscribers are notified to request an update from SharePoint.
 
 
 <h4>
-  <code>synchronizeData(model, updateQuery)</code>
+  <code>synchronizeData(model, updateQuery, model, updateQuery)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/sync_srvc.js#L14'>view</a>
@@ -66,6 +73,7 @@ event is so all subscribers are notified to request an update from SharePoint.
 Constructor to handle notifying models when data is updated
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -76,6 +84,38 @@ Constructor to handle notifying models when data is updated
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        model
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        updateQuery
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -122,6 +162,7 @@ Constructor to handle notifying models when data is updated
 
 
 
+###Example
 
 
 

@@ -10,6 +10,11 @@ doc: "utilityService"
 docType: "service"
 ---
 
+##[utilityService]()
+
+Provides shared utility functionality across the application.
+
+
 <div class="improve-docs">
   <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L3'>
     View Me
@@ -25,13 +30,13 @@ docType: "service"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   utilityService
 
 
 
-</h1>
+</h3>
 
 
 
@@ -55,7 +60,7 @@ Provides shared utility functionality across the application.
 
 
 <h4>
-  <code>xmlToJson(rows, options.mapping, options.includeAllAttrs, options.removeOws)</code>
+  <code>xmlToJson(rows, options.mapping, options.includeAllAttrs, options.removeOws, rows, options.mapping, options.includeAllAttrs, options.removeOws)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L20'>view</a>
@@ -65,6 +70,7 @@ This function converts an XML node set to JSON
 Modified version of SPServices "SPXmlToJson" function
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -75,6 +81,74 @@ Modified version of SPServices "SPXmlToJson" function
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        rows
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        <p>[&quot;z:rows&quot;]</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options.mapping
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        <p>[columnName: mappedName: &quot;mappedName&quot;, objectType: &quot;objectType&quot;]</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options.includeAllAttrs
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        <p>[If true, return all attributes, regardless whether they are in the mapping]</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options.removeOws
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        <p>[Specifically for GetListItems, if true, the leading ows_ will be stripped off the field name]</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -157,13 +231,14 @@ Modified version of SPServices "SPXmlToJson" function
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>attrToJson(value, objectType)</code>
+  <code>attrToJson(value, objectType, value, objectType)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L73'>view</a>
@@ -172,6 +247,7 @@ Modified version of SPServices "SPXmlToJson" function
 Converts a SharePoint string representation of a field into the correctly formatted JS version
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -182,6 +258,38 @@ Converts a SharePoint string representation of a field into the correctly format
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        value
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        objectType
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -228,6 +336,7 @@ Converts a SharePoint string representation of a field into the correctly format
 
 
 
+###Example
 
 
 
@@ -250,13 +359,14 @@ We don't need the time portion of comparison so an int makes this easier to eval
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>dateWithinRange(startDate, endDate, dateToCheck)</code>
+  <code>dateWithinRange(startDate, endDate, dateToCheck, startDate, endDate, dateToCheck)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L298'>view</a>
@@ -266,6 +376,7 @@ Converts dates into yyyymmdd formatted ints and evaluates to determine if the da
 falls within the date range provided
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -276,6 +387,55 @@ falls within the date range provided
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        startDate
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        endDate
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        dateToCheck
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        <p>defaults to the current date</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -339,6 +499,7 @@ falls within the date range provided
 
 
 
+###Example
 
 
 

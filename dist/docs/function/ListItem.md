@@ -10,13 +10,18 @@ doc: "ListItem"
 docType: "function"
 ---
 
+##[ListItem]()
+
+Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
+
+
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L558'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L560'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L558'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L560'>
     Edit Me
   </a>
 </div>
@@ -25,13 +30,13 @@ docType: "function"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   ListItem
 
 
 
-</h1>
+</h3>
 
 
 
@@ -58,7 +63,7 @@ Constructor for creating a list item which inherits CRUD functionality that can 
   <code>getDataService()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L568'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L570'>view</a>
 
 
 Allows us to reference when out of scope
@@ -73,21 +78,23 @@ Allows us to reference when out of scope
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>saveChanges(options)</code>
+  <code>saveChanges(options, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L579'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L581'>view</a>
 
 
 Updates record directly from the object
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -98,6 +105,23 @@ Updates record directly from the object
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        <p>optionally pass params to the dataService</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -129,22 +153,24 @@ Updates record directly from the object
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>saveFields(fieldArray)</code>
+  <code>saveFields(fieldArray, fieldArray)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L601'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L603'>view</a>
 
 
 Saves a named subset of fields back to SharePoint
 Alternative to saving all fields
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -155,6 +181,23 @@ Alternative to saving all fields
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        fieldArray
+        
+        
+      </td>
+      <td>
+        
+  <code>array</code>
+      </td>
+      <td>
+        <p>array of internal field names that should be saved to SharePoint</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -186,21 +229,23 @@ Alternative to saving all fields
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>deleteItem(options)</code>
+  <code>deleteItem(options, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L635'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L637'>view</a>
 
 
 Deletes record directly from the object and removes record from user cache
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -211,6 +256,23 @@ Deletes record directly from the object and removes record from user cache
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        <p>optionally pass params to the dataService</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -242,21 +304,23 @@ Deletes record directly from the object and removes record from user cache
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>validateEntity(options, options.toast)</code>
+  <code>validateEntity(options, options.toast, options, options.toast)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L657'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L659'>view</a>
 
 
 Helper function that passes the current item to Model.validateEntity
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -267,6 +331,38 @@ Helper function that passes the current item to Model.validateEntity
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options.toast
+        
+        
+      </td>
+      <td>
+        
+  <code>boolean</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -313,6 +409,7 @@ Helper function that passes the current item to Model.validateEntity
 
 
 
+###Example
 
 
 
@@ -322,7 +419,7 @@ Helper function that passes the current item to Model.validateEntity
   <code>getAttachmentCollection()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L673'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L675'>view</a>
 
 
 Requests all attachments for the object
@@ -337,21 +434,23 @@ Requests all attachments for the object
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>deleteAttachment(url)</code>
+  <code>deleteAttachment(url, url)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L690'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L692'>view</a>
 
 
 Delete an attachment using the attachment url
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -362,6 +461,22 @@ Delete an attachment using the attachment url
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        url
+        
+        
+      </td>
+      <td>
+        
+  <code>string</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -392,6 +507,7 @@ Delete an attachment using the attachment url
 
 
 
+###Example
 
 
 
@@ -401,7 +517,7 @@ Delete an attachment using the attachment url
   <code>resolvePermissions()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L707'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L709'>view</a>
 
 
 
@@ -416,21 +532,23 @@ Delete an attachment using the attachment url
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>getFieldVersionHistory(fieldNames)</code>
+  <code>getFieldVersionHistory(fieldNames, fieldNames)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L719'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L721'>view</a>
 
 
 Returns the version history for a specific field
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -441,6 +559,23 @@ Returns the version history for a specific field
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        fieldNames
+        
+        
+      </td>
+      <td>
+        
+  <code>string[]</code>
+      </td>
+      <td>
+        <p>the js mapped name of the fields (ex: [title])</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -472,6 +607,7 @@ Returns the version history for a specific field
 
 
 
+###Example
 
 
 

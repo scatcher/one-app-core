@@ -10,6 +10,11 @@ doc: "fieldService"
 docType: "service"
 ---
 
+##[fieldService]()
+
+Handles the mapping of the various types of fields used within a SharePoint list
+
+
 <div class="improve-docs">
   <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L3'>
     View Me
@@ -25,13 +30,13 @@ docType: "service"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   fieldService
 
 
 
-</h1>
+</h3>
 
 
 
@@ -55,7 +60,7 @@ Handles the mapping of the various types of fields used within a SharePoint list
 
 
 <h4>
-  <code>resolveValueForEffectivePermMask(perMask)</code>
+  <code>resolveValueForEffectivePermMask(perMask, perMask)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L43'>view</a>
@@ -65,6 +70,7 @@ Takes the name of a permission mask and returns a permission value which can the
 to generate a permission object using modelService.resolvePermissions(outputfromthis)
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -75,6 +81,22 @@ to generate a permission object using modelService.resolvePermissions(outputfrom
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        perMask
+        
+        
+      </td>
+      <td>
+        
+  <code>string</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -105,13 +127,14 @@ to generate a permission object using modelService.resolvePermissions(outputfrom
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>mockPermMask(options, options.permissionLevel)</code>
+  <code>mockPermMask(options, options.permissionLevel, options, options.permissionLevel)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L78'>view</a>
@@ -120,6 +143,7 @@ to generate a permission object using modelService.resolvePermissions(outputfrom
 Defaults to a full mask but allows simulation of each of main permission levels
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -130,6 +154,38 @@ Defaults to a full mask but allows simulation of each of main permission levels
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options.permissionLevel
+        
+        
+      </td>
+      <td>
+        
+  <code>string</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -176,13 +232,14 @@ Defaults to a full mask but allows simulation of each of main permission levels
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>Field(obj)</code>
+  <code>Field(obj, obj)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L125'>view</a>
@@ -191,6 +248,7 @@ Defaults to a full mask but allows simulation of each of main permission levels
 Decorates field with optional defaults
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -201,6 +259,22 @@ Decorates field with optional defaults
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        obj
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -231,13 +305,14 @@ Decorates field with optional defaults
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>getDefaultValueForType(fieldType)</code>
+  <code>getDefaultValueForType(fieldType, fieldType)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L191'>view</a>
@@ -246,6 +321,7 @@ Decorates field with optional defaults
 Returns the empty value expected for a field type
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -256,6 +332,22 @@ Returns the empty value expected for a field type
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        fieldType
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -286,13 +378,14 @@ Returns the empty value expected for a field type
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>getMockData(fieldType, options, options.staticValue)</code>
+  <code>getMockData(fieldType, options, options.staticValue, fieldType, options, options.staticValue)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L207'>view</a>
@@ -302,6 +395,7 @@ Can return mock data appropriate for the field type, by default it dynamically g
 the staticValue param will instead return a hard coded type specific value
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -312,6 +406,54 @@ the staticValue param will instead return a hard coded type specific value
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        fieldType
+        
+        
+      </td>
+      <td>
+        
+  <code>string</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options.staticValue
+        
+        
+      </td>
+      <td>
+        
+  <code>boolean</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -374,6 +516,7 @@ the staticValue param will instead return a hard coded type specific value
 
 
 
+###Example
 
 
 
@@ -395,13 +538,14 @@ Read only fields that should be included in all lists
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>extendFieldDefinitions(list, list.customFields, list.fields, list.viewFields)</code>
+  <code>extendFieldDefinitions(list, list.customFields, list.fields, list.viewFields, list, list.customFields, list.fields, list.viewFields)</code>
 
 </h4>
 <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L245'>view</a>
@@ -412,6 +556,7 @@ SharePoint fields with those defined in the list definition on the model
 2. Creates the list.viewFields XML string that defines the fields to be requested on a query
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -487,6 +632,70 @@ SharePoint fields with those defined in the list definition on the model
       </td>
     </tr>
     
+    <tr>
+      <td>
+        list
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        list.customFields
+        
+        
+      </td>
+      <td>
+        
+  <code>array</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        list.fields
+        
+        
+      </td>
+      <td>
+        
+  <code>array</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        list.viewFields
+        
+        
+      </td>
+      <td>
+        
+  <code>string</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
   </tbody>
 </table>
 
@@ -497,6 +706,7 @@ SharePoint fields with those defined in the list definition on the model
 
 
 
+###Example
 
 
 

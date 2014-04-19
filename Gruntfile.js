@@ -295,20 +295,10 @@ module.exports = function (grunt) {
         var dgeni = require('dgeni');
         var done = this.async();
 
-//        dgeni('docs/docs.config.js')
         dgeni('docs/docs.config.js')
             .generateDocs()
             .then(done);
     });
-
-//    grunt.registerTask('default', ['dgeni']);
-
-//    grunt.registerTask('docs', 'create docs', function(){
-//        var gruntProc = shelljs.exec('"node_modules/.bin/gulp" --gulpfile gulpfile.js');
-//        if (gruntProc.code !== 0) {
-//            throw new Error('doc generation failed');
-//        }
-//    });
 
 
     grunt.registerTask('doc', [

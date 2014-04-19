@@ -10,13 +10,18 @@ doc: "Query"
 docType: "function"
 ---
 
+##[Query]()
+
+Decorates query optional attributes
+
+
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L824'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L826'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L824'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L826'>
     Edit Me
   </a>
 </div>
@@ -25,13 +30,13 @@ docType: "function"
 
 
 
-<h1 class="api-title">
+<h3 class="api-title">
 
   Query
 
 
 
-</h1>
+</h3>
 
 
 
@@ -50,7 +55,7 @@ Decorates query optional attributes
 
   <h2 id="usage">Usage</h2>
     
-      <code>Query(queryOptions, model)</code>
+      <code>Query(queryOptions, model, queryOptions, model)</code>
 
     
 
@@ -97,6 +102,38 @@ Decorates query optional attributes
       </td>
     </tr>
     
+    <tr>
+      <td>
+        queryOptions
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        model
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
   </tbody>
 </table>
 
@@ -110,16 +147,17 @@ Decorates query optional attributes
 
 
 <h4>
-  <code>execute(options)</code>
+  <code>execute(options, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L889'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L891'>view</a>
 
 
 Query SharePoint, pull down all initial records on first call
 Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken")
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -130,6 +168,23 @@ Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinc
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  
+      </td>
+      <td>
+        <p>Any options that should be passed to dataService.executeQuery</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -161,21 +216,23 @@ Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinc
 
 
 
+###Example
 
 
 
 
 
 <h4>
-  <code>searchLocalCache(value, options)</code>
+  <code>searchLocalCache(value, options, value, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L942'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L944'>view</a>
 
 
 Simple wrapper that by default sets the search location to the local query cache
 
 
+###Params
 
 <table class="table" style="margin:0;">
   <thead>
@@ -186,6 +243,39 @@ Simple wrapper that by default sets the search location to the local query cache
     </tr>
   </thead>
   <tbody>
+    
+    <tr>
+      <td>
+        value
+        
+        
+      </td>
+      <td>
+        
+  <code>*</code>
+      </td>
+      <td>
+        
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        options
+        
+        
+      </td>
+      <td>
+        
+  <code>object</code>
+      </td>
+      <td>
+        <p>Options to pass to Model.prototype.searchLocalCache</p>
+
+        
+      </td>
+    </tr>
     
     <tr>
       <td>
@@ -233,6 +323,7 @@ Simple wrapper that by default sets the search location to the local query cache
 
 
 
+###Example
 
 
 

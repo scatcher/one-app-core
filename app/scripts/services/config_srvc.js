@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+* @ngdoc service
+* @name configService
+* @description
+* Basic config for the application (unique for each environment)
+*
+*/
 angular.module('spAngular')
     .service('configService', function (toastrConfig) {
 

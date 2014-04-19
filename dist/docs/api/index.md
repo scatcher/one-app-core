@@ -9,11 +9,33 @@ header_sub_title: Extend Ionic even further with the power of AngularJS
 searchable: false
 ---
 
-# AngularJS Extensions
+# sp-angular
 
-Ionic is both a CSS framework and a Javascript UI library. Many components need Javascript in order to produce magic, though often components
-can easily be used without coding through framework extensions such as our AngularIonic extensions.
+{# Be aware that we need these extra new lines here or marked will not realise that the <div>
+    is HTML and wrap each line in a <p> - thus breaking the HTML #}
 
-Ionic follows the View Controller pattern popularized in such frameworks as Cocoa Touch. In the View Controller pattern, we treat different sections of the interface as child Views or even child View Controllers that contain other views. View Controllers then "power" the Views inside of them to provide interaction and UI functionality. A great example is the Tab Bar View Controller which processes taps on a Tab Bar to switch between a set of viewable panes.
 
-Explore our API docs for detailed information on the View Controllers and Javascript utilities available in Ionic.
+    <div>
+        <a ng-href="http://plnkr.co/edit/ngdoc:{$ doc.example.id $}@{{docsVersion}}?p=preview" class="btn pull-right" target="_blank">
+            <i class="glyphicon glyphicon-edit">&nbsp;</i>
+            Edit in Plunker</a>
+        <div class="runnable-example"
+             path="{$ doc.example.outputFolder $}"
+        {%- for attrName, attrValue in doc.example.attributes %}
+        {$ attrName $}="{$ attrValue $}"{% endfor %}>
+
+        {% for fileName, file in doc.example.files %}
+        <div class="runnable-example-file" {% for attrName, attrValue in file.attributes %}
+        {$ attrName $}="{$ attrValue $}"{% endfor %}>
+        {% code -%}
+        {$ file.fileContents $}
+        {%- endcode %}
+    </div>
+    {% endfor %}
+
+    <iframe class="runnable-example-frame" src="{$ doc.example.outputFolder $}/index.html" name="{$ doc.example.id $}"></iframe>
+</div>
+</div>
+
+{# Be aware that we need these extra new lines here or marked will not realise that the <div>
+    above is HTML and wrap each line in a <p> - thus breaking the HTML #}

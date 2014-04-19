@@ -6,6 +6,11 @@ doc: "<$ doc.name $>"
 docType: "<$ doc.docType $>"
 ---
 
+##[<$ doc.name $>](<$ doc.sourceLink $>)
+<@ if doc.alias @>#### Use as: <$ doc.alias $><@ endif @>
+<$ doc.description $><@ if doc.deprecated @>**DEPRECATED** <$ doc.deprecated $><@ endif @>
+
+
 <div class="improve-docs">
   <a href='http://github.com/scatcher/sp-angular/blob/master/<$ doc.relativePath $>#L<$ doc.startingLine $>'>
     View Me
@@ -21,7 +26,7 @@ docType: "<$ doc.docType $>"
 <@ block content @>
 
 <@ block header @>
-<h1 class="api-title">
+<h3 class="api-title">
 <@ if doc.docType == "directive" @>
   <$ doc.name | dashCase $>
 <@ else @>
@@ -39,7 +44,7 @@ docType: "<$ doc.docType $>"
   Delegate: <$ doc.delegate $>
 </small>
 <@ endif @>
-</h1>
+</h3>
 
 <@ if doc.codepen @>
 {% include codepen.html id="<$ doc.codepen $>" %}
@@ -71,10 +76,17 @@ docType: "<$ doc.docType $>"
 
 <@ block examples @>
 <@- if doc.examples @>
-<h2 id="example">Example</h2>
+###Example
 <@- for example in doc.examples -@>
-  <$ example | marked $>
+```javascript
+<$ example $>
+```
 <@- endfor -@>
+
+
+<!--<@- for example in doc.examples -@>-->
+  <!--<$ example | marked $>-->
+<!--<@- endfor -@>-->
 <@ endif -@>
 <@ endblock @>
 
