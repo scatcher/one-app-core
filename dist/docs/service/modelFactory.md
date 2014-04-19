@@ -111,7 +111,7 @@ If online and sync is being used, notify all online users that a change has been
   <code>resolvePermissions(permissionsMask)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L958'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L962'>view</a>
 
 
 Converts permMask into something usable to determine permission level for current user
@@ -161,10 +161,8 @@ link: http://spservices.codeplex.com/discussions/208708
 
 
 
-<h2>Example</h2><code>
-    <p>&#39;0x0000000000000010&#39;</p>
+<h2>Example</h2><p>&#39;0x0000000000000010&#39;</p>
 
-</code>
 
 
 

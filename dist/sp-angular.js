@@ -1607,7 +1607,8 @@ angular.module('spAngular').factory('modelFactory', [
          * @example {title: "Some Title", date: new Date()}
          * @returns {promise}
          *
-         * @example Taken from a fictitious projectsModel.js
+         * @example
+         * //Taken from a fictitious projectsModel.js
          *    projectModel.addNewItem({
          *           title: 'A Project',
          *           customer: {lookupValue: 'My Customer', lookupId: 123},
@@ -1635,7 +1636,8 @@ angular.module('spAngular').factory('modelFactory', [
          * @param {string} [queryOptions.name=defaultQueryName]
          * @returns {Query}
          *
-         * @example Could be placed on the projectModel and creates the query but doesn't call it
+         * @example
+         * //Could be placed on the projectModel and creates the query but doesn't call it
          *
          *    projectModel.registerQuery({
          *        name: 'primary',
@@ -1647,7 +1649,8 @@ angular.module('spAngular').factory('modelFactory', [
          *            '</Query>'
          *    });
          *
-         * @example To call the query or check for changes since the last call
+         * @example
+         * //To call the query or check for changes since the last call
          *
          *    projectModel.executeQuery('primary').then(function(entities) {
          *        //We now have a reference to array of entities stored in the local cache
@@ -1655,8 +1658,9 @@ angular.module('spAngular').factory('modelFactory', [
          *        $scope.projects = entities;
          *    });
          *
-         * @example Advanced functionality that would allow us to dynamically create queries for list items with a
-         * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
+         * @example
+         * //Advanced functionality that would allow us to dynamically create queries for list items with a
+         * //lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
          *
          *    model.queryByProjectId(projectId) {
          *        // Unique query name
