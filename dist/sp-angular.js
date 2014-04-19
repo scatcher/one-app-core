@@ -1522,26 +1522,26 @@ angular.module('spAngular').factory('modelFactory', [
          * @constructor
          *
          * @example Taken from a fictitious projectsModel.js
-         <pre>
-         var model = new modelFactory.Model({
-                factory: Project,
-                list: {
-                    guid: '{PROJECT LIST GUID}',
-                    title: 'Projects',
-                    customFields: [
-                        { internalName: 'Title', objectType: 'Text', mappedName: 'title', readOnly: false },
-                        { internalName: 'Customer', objectType: 'Lookup', mappedName: 'customer', readOnly: false },
-                        { internalName: 'ProjectDescription', objectType: 'Text', mappedName: 'projectDescription', readOnly: false },
-                        { internalName: 'Status', objectType: 'Text', mappedName: 'status', readOnly: false },
-                        { internalName: 'TaskManager', objectType: 'User', mappedName: 'taskManager', readOnly: false },
-                        { internalName: 'ProjectGroup', objectType: 'Lookup', mappedName: 'group', readOnly: false },
-                        { internalName: 'CostEstimate', objectType: 'Currency', mappedName: 'costEstimate', readOnly: false },
-                        { internalName: 'Active', objectType: 'Boolean', mappedName: 'active', readOnly: false },
-                        { internalName: 'Attachments', objectType: 'Attachments', mappedName: 'attachments', readOnly: true}
-                    ]
-                }
-            });
-         </pre>
+         * <pre>
+         * var model = new modelFactory.Model({
+         *        factory: Project,
+         *        list: {
+         *            guid: '{PROJECT LIST GUID}',
+         *            title: 'Projects',
+         *            customFields: [
+         *                { internalName: 'Title', objectType: 'Text', mappedName: 'title', readOnly: false },
+         *                { internalName: 'Customer', objectType: 'Lookup', mappedName: 'customer', readOnly: false },
+         *                { internalName: 'ProjectDescription', objectType: 'Text', mappedName: 'projectDescription', readOnly: false },
+         *                { internalName: 'Status', objectType: 'Text', mappedName: 'status', readOnly: false },
+         *                { internalName: 'TaskManager', objectType: 'User', mappedName: 'taskManager', readOnly: false },
+         *                { internalName: 'ProjectGroup', objectType: 'Lookup', mappedName: 'group', readOnly: false },
+         *                { internalName: 'CostEstimate', objectType: 'Currency', mappedName: 'costEstimate', readOnly: false },
+         *                { internalName: 'Active', objectType: 'Boolean', mappedName: 'active', readOnly: false },
+         *                { internalName: 'Attachments', objectType: 'Attachments', mappedName: 'attachments', readOnly: true}
+         *            ]
+         *        }
+         *    });
+         * </pre>
          */
     function Model(options) {
       var model = this;
@@ -1572,12 +1572,12 @@ angular.module('spAngular').factory('modelFactory', [
          * Uses new deferred object instead of resolving self.ready
          * @returns {promise}
          * @example Taken from a fictitious projectsModel.js
-         <pre>
-         projectModel.getAllListItems().then(function(entities) {
-             //Do something with all of the returned entities
-             $scope.projects = entities;
-         };
-         </pre>
+         * <pre>
+         * projectModel.getAllListItems().then(function(entities) {
+         *     //Do something with all of the returned entities
+         *     $scope.projects = entities;
+         * };
+         * </pre>
          */
     Model.prototype.getAllListItems = function () {
       var deferred = $q.defer();
@@ -1610,15 +1610,15 @@ angular.module('spAngular').factory('modelFactory', [
          * @returns {promise}
          *
          * @example Taken from a fictitious projectsModel.js
-         <pre>
-         projectModel.addNewItem({
-                title: 'A Project',
-                customer: {lookupValue: 'My Customer', lookupId: 123},
-                description: 'This is the project description'
-             }).then(function(newEntityFromServer) {
-                 //The local query cache is automatically updated but any other dependent logic can go here
-             };
-         </pre>
+         * <pre>
+         * projectModel.addNewItem({
+         *        title: 'A Project',
+         *        customer: {lookupValue: 'My Customer', lookupId: 123},
+         *        description: 'This is the project description'
+         *     }).then(function(newEntityFromServer) {
+         *         //The local query cache is automatically updated but any other dependent logic can go here
+         *     };
+         * </pre>
          */
     Model.prototype.addNewItem = function (entity, options) {
       var model = this;
@@ -1640,63 +1640,62 @@ angular.module('spAngular').factory('modelFactory', [
          * @returns {Query}
          *
          * @example Could be placed on the projectModel and creates the query but doesn't call it
-         <pre>
-         projectModel.registerQuery({
-                name: 'primary',
-                query: '' +
-                    '<Query>' +
-                    '   <OrderBy>' +
-                    '       <FieldRef Name="Title" Ascending="TRUE"/>' +
-                    '   </OrderBy>' +
-                    '</Query>'
-            });
+         *<pre>
+         *  projectModel.registerQuery({
+         *       name: 'primary',
+         *       query: '' +
+         *           '\<Query\>' +
+         *           '   \<OrderBy>\' +
+         *           '       \<FieldRef Name="Title" Ascending="TRUE"/\>' +
+         *           '   \</OrderBy\>' +
+         *           '\</Query\>'
+         *   });
          </pre>
          * @example To call the query or check for changes since the last call
-         <pre>
-         projectModel.executeQuery('primary').then(function(entities) {
-             //We now have a reference to array of entities stored in the local cache
-             //These inherit from the ListItem prototype as well as the Project prototype on the model
-             $scope.projects = entities;
-         });
-         </pre>
+         * <pre>
+         * projectModel.executeQuery('primary').then(function(entities) {
+         *     //We now have a reference to array of entities stored in the local cache
+         *     //These inherit from the ListItem prototype as well as the Project prototype on the model
+         *     $scope.projects = entities;
+         * });
+         * </pre>
          *
          * @example Advanced functionality that would allow us to dynamically create queries for list items with a
          * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
+         * <pre>
+         * model.queryByProjectId(projectId) {
+         *     // Unique query name
+         *     var queryKey = 'pid' + projectId;
          *
-         <pre>
-            model.queryByProjectId(projectId) {
-                // Unique query name
-                var queryKey = 'pid' + projectId;
-
-                // Register project query if it doesn't exist
-                if (!_.isObject(model.queries[queryKey])) {
-                    model.registerQuery({
-                        name: queryKey,
-                        query: '' +
-                            '<Query>' +
-                            '   <OrderBy>' +
-                            '       <FieldRef Name="ID" Ascending="TRUE"/>' +
-                            '   </OrderBy>' +
-                            '   <Where>' +
-                            '       <And>' +
-                        // Prevents any records from being returned if user doesn't have permissions on project
-                            '           <IsNotNull>' +
-                            '               <FieldRef Name="Project"/>' +
-                            '           </IsNotNull>' +
-                        // Return all records for the project matching param projectId
-                            '           <Eq>' +
-                            '               <FieldRef Name="Project" LookupId="TRUE"/>' +
-                            '               <Value Type="Lookup">' + projectId + '</Value>' +
-                            '           </Eq>' +
-                            '       </And>' +
-                            '   </Where>' +
-                            '</Query>'
-                    });
-                }
-                //Still using execute query but now we have a custom query
-                return model.executeQuery(queryKey);
-            };
-         </pre>
+         *     // Register project query if it doesn't exist
+         *     if (!_.isObject(model.queries[queryKey])) {
+         *         model.registerQuery({
+         *             name: queryKey,
+         *             query: '' +
+         *                 '<Query>' +
+         *                 '   <OrderBy>' +
+         *                 '       <FieldRef Name="ID" Ascending="TRUE"/>' +
+         *                 '   </OrderBy>' +
+         *                 '   <Where>' +
+         *                 '       <And>' +
+         *             // Prevents any records from being returned if user doesn't have permissions on project
+         *                 '           <IsNotNull>' +
+         *                 '               <FieldRef Name="Project"/>' +
+         *                 '           </IsNotNull>' +
+         *             // Return all records for the project matching param projectId
+         *                 '           <Eq>' +
+         *                 '               <FieldRef Name="Project" LookupId="TRUE"/>' +
+         *                 '               <Value Type="Lookup">' + projectId + '</Value>' +
+         *                 '           </Eq>' +
+         *                 '       </And>' +
+         *                 '   </Where>' +
+         *                 '</Query>'
+         *         });
+         *     }
+         *     //Still using execute query but now we have a custom query
+         *     return model.executeQuery(queryKey);
+         * };
+         * </pre>
          *
          */
     Model.prototype.registerQuery = function (queryOptions) {
@@ -1718,15 +1717,15 @@ angular.module('spAngular').factory('modelFactory', [
          * @example
          * <pre>
          * var primaryQuery = projectModel.getQuery();
-         *</pre>
-         * --or--
-         *<pre>
+         * </pre>
+         * :--or--:
+         * <pre>
          * var primaryQuery = projectModel.getQuery('primary');
-         *</pre>
-         * --or--
-         *<pre>
+         * </pre>
+         * :--or--:
+         * <pre>
          * var namedQuery = projectModel.getQuery('customQuery');
-         *</pre>
+         * </pre>
          */
     Model.prototype.getQuery = function (queryName) {
       var model = this, query;
