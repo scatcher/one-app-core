@@ -45,8 +45,8 @@ angular.module('spAngular')
          * application.  Identifies field types and formats accordingly.  Also denotes if a field is read only.
          * @constructor
          *
-         * @example Taken from a fictitious projectsModel.js
-         * <pre>
+         * @example
+         * //Taken from a fictitious projectsModel.js
          * var model = new modelFactory.Model({
          *        factory: Project,
          *        list: {
@@ -65,7 +65,6 @@ angular.module('spAngular')
          *            ]
          *        }
          *    });
-         * </pre>
          */
         function Model(options) {
             var model = this;
@@ -172,9 +171,6 @@ angular.module('spAngular')
          * @returns {Query}
          *
          * @example
-         * '''js
-         *
-         *
          * //Could be placed on the projectModel and creates the query but doesn't call it
          *
          *    projectModel.registerQuery({
@@ -186,9 +182,7 @@ angular.module('spAngular')
          *            '   </OrderBy>' +
          *            '</Query>'
          *    });
-         *'''
-         *
-         * '''js
+         * @example
          * //To call the query or check for changes since the last call
          *
          *    projectModel.executeQuery('primary').then(function(entities) {
@@ -196,9 +190,7 @@ angular.module('spAngular')
          *        //These inherit from the ListItem prototype as well as the Project prototype on the model
          *        $scope.projects = entities;
          *    });
-         *'''
-         *
-         * '''js
+         * @example
          * //Advanced functionality that would allow us to dynamically create queries for list items with a
          * //lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
          *
@@ -265,10 +257,12 @@ angular.module('spAngular')
          * var primaryQuery = projectModel.getQuery();
          * </pre>
          * --or--
+         * @example
          * <pre>
          * var primaryQuery = projectModel.getQuery('primary');
          * </pre>
          * --or--
+         * @example
          * <pre>
          * var namedQuery = projectModel.getQuery('customQuery');
          * </pre>
@@ -302,12 +296,14 @@ angular.module('spAngular')
          * @example
          * var primaryQueryCache = projectModel.getCache();
          *
-         * --or--
          *
+         * --or--
+         * @example
          * var primaryQueryCache = projectModel.getCache('primary');
          *
-         * --or--
          *
+         * --or--
+         * @example
          * var namedQueryCache = projectModel.getCache('customQuery');
          *
          */
@@ -332,11 +328,11 @@ angular.module('spAngular')
          * @returns {function}
          *
          * @example To call the query or check for changes since the last call.
-         projectModel.executeQuery('MyCustomQuery').then(function(entities) {
-             //We now have a reference to array of entities stored in the local cache
-             //These inherit from the ListItem prototype as well as the Project prototype on the model
-             $scope.subsetOfProjects = entities;
-         })
+         * projectModel.executeQuery('MyCustomQuery').then(function(entities) {
+         *     //We now have a reference to array of entities stored in the local cache
+         *     //These inherit from the ListItem prototype as well as the Project prototype on the model
+         *     $scope.subsetOfProjects = entities;
+         * })
          *
          */
         Model.prototype.executeQuery = function (queryName, options) {

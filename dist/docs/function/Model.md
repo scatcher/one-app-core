@@ -308,7 +308,7 @@ application.  Identifies field types and formats accordingly.  Also denotes if a
   <code>getAllListItems()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L96'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L95'>view</a>
 
 
 Inherited from Model constructor
@@ -341,7 +341,7 @@ Taken from a fictitious projectsModel.js
   <code>addNewItem(entity, options, entity, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L134'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L133'>view</a>
 
 
 Creates a new list item in SharePoint
@@ -459,7 +459,7 @@ Creates a new list item in SharePoint
   <code>registerQuery(queryOptions, queryOptions.name, queryOptions, queryOptions.name)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L165'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L164'>view</a>
 
 
 Constructor that allows us create a static query with a reference to the parent model
@@ -555,9 +555,6 @@ Constructor that allows us create a static query with a reference to the parent 
 
 
 ###Example```javascript
-'''js
-
-
 //Could be placed on the projectModel and creates the query but doesn't call it
 
    projectModel.registerQuery({
@@ -569,9 +566,7 @@ Constructor that allows us create a static query with a reference to the parent 
            '   </OrderBy>' +
            '</Query>'
    });
-'''
-
-'''js
+``````javascript
 //To call the query or check for changes since the last call
 
    projectModel.executeQuery('primary').then(function(entities) {
@@ -579,9 +574,7 @@ Constructor that allows us create a static query with a reference to the parent 
        //These inherit from the ListItem prototype as well as the Project prototype on the model
        $scope.projects = entities;
    });
-'''
-
-'''js
+``````javascript
 //Advanced functionality that would allow us to dynamically create queries for list items with a
 //lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
 
@@ -627,7 +620,7 @@ Constructor that allows us create a static query with a reference to the parent 
   <code>getQuery(queryName, queryName)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L255'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L247'>view</a>
 
 
 Helper function that attempts to locate and return a reference to the requested or catchall query
@@ -697,10 +690,12 @@ Helper function that attempts to locate and return a reference to the requested 
 var primaryQuery = projectModel.getQuery();
 </pre>
 --or--
+``````javascript
 <pre>
 var primaryQuery = projectModel.getQuery('primary');
 </pre>
 --or--
+``````javascript
 <pre>
 var namedQuery = projectModel.getQuery('customQuery');
 </pre>
@@ -714,7 +709,7 @@ var namedQuery = projectModel.getQuery('customQuery');
   <code>getCache(queryName, queryName)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L291'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L285'>view</a>
 
 
 Helper function that return the local cache for a named query if provided, otherwise
@@ -782,12 +777,14 @@ has already been resolved and there's no need to check SharePoint for changes.
 ###Example```javascript
 var primaryQueryCache = projectModel.getCache();
 
---or--
 
+--or--
+``````javascript
 var primaryQueryCache = projectModel.getCache('primary');
 
---or--
 
+--or--
+``````javascript
 var namedQueryCache = projectModel.getCache('customQuery');
 ```
 
@@ -799,7 +796,7 @@ var namedQueryCache = projectModel.getCache('customQuery');
   <code>executeQuery(queryName, options, queryName, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L323'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L319'>view</a>
 
 
 The primary method for retrieving data from a query registered on a model.  It returns a promise
@@ -901,11 +898,11 @@ which resolves to the local cache after post processing entities with constructo
 
 ###Example```javascript
 To call the query or check for changes since the last call.
-         projectModel.executeQuery('MyCustomQuery').then(function(entities) {
-             //We now have a reference to array of entities stored in the local cache
-             //These inherit from the ListItem prototype as well as the Project prototype on the model
-             $scope.subsetOfProjects = entities;
-         })
+projectModel.executeQuery('MyCustomQuery').then(function(entities) {
+    //We now have a reference to array of entities stored in the local cache
+    //These inherit from the ListItem prototype as well as the Project prototype on the model
+    $scope.subsetOfProjects = entities;
+})
 ```
 
 
@@ -916,7 +913,7 @@ To call the query or check for changes since the last call.
   <code>isInitialised()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L350'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L346'>view</a>
 
 
 Methods which allows us to easily determine if we've successfully made any queries this session
@@ -941,7 +938,7 @@ Methods which allows us to easily determine if we've successfully made any queri
   <code>searchLocalCache(value, options, options.propertyPath, options.cacheName, options.localCache, options.rebuildIndex, value, options, options.propertyPath, options.cacheName, options.localCache, options.rebuildIndex)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L361'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L357'>view</a>
 
 
 Search functionality that allow for deeply searching an array of objects for the first
@@ -1184,7 +1181,7 @@ rebuildIndex flag is set.
   <code>createEmptyItem(overrides, overrides)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L427'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L423'>view</a>
 
 
 Creates an object using the editable fields from the model, all attributes are empty
@@ -1259,7 +1256,7 @@ Creates an object using the editable fields from the model, all attributes are e
   <code>generateMockData(options, options.quantity, options.permissionLevel, options.staticValue, options, options.quantity, options.permissionLevel, options.staticValue)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L450'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L446'>view</a>
 
 
 Generates n mock records for testing
@@ -1433,7 +1430,7 @@ cause static data to be used instead</p>
   <code>validateEntity(entity, options, options.toast, entity, options, options.toast)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L487'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L483'>view</a>
 
 
 Uses the custom fields defined in an model to ensure each field (required = true) is evaluated
@@ -1574,8 +1571,7 @@ based on field type
 
 
 ###Example```javascript
-Taken from a fictitious projectsModel.js
-<pre>
+//Taken from a fictitious projectsModel.js
 var model = new modelFactory.Model({
        factory: Project,
        list: {
@@ -1594,29 +1590,27 @@ var model = new modelFactory.Model({
            ]
        }
    });
-</pre>
 ```<!---->
-  <!--<p>Taken from a fictitious projectsModel.js</p>
-<pre>
+  <!--<p>//Taken from a fictitious projectsModel.js
 var model = new modelFactory.Model({
        factory: Project,
        list: {
-           guid: '{PROJECT LIST GUID}',
-           title: 'Projects',
+           guid: &#39;{PROJECT LIST GUID}&#39;,
+           title: &#39;Projects&#39;,
            customFields: [
-               { internalName: 'Title', objectType: 'Text', mappedName: 'title', readOnly: false },
-               { internalName: 'Customer', objectType: 'Lookup', mappedName: 'customer', readOnly: false },
-               { internalName: 'ProjectDescription', objectType: 'Text', mappedName: 'projectDescription', readOnly: false },
-               { internalName: 'Status', objectType: 'Text', mappedName: 'status', readOnly: false },
-               { internalName: 'TaskManager', objectType: 'User', mappedName: 'taskManager', readOnly: false },
-               { internalName: 'ProjectGroup', objectType: 'Lookup', mappedName: 'group', readOnly: false },
-               { internalName: 'CostEstimate', objectType: 'Currency', mappedName: 'costEstimate', readOnly: false },
-               { internalName: 'Active', objectType: 'Boolean', mappedName: 'active', readOnly: false },
-               { internalName: 'Attachments', objectType: 'Attachments', mappedName: 'attachments', readOnly: true}
+               { internalName: &#39;Title&#39;, objectType: &#39;Text&#39;, mappedName: &#39;title&#39;, readOnly: false },
+               { internalName: &#39;Customer&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;customer&#39;, readOnly: false },
+               { internalName: &#39;ProjectDescription&#39;, objectType: &#39;Text&#39;, mappedName: &#39;projectDescription&#39;, readOnly: false },
+               { internalName: &#39;Status&#39;, objectType: &#39;Text&#39;, mappedName: &#39;status&#39;, readOnly: false },
+               { internalName: &#39;TaskManager&#39;, objectType: &#39;User&#39;, mappedName: &#39;taskManager&#39;, readOnly: false },
+               { internalName: &#39;ProjectGroup&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;group&#39;, readOnly: false },
+               { internalName: &#39;CostEstimate&#39;, objectType: &#39;Currency&#39;, mappedName: &#39;costEstimate&#39;, readOnly: false },
+               { internalName: &#39;Active&#39;, objectType: &#39;Boolean&#39;, mappedName: &#39;active&#39;, readOnly: false },
+               { internalName: &#39;Attachments&#39;, objectType: &#39;Attachments&#39;, mappedName: &#39;attachments&#39;, readOnly: true}
            ]
        }
-   });
-</pre>-->
+   });</p>
+-->
 <!---->
 
 

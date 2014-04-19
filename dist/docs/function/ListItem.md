@@ -16,12 +16,12 @@ Constructor for creating a list item which inherits CRUD functionality that can 
 
 
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L560'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L556'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L560'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L556'>
     Edit Me
   </a>
 </div>
@@ -63,7 +63,7 @@ Constructor for creating a list item which inherits CRUD functionality that can 
   <code>getDataService()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L570'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L566'>view</a>
 
 
 Allows us to reference when out of scope
@@ -88,7 +88,7 @@ Allows us to reference when out of scope
   <code>saveChanges(options, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L581'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L577'>view</a>
 
 
 Updates record directly from the object
@@ -163,7 +163,7 @@ Updates record directly from the object
   <code>saveFields(fieldArray, fieldArray)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L603'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L599'>view</a>
 
 
 Saves a named subset of fields back to SharePoint
@@ -239,7 +239,7 @@ Alternative to saving all fields
   <code>deleteItem(options, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L637'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L633'>view</a>
 
 
 Deletes record directly from the object and removes record from user cache
@@ -314,7 +314,7 @@ Deletes record directly from the object and removes record from user cache
   <code>validateEntity(options, options.toast, options, options.toast)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L659'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L655'>view</a>
 
 
 Helper function that passes the current item to Model.validateEntity
@@ -419,7 +419,7 @@ Helper function that passes the current item to Model.validateEntity
   <code>getAttachmentCollection()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L675'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L671'>view</a>
 
 
 Requests all attachments for the object
@@ -444,7 +444,7 @@ Requests all attachments for the object
   <code>deleteAttachment(url, url)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L692'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L688'>view</a>
 
 
 Delete an attachment using the attachment url
@@ -517,7 +517,7 @@ Delete an attachment using the attachment url
   <code>resolvePermissions()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L709'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L705'>view</a>
 
 
 
@@ -542,7 +542,7 @@ Delete an attachment using the attachment url
   <code>getFieldVersionHistory(fieldNames, fieldNames)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L721'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L717'>view</a>
 
 
 Returns the version history for a specific field
