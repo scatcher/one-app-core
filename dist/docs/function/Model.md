@@ -11,12 +11,12 @@ docType: "function"
 ---
 
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L23'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L24'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L23'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L24'>
     Edit Me
   </a>
 </div>
@@ -904,6 +904,27 @@ based on field type
 
 
 
+
+<h2 id="example">Example</h2><p>Taken from a fictitious projectsModel.js</p>
+<pre><code>        var model = new modelFactory.Model({
+            factory: Project,
+            list: {
+                guid: &#39;{PROJECT LIST GUID}&#39;,
+                title: &#39;Projects&#39;,
+                customFields: [
+                    { internalName: &#39;Title&#39;, objectType: &#39;Text&#39;, mappedName: &#39;title&#39;, readOnly: false },
+                    { internalName: &#39;Customer&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;customer&#39;, readOnly: false },
+                    { internalName: &#39;ProjectDescription&#39;, objectType: &#39;Text&#39;, mappedName: &#39;projectDescription&#39;, readOnly: false },
+                    { internalName: &#39;Status&#39;, objectType: &#39;Text&#39;, mappedName: &#39;status&#39;, readOnly: false },
+                    { internalName: &#39;TaskManager&#39;, objectType: &#39;User&#39;, mappedName: &#39;taskManager&#39;, readOnly: false },
+                    { internalName: &#39;ProjectGroup&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;group&#39;, readOnly: false },
+                    { internalName: &#39;CostEstimate&#39;, objectType: &#39;Currency&#39;, mappedName: &#39;costEstimate&#39;, readOnly: false },
+                    { internalName: &#39;Active&#39;, objectType: &#39;Boolean&#39;, mappedName: &#39;active&#39;, readOnly: false },
+                    { internalName: &#39;Attachments&#39;, objectType: &#39;Attachments&#39;, mappedName: &#39;attachments&#39;, readOnly: true}
+                ]
+            }
+        });
+     &lt;/code&gt;</code></pre>
 
 
 

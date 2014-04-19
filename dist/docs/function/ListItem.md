@@ -11,12 +11,12 @@ docType: "function"
 ---
 
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L421'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L457'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L421'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L457'>
     Edit Me
   </a>
 </div>

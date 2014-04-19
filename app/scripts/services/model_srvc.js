@@ -5,8 +5,9 @@
  * @name modelFactory
  * @module Model
  * @description
- *
  * The `modelFactory` provides a common base prototype for Model, Query, and List Item.
+ *
+ * @function
  */
 angular.module('spAngular')
     .factory('modelFactory', function ($q, $timeout, configService, dataService, fieldService, toastr) {
@@ -43,6 +44,41 @@ angular.module('spAngular')
          * @param {object[]} options.list.customFields - Maps SharePoint fields with names we'll use within the
          * application.  Identifies field types and formats accordingly.  Also denotes if a field is read only.
          * @constructor
+         *
+         *  * @usage
+         *
+         * ```html
+         * <body ng-app="starter">
+         *   <!-- The nav bar that will be updated as we navigate -->
+         *   <ion-nav-bar class="bar-positive nav-title-slide-ios7">
+         *   </ion-nav-bar>
+         *
+         *   <!-- where the initial view template will be rendered -->
+         *   <ion-nav-view></ion-nav-view>
+         * </body>
+         * ```
+         * @example Taken from a fictitious projectsModel.js
+
+            var model = new modelFactory.Model({
+                factory: Project,
+                list: {
+                    guid: '{PROJECT LIST GUID}',
+                    title: 'Projects',
+                    customFields: [
+                        { internalName: 'Title', objectType: 'Text', mappedName: 'title', readOnly: false },
+                        { internalName: 'Customer', objectType: 'Lookup', mappedName: 'customer', readOnly: false },
+                        { internalName: 'ProjectDescription', objectType: 'Text', mappedName: 'projectDescription', readOnly: false },
+                        { internalName: 'Status', objectType: 'Text', mappedName: 'status', readOnly: false },
+                        { internalName: 'TaskManager', objectType: 'User', mappedName: 'taskManager', readOnly: false },
+                        { internalName: 'ProjectGroup', objectType: 'Lookup', mappedName: 'group', readOnly: false },
+                        { internalName: 'CostEstimate', objectType: 'Currency', mappedName: 'costEstimate', readOnly: false },
+                        { internalName: 'Active', objectType: 'Boolean', mappedName: 'active', readOnly: false },
+                        { internalName: 'Attachments', objectType: 'Attachments', mappedName: 'attachments', readOnly: true}
+                    ]
+                }
+            });
+         </code>
+         *
          */
         function Model(options) {
             var model = this;

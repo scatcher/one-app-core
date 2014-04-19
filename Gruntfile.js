@@ -24,7 +24,8 @@ module.exports = function (grunt) {
         config: {
             // configurable paths
             app: require('./bower.json').appPath || 'app',
-            dist: require('./bower.json').distPath || 'dist'
+            dist: require('./bower.json').distPath || 'dist',
+            services: 'app/scripts/services'
         },
 
         // Watches files for changes and runs tasks based on the changed files
@@ -115,18 +116,6 @@ module.exports = function (grunt) {
             }
         },
 
-//        ngdoc : {
-//            options: {
-//                html5Mode: false,
-//                title: 'spAngular Core Documentation',
-//                scripts: ['<%= config.app %>/scripts/services/*.js']
-//            },
-//            all: {
-//                src: ['<%= config.app %>/scripts/services/*.js'],
-//                title: 'Services'
-//            }
-//        },
-//
         // Empties folders to start fresh
         clean: {
             dist: {
@@ -141,102 +130,9 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            docs: 'docs/app/*',
             server: '.tmp'
         },
 
-        // Add vendor prefixed styles
-        autoprefixer: {
-            options: {
-                browsers: ['last 1 version']
-            },
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '.tmp/styles/',
-                        src: '{,*/}*.css',
-                        dest: '.tmp/styles/'
-                    }
-                ]
-            }
-        },
-
-        // Renames files for browser caching purposes
-        rev: {
-            dist: {
-                files: {
-                    src: [
-                        '<%= config.dist %>/scripts/{,*/}*.js',
-                        '<%= config.dist %>/styles/{,*/}*.css',
-                        '<%= config.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-                        '<%= config.dist %>/styles/fonts/*'
-                    ]
-                }
-            }
-        },
-
-        // Reads HTML for usemin blocks to enable smart builds that automatically
-        // concat, minify and revision files. Creates configurations in memory so
-        // additional tasks can operate on them
-//        useminPrepare: {
-//            html: '<%= config.app %>/index.html',
-//            options: {
-//                dest: '<%= config.dist %>'
-//            }
-//        },
-
-        useminPrepare: {
-            html: '<%= config.app %>/index.html',
-            options: {
-                dest: '<%= config.dist %>',
-                flow: {
-                    steps: {
-                        'js': ['concat'],
-                        'css': ['concat']
-                    },
-                    post: {}
-                }
-            }
-        },
-
-        // Performs rewrites based on rev and the useminPrepare configuration
-        usemin: {
-            html: [
-                '<%= config.dist %>/{,*/}*.html',
-                '<%= config.dist %>/scripts/**/*.html'
-            ],
-            css: ['<%= config.dist %>/styles/{,*/}*.css'],
-            options: {
-                assetsDirs: ['<%= config.dist %>']
-            }
-        },
-
-        // The following *-min tasks produce minified files in the dist folder
-        imagemin: {
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= config.app %>/images',
-                        src: '{,*/}*.{png,jpg,jpeg,gif}',
-                        dest: '<%= config.dist %>/images'
-                    }
-                ]
-            }
-        },
-        svgmin: {
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= config.app %>/images',
-                        src: '{,*/}*.svg',
-                        dest: '<%= config.dist %>/images'
-                    }
-                ]
-            }
-        },
         htmlmin: {
             dist: {
                 options: {
@@ -264,25 +160,28 @@ module.exports = function (grunt) {
             }
         },
 
+        concat: {
+            options: {
+                separator: ';'
+            },
+            dist: {
+                src: ['<%= config.services %>/*.js'],
+                dest: '<%= config.dist %>/sp-angular.js'
+            }
+        },
+
         // Allow the use of non-minsafe AngularJS files. Automatically makes it
         // minsafe compatible so Uglify does not destroy the ng references
         ngmin: {
             dist: {
                 files: [
                     {
-                        expand: true,
-                        cwd: '.tmp/concat/scripts',
-                        src: '*.js',
-                        dest: '.tmp/concat/scripts'
+//                        expand: true,
+//                        cwd: '.tmp/concat/scripts',
+                        src: '<%= config.dist %>/sp-angular.js',
+                        dest: '<%= config.dist %>/sp-angular.js'
                     }
                 ]
-            }
-        },
-
-        // Replace Google CDN references
-        cdnify: {
-            dist: {
-                html: ['<%= config.dist %>/*.html']
             }
         },
 
@@ -290,118 +189,52 @@ module.exports = function (grunt) {
         copy: {
             dist: {
                 files: [
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= config.app %>',
-                        dest: '<%= config.dist %>',
-                        src: [
-                            //HTML
-                            '*.html',
-                            'views/{,*/}*.html',
-                            'modules/**/*.html',
-                            'scripts/**/*.html',
-
-                            //PROJECT SPECIFIC RESOURCES
-                            '*.{ico,png,txt}',
-                            'images/{,*/}*.{png,jpg,gif}',
-
-                            //CK EDITOR
-                            'bower_components/ng-ckeditor/libs/ckeditor/*.{js,css}',
-                            'bower_components/ng-ckeditor/libs/ckeditor/plugins/**',
-                            'bower_components/ng-ckeditor/libs/ckeditor/skins/**',
-                            'bower_components/ng-ckeditor/libs/ckeditor/lang/en.js',
-
-                            //FONT AWESOME
-                            'bower_components/font-awesome/css/**',
-                            'bower_components/font-awesome/fonts/**',
-
-                            //ONE APP CORE
-                            '<%= config.app %>/modules/**/*.html',
-                            '<%= config.app %>/scripts/**/*.html'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        cwd: '.tmp/images',
-                        dest: '<%= config.dist %>/images',
-                        src: [
-                            'generated/*'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        dest: '<%= config.dist %>/styles/images',
-                        flatten: true,
-                        src: ['<%= config.app %>/bower_components/jquery-ui-bootstrap/css/custom-theme/images/*.png']
-                    }
-                ]
-            },
-            styles: {
-                expand: true,
-                cwd: '<%= config.app %>/styles',
-                dest: '.tmp/styles/',
-                src: '{,*/}*.css'
-            }
-        },
-
-        // Run some tasks in parallel to speed up the build process
-        concurrent: {
-            server: [
-                'copy:styles'
-            ],
-            test: [
-                'copy:styles'
-            ],
-            dist: [
-                'copy:styles',
-                'svgmin'
-            ]
-        },
-
-        // By default, your `index.html`'s <!-- Usemin block --> will take care of
-        // minification. These next options are pre-configured if you do not wish
-        // to use the Usemin blocks.
-        cssmin: {
-            dist: {
-                files: {
-                    '<%= config.dist %>/styles/main.css': [
-                        '.tmp/styles/{,*/}*.css',
-                        '<%= config.app %>/styles/{,*/}*.css'
-                    ]
-                }
-            }
-        },
-        uglify: {
-            dist: {
-                files: [
-                    {
-                        '<%= config.dist %>/scripts/vendor.js': [
-                            '<%= config.dist %>/scripts/vendor.js'
-                        ]
-                    },
 //                    {
-//                        '<%= config.dist %>/scripts/scripts.js': [
-//                            '<%= config.dist %>/scripts/scripts.js'
+//                        expand: true,
+//                        dot: true,
+//                        cwd: '<%= config.app %>',
+//                        dest: '<%= config.dist %>',
+//                        src: [
+//                            //HTML
+//                            '*.html',
+//                            'views/{,*/}*.html',
+//                            'modules/**/*.html',
+//                            'scripts/**/*.html',
+//
+//                            //PROJECT SPECIFIC RESOURCES
+//                            '*.{ico,png,txt}',
+//                            'images/{,*/}*.{png,jpg,gif}',
+//
+//                            //CK EDITOR
+//                            'bower_components/ng-ckeditor/libs/ckeditor/*.{js,css}',
+//                            'bower_components/ng-ckeditor/libs/ckeditor/plugins/**',
+//                            'bower_components/ng-ckeditor/libs/ckeditor/skins/**',
+//                            'bower_components/ng-ckeditor/libs/ckeditor/lang/en.js',
+//
+//                            //FONT AWESOME
+//                            'bower_components/font-awesome/css/**',
+//                            'bower_components/font-awesome/fonts/**',
+//
+//                            //ONE APP CORE
+//                            '<%= config.app %>/modules/**/*.html',
+//                            '<%= config.app %>/scripts/**/*.html'
 //                        ]
 //                    },
                     {
-                        '<%= config.dist %>/scripts/ie-shim.js': [
-                            '<%= config.dist %>/scripts/ie-shim.js'
+                        expand: true,
+//                        cwd: '<%= config.app %>',
+                        dest: '<%= config.dist %>',
+                        src: [
+                            '<%= config.dist %>*.js'
                         ]
                     }
                 ]
             }
         },
-//        concat: {
-//            dist: {}
-//        },
-
-        // Test settings
-        karma: {
-            unit: {
-                configFile: 'karma.conf.js',
-                singleRun: true
+        uglify: {
+            js: {
+                src: ['<%= config.dist %>/sp-angular.js'],
+                dest: '<%= config.dist %>/sp-angular.min.js'
             }
         }
     });
@@ -436,19 +269,26 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
-        'useminPrepare',
-        'concurrent:dist',
-        'autoprefixer',
         'concat',
         'ngmin',
-        'copy:dist',
-//        'cdnify',
-        'cssmin',
         'uglify',
-//        'rev',
-        'usemin',
-        'htmlmin'
+        'ngdoc'
     ]);
+//    grunt.registerTask('build', [
+//        'clean:dist',
+////        'useminPrepare',
+////        'concurrent:dist',
+////        'autoprefixer',
+//        'concat',
+//        'ngmin',
+////        'copy:dist',
+////        'cdnify',
+////        'cssmin',
+//        'uglify'
+////        'rev',
+////        'usemin',
+////        'htmlmin'
+//    ]);
 
     grunt.registerTask('ngdoc', 'Create ngdocs.', function() {
         var dgeni = require('dgeni');
