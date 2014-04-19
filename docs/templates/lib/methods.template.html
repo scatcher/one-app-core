@@ -26,8 +26,9 @@
 
 <@ block examples @>
 <@- if method.examples @>
-<h2 id="example">Example</h2>
+<h2>Example</h2>
 <@- for example in method.examples -@>
+
 <$ example | marked $>
 <@- endfor -@>
 <@ endif -@>

@@ -209,13 +209,12 @@ Uses new deferred object instead of resolving self.ready
 
 
 
-<h2 id="example">Example</h2><p>Taken from a fictitious projectsModel.js</p>
-<pre>
-projectModel.getAllListItems().then(function(entities) {
-    //Do something with all of the returned entities
-    $scope.projects = entities;
-};
-</pre>
+<h2>Example</h2><p>Taken from a fictitious projectsModel.js
+    projectModel.getAllListItems().then(function(entities) {
+        //Do something with all of the returned entities
+        $scope.projects = entities;
+    };</p>
+
 
 
 
@@ -225,7 +224,7 @@ projectModel.getAllListItems().then(function(entities) {
   <code>addNewItem(entity, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L136'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L134'>view</a>
 
 
 Creates a new list item in SharePoint
@@ -289,17 +288,16 @@ Creates a new list item in SharePoint
 
 
 
-<h2 id="example">Example</h2><p>{title: &quot;Some Title&quot;, date: new Date()}</p>
-<p>Taken from a fictitious projectsModel.js</p>
-<pre>
-projectModel.addNewItem({
-       title: 'A Project',
-       customer: {lookupValue: 'My Customer', lookupId: 123},
-       description: 'This is the project description'
-    }).then(function(newEntityFromServer) {
-        //The local query cache is automatically updated but any other dependent logic can go here
-    };
-</pre>
+<h2>Example</h2><p>{title: &quot;Some Title&quot;, date: new Date()}</p>
+<p>Taken from a fictitious projectsModel.js
+   projectModel.addNewItem({
+          title: &#39;A Project&#39;,
+          customer: {lookupValue: &#39;My Customer&#39;, lookupId: 123},
+          description: &#39;This is the project description&#39;
+       }).then(function(newEntityFromServer) {
+           //The local query cache is automatically updated but any other dependent logic can go here
+   };</p>
+
 
 
 
@@ -309,7 +307,7 @@ projectModel.addNewItem({
   <code>registerQuery(queryOptions, queryOptions.name)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L169'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L165'>view</a>
 
 
 Constructor that allows us create a static query with a reference to the parent model
@@ -371,56 +369,55 @@ Constructor that allows us create a static query with a reference to the parent 
 
 
 
-<h2 id="example">Example</h2><p>Could be placed on the projectModel and creates the query but doesn&#39;t call it</p>
-<p> projectModel.registerQuery({
-      name: &#39;primary&#39;,
-      query: &#39;&#39; +
-          &#39;<Query>&#39; +
-          &#39;   <OrderBy>&#39; +
-          &#39;       <FieldRef Name="Title" Ascending="TRUE"/>&#39; +
-          &#39;   </OrderBy>&#39; +
-          &#39;</Query>&#39;
-  });</p>
+<h2>Example</h2><p>Could be placed on the projectModel and creates the query but doesn&#39;t call it</p>
+<p>   projectModel.registerQuery({
+       name: &#39;primary&#39;,
+       query: &#39;&#39; +
+           &#39;<Query>&#39; +
+           &#39;   <OrderBy>&#39; +
+           &#39;       <FieldRef Name="Title" Ascending="TRUE"/>&#39; +
+           &#39;   </OrderBy>&#39; +
+           &#39;</Query>&#39;
+   });</p>
 <p>To call the query or check for changes since the last call</p>
-<p>projectModel.executeQuery(&#39;primary&#39;).then(function(entities) {
-    //We now have a reference to array of entities stored in the local cache
-    //These inherit from the ListItem prototype as well as the Project prototype on the model
-    $scope.projects = entities;
-});</p>
+<p>   projectModel.executeQuery(&#39;primary&#39;).then(function(entities) {
+       //We now have a reference to array of entities stored in the local cache
+       //These inherit from the ListItem prototype as well as the Project prototype on the model
+       $scope.projects = entities;
+   });</p>
 <p>Advanced functionality that would allow us to dynamically create queries for list items with a
 lookup field associated with a specific project id.  Let&#39;s assume this is on the projectTasksModel.</p>
-<pre><code> model.queryByProjectId(projectId) {
-     // Unique query name
-     var queryKey = &#39;pid&#39; + projectId;
-
-     // Register project query if it doesn&#39;t exist
-     if (!_.isObject(model.queries[queryKey])) {
-         model.registerQuery({
-             name: queryKey,
-             query: &#39;&#39; +
-                 &#39;&lt;Query&gt;&#39; +
-                 &#39;   &lt;OrderBy&gt;&#39; +
-                 &#39;       &lt;FieldRef Name=&quot;ID&quot; Ascending=&quot;TRUE&quot;/&gt;&#39; +
-                 &#39;   &lt;/OrderBy&gt;&#39; +
-                 &#39;   &lt;Where&gt;&#39; +
-                 &#39;       &lt;And&gt;&#39; +
-             // Prevents any records from being returned if user doesn&#39;t have permissions on project
-                 &#39;           &lt;IsNotNull&gt;&#39; +
-                 &#39;               &lt;FieldRef Name=&quot;Project&quot;/&gt;&#39; +
-                 &#39;           &lt;/IsNotNull&gt;&#39; +
-             // Return all records for the project matching param projectId
-                 &#39;           &lt;Eq&gt;&#39; +
-                 &#39;               &lt;FieldRef Name=&quot;Project&quot; LookupId=&quot;TRUE&quot;/&gt;&#39; +
-                 &#39;               &lt;Value Type=&quot;Lookup&quot;&gt;&#39; + projectId + &#39;&lt;/Value&gt;&#39; +
-                 &#39;           &lt;/Eq&gt;&#39; +
-                 &#39;       &lt;/And&gt;&#39; +
-                 &#39;   &lt;/Where&gt;&#39; +
-                 &#39;&lt;/Query&gt;&#39;
-         });
-     }
-     //Still using execute query but now we have a custom query
-     return model.executeQuery(queryKey);
- };</code></pre>
+<p>   model.queryByProjectId(projectId) {
+       // Unique query name
+       var queryKey = &#39;pid&#39; + projectId;</p>
+<pre><code>   // Register project query if it doesn&#39;t exist
+   if (!_.isObject(model.queries[queryKey])) {
+       model.registerQuery({
+           name: queryKey,
+           query: &#39;&#39; +
+               &#39;&lt;Query&gt;&#39; +
+               &#39;   &lt;OrderBy&gt;&#39; +
+               &#39;       &lt;FieldRef Name=&quot;ID&quot; Ascending=&quot;TRUE&quot;/&gt;&#39; +
+               &#39;   &lt;/OrderBy&gt;&#39; +
+               &#39;   &lt;Where&gt;&#39; +
+               &#39;       &lt;And&gt;&#39; +
+           // Prevents any records from being returned if user doesn&#39;t have permissions on project
+               &#39;           &lt;IsNotNull&gt;&#39; +
+               &#39;               &lt;FieldRef Name=&quot;Project&quot;/&gt;&#39; +
+               &#39;           &lt;/IsNotNull&gt;&#39; +
+           // Return all records for the project matching param projectId
+               &#39;           &lt;Eq&gt;&#39; +
+               &#39;               &lt;FieldRef Name=&quot;Project&quot; LookupId=&quot;TRUE&quot;/&gt;&#39; +
+               &#39;               &lt;Value Type=&quot;Lookup&quot;&gt;&#39; + projectId + &#39;&lt;/Value&gt;&#39; +
+               &#39;           &lt;/Eq&gt;&#39; +
+               &#39;       &lt;/And&gt;&#39; +
+               &#39;   &lt;/Where&gt;&#39; +
+               &#39;&lt;/Query&gt;&#39;
+       });
+   }
+   //Still using execute query but now we have a custom query
+   return model.executeQuery(queryKey);</code></pre>
+<p>   };</p>
 
 
 
@@ -431,7 +428,7 @@ lookup field associated with a specific project id.  Let&#39;s assume this is on
   <code>getQuery(queryName)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L251'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L247'>view</a>
 
 
 Helper function that attempts to locate and return a reference to the requested or catchall query
@@ -478,7 +475,7 @@ Helper function that attempts to locate and return a reference to the requested 
 
 
 
-<h2 id="example">Example</h2><p><pre>
+<h2>Example</h2><p><pre>
 var primaryQuery = projectModel.getQuery();
 </pre>
 :--or--:</p>
@@ -498,7 +495,7 @@ var namedQuery = projectModel.getQuery('customQuery');
   <code>getCache(queryName)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L289'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L285'>view</a>
 
 
 Helper function that return the local cache for a named query if provided, otherwise
@@ -546,7 +543,7 @@ has already been resolved and there's no need to check SharePoint for changes.
 
 
 
-<h2 id="example">Example</h2><p>var primaryQueryCache = projectModel.getCache();</p>
+<h2>Example</h2><p>var primaryQueryCache = projectModel.getCache();</p>
 <p>--or--</p>
 <p>var primaryQueryCache = projectModel.getCache(&#39;primary&#39;);</p>
 <p>--or--</p>
@@ -561,7 +558,7 @@ has already been resolved and there's no need to check SharePoint for changes.
   <code>executeQuery(queryName, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L321'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L317'>view</a>
 
 
 The primary method for retrieving data from a query registered on a model.  It returns a promise
@@ -626,7 +623,7 @@ which resolves to the local cache after post processing entities with constructo
 
 
 
-<h2 id="example">Example</h2><p>To call the query or check for changes since the last call.
+<h2>Example</h2><p>To call the query or check for changes since the last call.
          projectModel.executeQuery(&#39;MyCustomQuery&#39;).then(function(entities) {
              //We now have a reference to array of entities stored in the local cache
              //These inherit from the ListItem prototype as well as the Project prototype on the model
@@ -642,7 +639,7 @@ which resolves to the local cache after post processing entities with constructo
   <code>isInitialised()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L348'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L344'>view</a>
 
 
 Methods which allows us to easily determine if we've successfully made any queries this session
@@ -666,7 +663,7 @@ Methods which allows us to easily determine if we've successfully made any queri
   <code>searchLocalCache(value, options, options.propertyPath, options.cacheName, options.localCache, options.rebuildIndex)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L359'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L355'>view</a>
 
 
 Search functionality that allow for deeply searching an array of objects for the first
@@ -806,7 +803,7 @@ rebuildIndex flag is set.
   <code>createEmptyItem(overrides)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L425'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L421'>view</a>
 
 
 Creates an object using the editable fields from the model, all attributes are empty
@@ -862,7 +859,7 @@ Creates an object using the editable fields from the model, all attributes are e
   <code>generateMockData(options, options.quantity, options.permissionLevel, options.staticValue)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L448'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L444'>view</a>
 
 
 Generates n mock records for testing
@@ -966,7 +963,7 @@ cause static data to be used instead</p>
   <code>validateEntity(entity, options, options.toast)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L485'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L481'>view</a>
 
 
 Uses the custom fields defined in an model to ensure each field (required = true) is evaluated

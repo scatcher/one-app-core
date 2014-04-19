@@ -11,12 +11,12 @@ docType: "function"
 ---
 
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L824'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L820'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L824'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L820'>
     Edit Me
   </a>
 </div>
@@ -113,7 +113,7 @@ Decorates query optional attributes
   <code>execute(options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L889'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L885'>view</a>
 
 
 Query SharePoint, pull down all initial records on first call
@@ -170,7 +170,7 @@ Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinc
   <code>searchLocalCache(value, options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L942'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L938'>view</a>
 
 
 Simple wrapper that by default sets the search location to the local query cache

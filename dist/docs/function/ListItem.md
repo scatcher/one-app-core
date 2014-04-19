@@ -11,12 +11,12 @@ docType: "function"
 ---
 
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L558'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L554'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L558'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L554'>
     Edit Me
   </a>
 </div>
@@ -58,7 +58,7 @@ Constructor for creating a list item which inherits CRUD functionality that can 
   <code>getDataService()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L568'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L564'>view</a>
 
 
 Allows us to reference when out of scope
@@ -82,7 +82,7 @@ Allows us to reference when out of scope
   <code>saveChanges(options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L579'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L575'>view</a>
 
 
 Updates record directly from the object
@@ -138,7 +138,7 @@ Updates record directly from the object
   <code>saveFields(fieldArray)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L601'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L597'>view</a>
 
 
 Saves a named subset of fields back to SharePoint
@@ -195,7 +195,7 @@ Alternative to saving all fields
   <code>deleteItem(options)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L635'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L631'>view</a>
 
 
 Deletes record directly from the object and removes record from user cache
@@ -251,7 +251,7 @@ Deletes record directly from the object and removes record from user cache
   <code>validateEntity(options, options.toast)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L657'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L653'>view</a>
 
 
 Helper function that passes the current item to Model.validateEntity
@@ -322,7 +322,7 @@ Helper function that passes the current item to Model.validateEntity
   <code>getAttachmentCollection()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L673'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L669'>view</a>
 
 
 Requests all attachments for the object
@@ -346,7 +346,7 @@ Requests all attachments for the object
   <code>deleteAttachment(url)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L690'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L686'>view</a>
 
 
 Delete an attachment using the attachment url
@@ -401,7 +401,7 @@ Delete an attachment using the attachment url
   <code>resolvePermissions()</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L707'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L703'>view</a>
 
 
 
@@ -425,7 +425,7 @@ Delete an attachment using the attachment url
   <code>getFieldVersionHistory(fieldNames)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L719'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L715'>view</a>
 
 
 Returns the version history for a specific field

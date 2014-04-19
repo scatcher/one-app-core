@@ -58,7 +58,7 @@ The `modelFactory` provides a common base prototype for Model, Query, and List I
   <code>registerChange(model)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L122'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L120'>view</a>
 
 
 If online and sync is being used, notify all online users that a change has been made
@@ -111,7 +111,7 @@ If online and sync is being used, notify all online users that a change has been
   <code>resolvePermissions(permissionsMask)</code>
 
 </h4>
-<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L962'>view</a>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L958'>view</a>
 
 
 Converts permMask into something usable to determine permission level for current user
@@ -161,7 +161,7 @@ link: http://spservices.codeplex.com/discussions/208708
 
 
 
-<h2 id="example">Example</h2><p>&#39;0x0000000000000010&#39;</p>
+<h2>Example</h2><p>&#39;0x0000000000000010&#39;</p>
 
 
 
