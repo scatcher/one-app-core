@@ -1,4 +1,4 @@
-angular.module('OneApp')
+angular.module('spAngular')
     .animation('.oa-slide-animation', function() {
         return {
             enter : function(element, done) {

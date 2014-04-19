@@ -2,7 +2,7 @@
 
 /**Angular will instantiate this singleton by calling "new" on this function the first time it's referenced
  /* State will persist throughout life of session*/
-angular.module('OneApp')
+angular.module('spAngular')
     .service('userFeedbackModel', function ($q, $modal, modelFactory) {
 
         /** Object Constructor (class)*/
@@ -25,7 +25,7 @@ angular.module('OneApp')
                 guid: '{69769FB9-E681-4AA4-97B2-57F5E2B6B302}', /**List GUID can be found in list properties in SharePoint designer */
                 customFields: [
                 /** Array of objects mapping each SharePoint field to a property on a list item object */
-                /** If OneApp live templates have been imported type "oafield" followed by the tab key for
+                /** If spAngular live templates have been imported type "oafield" followed by the tab key for
                  /*  each field to quickly map with available options */
                     //Ex: {internalName: "Title", objectType: "Text", mappedName: "title", readOnly: false}
                     {internalName: "Title", objectType: "Text", mappedName: "title", readOnly: false},

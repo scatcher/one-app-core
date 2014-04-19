@@ -3,13 +3,12 @@
 /**
  * @ngdoc service
  * @name modelFactory
+ * @module Model
  * @description
- *
- * # ngRoute
  *
  * The `modelFactory` provides a common base prototype for Model, Query, and List Item.
  */
-angular.module('OneApp')
+angular.module('spAngular')
     .factory('modelFactory', function ($q, $timeout, configService, dataService, fieldService, toastr) {
 
         var defaultQueryName = 'primary';
@@ -24,6 +23,7 @@ angular.module('OneApp')
         /**
          * @ngdoc function
          * @name Model
+         * @module Model
          * @description
          * Model Constructor
          * Provides the Following
@@ -71,8 +71,9 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name Model.getAllListItems
+         * @ngdoc method
+         * @name Model#getAllListItems
+         * @module Model
          * @description
          * Inherited from Model constructor
          * Gets all list items in the current list, processes the xml, and adds the data to the model
@@ -89,8 +90,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.registerChange
+         * @ngdoc method
+         * @name modelFactory#registerChange
          * @description
          * If online and sync is being used, notify all online users that a change has been made
          * @param {object} model event
@@ -103,8 +104,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name Model.addNewItem
+         * @ngdoc method
+         * @name Model#addNewItem
          * @description
          * Creates a new list item in SharePoint
          * @param {object} entity - Contains attribute to use in the creation of the new list item
@@ -125,8 +126,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.registerQuery
+         * @ngdoc method
+         * @name Model#registerQuery
          * @description
          * Constructor that allows us create a static query with a reference to the parent model
          * @param {object} [queryOptions]
@@ -150,8 +151,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.getQuery
+         * @ngdoc method
+         * @name Model#getQuery
          * @description
          * Helper function that attempts to locate and return a reference to the requested or catchall query
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
@@ -173,8 +174,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.getCache
+         * @ngdoc method
+         * @name Model#getCache
          * @description
          * Helper function that return the local cache for a named query if provided, otherwise
          * it returns the cache for the primary query for the model
@@ -191,8 +192,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.executeQuery
+         * @ngdoc method
+         * @name Model#executeQuery
          * @description
          * Reference to the function which executes a query
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
@@ -208,8 +209,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.isInitialised
+         * @ngdoc method
+         * @name Model#isInitialised
          * @description
          * Methods which allows us to easily determine if we've successfully made any queries this session
          * @returns {boolean}
@@ -219,8 +220,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.searchLocalCache
+         * @ngdoc method
+         * @name Model#searchLocalCache
          * @description
          * Search functionality that allow for deeply searching an array of objects for the first
          * record matching the supplied value.  Additionally it maps indexes to speed up future calls.  It
@@ -285,8 +286,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.createEmptyItem
+         * @ngdoc method
+         * @name Model#createEmptyItem
          * @description
          * Creates an object using the editable fields from the model, all attributes are empty
          * @param {object} [overrides] - Optionally extend the new item with specific values.
@@ -308,8 +309,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.generateMockData
+         * @ngdoc method
+         * @name Model#generateMockData
          * @description
          * Generates n mock records for testing
          *
@@ -345,8 +346,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Model.validateEntity
+         * @ngdoc method
+         * @name Model#validateEntity
          * @description
          * Uses the custom fields defined in an model to ensure each field (required = true) is evaluated
          * based on field type
@@ -428,8 +429,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name ListItem.getDataService
+         * @ngdoc method
+         * @name ListItem#getDataService
          * @description
          * Allows us to reference when out of scope
          * @returns {object}
@@ -439,8 +440,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.saveChanges
+         * @ngdoc method
+         * @name ListItem#saveChanges
          * @description
          * Updates record directly from the object
          * @param {object} [options] - optionally pass params to the dataService
@@ -461,8 +462,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.saveFields
+         * @ngdoc method
+         * @name ListItem#saveFields
          * @description
          * Saves a named subset of fields back to SharePoint
          * Alternative to saving all fields
@@ -495,8 +496,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.deleteItem
+         * @ngdoc method
+         * @name ListItem#deleteItem
          * @description
          * Deletes record directly from the object and removes record from user cache
          * @param {object} [options] - optionally pass params to the dataService
@@ -517,8 +518,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.validateEntity
+         * @ngdoc method
+         * @name ListItem#validateEntity
          * @description
          * Helper function that passes the current item to Model.validateEntity
          *
@@ -533,8 +534,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.getAttachmentCollection
+         * @ngdoc method
+         * @name ListItem#getAttachmentCollection
          * @description
          * Requests all attachments for the object
          * @returns {promise} - resolves with attachment collection
@@ -550,8 +551,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.deleteAttachment
+         * @ngdoc method
+         * @name ListItem#deleteAttachment
          * @description
          * Delete an attachment using the attachment url
          * @param {string} url
@@ -567,8 +568,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name ListItem.resolvePermissions
+         * @ngdoc method
+         * @name ListItem#resolvePermissions
          * @description
          *
          * @returns {Object} Contains properties for each permission level evaluated for current user(true | false)
@@ -579,8 +580,8 @@ angular.module('OneApp')
 
 
         /**
-         * @ngdoc function
-         * @name ListItem.getFieldVersionHistory
+         * @ngdoc method
+         * @name ListItem#getFieldVersionHistory
          * @description
          * Returns the version history for a specific field
          * @param {string[]} fieldNames the js mapped name of the fields (ex: [title])
@@ -749,8 +750,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name Query.execute
+         * @ngdoc method
+         * @name Query#execute
          * @description
          * Query SharePoint, pull down all initial records on first call
          * Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken")
@@ -802,8 +803,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name Query.searchLocalCache
+         * @ngdoc method
+         * @name Query#searchLocalCache
          * @description
          * Simple wrapper that by default sets the search location to the local query cache
          * @param {*} value
@@ -822,8 +823,8 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name resolvePermissions
+         * @ngdoc method
+         * @name modelFactory#resolvePermissions
          * @description
          * Converts permMask into something usable to determine permission level for current user
          * @param {string} permissionsMask - The WSS Rights Mask is an 8-byte, unsigned integer that specifies

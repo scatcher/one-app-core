@@ -3,7 +3,7 @@
 describe('Controller: Main', function () {
 
     // load the controller's module
-    beforeEach(module('OneApp'));
+    beforeEach(module('spAngular'));
 
     var mainCtrl,
         scope, timeout, rootScope;

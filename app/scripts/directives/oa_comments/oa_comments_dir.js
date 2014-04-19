@@ -1,9 +1,9 @@
-angular.module('OneApp')
+angular.module('spAngular')
     .directive('oaComments', function ($sce, $timeout, commentsModel, configService, toastr) {
         return {
             restrict: "A",
             replace: true,
-            templateUrl: 'bower_components/one-app-core/app/scripts/directives/oa_comments/oa_comments_tmpl.html',
+            templateUrl: 'bower_components/sp-angular/app/scripts/directives/oa_comments/oa_comments_tmpl.html',
             scope: {
                 listItem: "=",      //List item the attachments belong to
                 changeEvent: '='    //Optional - called after an attachment is deleted

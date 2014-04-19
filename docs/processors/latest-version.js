@@ -7,10 +7,10 @@ module.exports = {
   runAfter: ['write-files'],
   description: 'Copy the latest version (that was compiled to docs/latest) into docs/versionName',
   process: function(docs, config) {
-    var versionData = config.get('versionData');
+    var currentVersion = config.get('currentVersion');
 
     var docsBase = path.join(config.get('basePath'), config.get('rendering.outputFolder'), 'docs');
-    var versionDir = path.join(docsBase, versionData.latest.name);
+    var versionDir = path.join(docsBase, currentVersion);
     var latestDir = path.join(docsBase, 'api');
 
     mkdirp(versionDir, function() {

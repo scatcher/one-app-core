@@ -1,6 +1,16 @@
 'use strict';
 
-angular.module('OneApp')
+/**
+ * @ngdoc service
+ * @name dataService
+ * @description
+ * Handles all interaction with SharePoint web services
+ *
+ * For additional information on many of these web service calls, see Marc Anderson's SPServices documentation
+ *
+ *  - [http://spservices.codeplex.com/documentation]
+ */
+angular.module('spAngular')
     .service('dataService', function ($q, $timeout, queueService, configService, utilityService, toastr) {
         var dataService = {};
 
@@ -10,7 +20,10 @@ angular.module('OneApp')
         var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
 
         /**
-         *  Post processing of data after returning list items from server
+         * @ngdoc method
+         * @name dataService#processListItems
+         * @description
+         * Post processing of data after returning list items from server
          * @param {object} model - reference to allow updating of model
          * @param {xml} responseXML - Resolved promise from web service call
          * @param {object} [options]
@@ -92,6 +105,8 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#parseFieldVersionHistoryResponse
          * Takes an XML response from SharePoint webservice and returns an array of field versions
          * @param {xml} responseXML
          * @param {object} fieldDefinition - defined in model for the list
@@ -123,6 +138,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#getFieldVersionHistory
+         * @description
          * Returns the version history for a field in a list item
          * @param {object} payload
          * @param {object} fieldDefinition - field definition object from the model
@@ -156,42 +174,34 @@ angular.module('OneApp')
         };
 
         /**
-         * @ngdoc function
-         * @name dataService.getCollection
+         * @ngdoc method
+         * @name dataService#getCollection
          * @description
          * Used to handle any of the Get[filterNode]Collection calls to SharePoint
          *
-         * @param {object} options - object used to extend payload and needs to include all SPServices required attributes
-         * @param {string} options.operation
-         *  - GetUserCollectionFromSite
-         *  - GetGroupCollectionFromSite
-         *  - GetGroupCollectionFromUser
-         *      @param options.userLoginName
-         *  - GetUserCollectionFromGroup
-         *      @param options.groupName
-         *  - GetListCollection
-         *  - GetViewCollection
-         *      @param options.listName
-         *  - GetAttachmentCollection
-         *      @param options.listName
-         *      @param options.ID
-         *
-         *  @param {string} [options.filterNode] - Value to iterate over in returned XML
+         * @param {Object} options - object used to extend payload and needs to include all SPServices required attributes
+         * @param {string} [options.operation] GetUserCollectionFromSite
+         * @param {string} [options.operation] GetGroupCollectionFromSite
+         * @param {string} [options.operation] GetGroupCollectionFromUser @requires options.userLoginName
+         * @param {string} [options.operation] GetUserCollectionFromGroup @requires options.groupName
+         * @param {string} [options.operation] GetListCollection
+         * @param {string} [options.operation] GetViewCollection @requires options.listName
+         * @param {string} [options.operation] GetAttachmentCollection @requires options.listName & options.ID
+         * @param {string} [options.filterNode] - Value to iterate over in returned XML
          *         if not provided it's extracted from the name of the operation
          *         ex: Get[User]CollectionFromSite, "User" is used as the filterNode
          *
          * @returns {promise} when resolved will contain an array of the requested collection
          *
          * @example
-         * Typical usage
-         * <pre>
+         * ```js
          *  dataService.getCollection({
          *       operation: "GetGroupCollectionFromUser",
          *       userLoginName: $scope.state.selectedUser.LoginName
          *  }).then(function (response) {
          *       postProcessFunction(response);
          *  });
-         * </pre>
+         * ```
          */
         var getCollection = function (options) {
             queueService.increase();
@@ -291,6 +301,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#serviceWrapper
+         * @description
          * Generic wrapper for any SPServices web service call
          * Check http://spservices.codeplex.com/documentation for details on expected parameters for each operation
          *
@@ -358,6 +371,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#getList
+         * @description
          * Returns all list settings for each list on the site
          * @param options
          * @param {string} options.listName
@@ -397,6 +413,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#deleteAttachment
+         * @description
          * Deletes and attachment on a list item
          * @param {object} options
          * @param {string} options.listItemId
@@ -439,6 +458,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#getView
+         * @description
          * Returns details of a SharePoint list view
          * @param {object} options
          * @param {string} options.listName
@@ -486,6 +508,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#executeQuery
+         * @description
          * Takes in the model and a query that
          * @param {object} model
          * @param {object} query
@@ -575,6 +600,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#removeEntityFromLocalCache
+         * @description
          * Removes an entity from the local cache if it exists
          * @param {Array} entityArray
          * @param {Number} entityId
@@ -597,6 +625,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#retrieveChangeToken
+         * @description
          * Returns the change token from the xml response of a GetListItemChangesSinceToken query
          * Note: this attribute is only found when using 'GetListItemChangesSinceToken'
          * @param {xml} responseXML
@@ -606,6 +637,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#retrievePermMask
+         * @description
          * Returns the text representation of the users permission mask
          * Note: this attribute is only found when using 'GetListItemChangesSinceToken'
          * @param {xml} responseXML
@@ -615,6 +649,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#processDeletionsSinceToken
+         * @description
          * GetListItemChangesSinceToken returns items that have been added as well as deleted so we need
          * to remove the deleted items from the local cache
          * @param {xml} responseXML
@@ -643,6 +680,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#stringifySharePointMultiSelect
+         * @description
          * Turns an array of, typically {lookupId: someId, lookupValue: someValue}, objects into a string
          * of delimited id's that can be passed to SharePoint for a multi select lookup or multi user selection
          * field
@@ -664,6 +704,9 @@ angular.module('OneApp')
 
 
         /**
+         * @ngdoc method
+         * @name dataService#createValuePair
+         * @description
          * Uses a field definition from a model to properly format a value for submission to SharePoint
          * @param {object} fieldDefinition
          * @param {*} value
@@ -720,6 +763,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#generateValuePairs
+         * @description
          * Uses provided field definitions to pull value pairs for desired attributes
          * @param {Array} fieldDefinitions - definitions from the model
          * @param {object} item - list item
@@ -737,6 +783,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name dataService#addUpdateItemModel
+         * @description
          * Adds or updates a list item based on if the item passed in contains an id attribute
          * @param {object} model
          * @param {object} item
@@ -846,6 +895,9 @@ angular.module('OneApp')
         };
 
         /**
+         * @ngdoc method
+         * @name dataService#deleteItemModel
+         * @description
          * Typically called directly from a list item, removes the list item from SharePoint
          * and the local cache
          * @param {object} model - model of the list item

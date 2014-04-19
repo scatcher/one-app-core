@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .controller('mainCtrl', function ($scope, $filter, $q, $timeout, dataService, ngTableParams, bannerTextModel, modelFactory) {
 
         /** Request Data */

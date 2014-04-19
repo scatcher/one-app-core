@@ -1,13 +1,13 @@
 {
-  "name": "one-app-core",
+  "name": "sp-angular",
   "version": "0.0.1",
-  "homepage": "https://github.com/scatcher/one-app-core",
+  "homepage": "https://github.com/scatcher/sp-angular",
   "authors": [
     "Scott <github@scotthatcher.com>"
   ],
   "appPath": "app",
   "distPath": "dist",
-  "description": "Shared components of OneApp.",
+  "description": "Shared components of spAngular.",
   "license": "MIT",
   "dependencies": {
     "angular": "~1.2",
@@ -48,7 +48,7 @@
     "ng-table-export": "latest",
     "respond": "latest",
     "select2": "latest",
-    "SPServices": "https://github.com/scatcher/SPServices.git"
+    "SPServices": "https://github.com/scatcher/SPServices.git#master"
   },
   "ignore": [
     "**/.*",

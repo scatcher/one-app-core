@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .animation('.fade-animation', function () {
         return {
             enter : function(element, done) {

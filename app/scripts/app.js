@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp', [
+angular.module('spAngular', [
         //Angular Components
         'ngAnimate',
         'ngResource',
@@ -135,14 +135,14 @@ angular.module('OneApp', [
             //Group Manager
             .state('groupmanager', {
                 url: "/group_manager",
-                templateUrl: 'bower_components/one-app-core/modules/group_manager/views/group_manager_view.html',
+                templateUrl: 'bower_components/sp-angular/modules/group_manager/views/group_manager_view.html',
                 controller: 'groupManagerCtrl'
             })
 
             //Offline
             .state('offline', {
                 url: "/offline",
-                templateUrl: 'bower_components/one-app-core/modules/dev/views/generate_offline_view.html',
+                templateUrl: 'bower_components/sp-angular/modules/dev/views/generate_offline_view.html',
                 controller: 'generateOfflineCtrl'
             })
 
@@ -196,16 +196,16 @@ angular.module('OneApp', [
 //
 //            /** Development Support Routes **/
 //            .when('/group_manager', {
-//                templateUrl: 'bower_components/one-app-core/modules/group_manager/views/group_manager_view.html',
+//                templateUrl: 'bower_components/sp-angular/modules/group_manager/views/group_manager_view.html',
 //                controller: 'groupManagerCtrl'
 //            })
 //            // Group Manager
 //            .when('/group_manager', {
-//                templateUrl: 'bower_components/one-app-core/modules/group_manager/views/group_manager_view.html',
+//                templateUrl: 'bower_components/sp-angular/modules/group_manager/views/group_manager_view.html',
 //                controller: 'groupManagerCtrl'
 //            })
 //            .when('/offline', {
-//                templateUrl: 'bower_components/one-app-core/modules/dev/views/generate_offline_view.html',
+//                templateUrl: 'bower_components/sp-angular/modules/dev/views/generate_offline_view.html',
 //                controller: 'generateOfflineCtrl'
 //            })
 //            .when('/tasker', {

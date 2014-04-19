@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .controller('groupManagerCtrl', function ($scope, $q, $timeout, $filter, ngTableParams, configService, dataService, toastr) {
         $scope.availableOptions = [];
         $scope.assignedOptions = [];

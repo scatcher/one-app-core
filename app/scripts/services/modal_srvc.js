@@ -1,17 +1,17 @@
 'use strict';
 
 /**
- * @ngdoc api
+ * @ngdoc service
  * @name modalService
  * @description
  * Extends a modal form to include many standard functions
  */
-angular.module('OneApp')
+angular.module('spAngular')
     .service('modalService', function ($modal, toastr) {
 
         /**
-         * @ngdoc function
-         * @name modalService.modalModelProvider
+         * @ngdoc method
+         * @name modalService#modalModelProvider
          * @description
          * Extends a model to allow us to easily attach a modal form that accepts and injects a
          * dynamic number of arguments.
@@ -70,8 +70,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name modalService.getPermissions
+         * @ngdoc method
+         * @name modalService#getPermissions
          * @description
          * Returns an object containing the permission levels for the current user
          * @param {object} entity - list item
@@ -98,8 +98,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name modalService.initializeState
+         * @ngdoc method
+         * @name modalService#initializeState
          * @description
          * Creates a state object, populates permissions for curent user, and sets display mode
          * @param entity
@@ -135,8 +135,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name modalService.deleteEntity
+         * @ngdoc method
+         * @name modalService#deleteEntity
          * @description
          * Prompts for confirmation of deletion, then deletes and closes modal
          * @param {object} entity
@@ -163,8 +163,8 @@ angular.module('OneApp')
         }
 
         /**
-         * @ngdoc function
-         * @name modalService.saveEntity
+         * @ngdoc method
+         * @name modalService#saveEntity
          * @description
          * Creates a new record if necessary, otherwise updates the existing record
          * @param {object} entity

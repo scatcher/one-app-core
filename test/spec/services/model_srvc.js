@@ -3,7 +3,7 @@
 describe('Service: modelFactory', function () {
 
     /** Load the main module */
-    beforeEach(module('OneApp'));
+    beforeEach(module('spAngular'));
 
     var mockModel, modelFactory, deepArray;
 

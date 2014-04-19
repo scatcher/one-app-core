@@ -1,9 +1,26 @@
 'use strict';
 
-angular.module('OneApp')
+/**
+ * @ngdoc service
+ * @name syncService
+ * @description
+ * Supports 3-way data binding if you decide to incorporate firebase (any change by any user
+ * to a list item is mirrored across users). The data isn't saved to firebase but the change
+ * event is so all subscribers are notified to request an update from SharePoint.
+ */
+angular.module('spAngular')
     .factory('syncService', function ($q, $timeout, $firebase, configService) {
 
-        /** Constructor to handle notifying models when data is updated */
+        /**
+         * @ngdoc method
+         * @name syncService#synchronizeData
+         * @description
+         * Constructor to handle notifying models when data is updated
+         *
+         * @param model
+         * @param updateQuery
+         * @returns {object} sync
+         */
         function synchronizeData(model, updateQuery) {
             var sync = {};
             sync.updateQuery = updateQuery;

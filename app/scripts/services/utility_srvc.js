@@ -1,6 +1,12 @@
 'use strict';
 
-angular.module('OneApp')
+/**
+ * @ngdoc service
+ * @name utilityService
+ * @description
+ * Provides shared utility functionality across the application.
+ */
+angular.module('spAngular')
     .service('utilityService', function () {
         // AngularJS will instantiate a singleton by calling "new" on this function
 
@@ -11,9 +17,12 @@ angular.module('OneApp')
             }
         });
 
-        // Modified version of SPServices "SPXmlToJson" function
         /**
+         * @ngdoc method
+         * @name utilityService#xmlToJson
+         * @description
          * This function converts an XML node set to JSON
+         * Modified version of SPServices "SPXmlToJson" function
          * @param rows ["z:rows"]
          * @param options.mapping [columnName: mappedName: "mappedName", objectType: "objectType"]
          * @param options.includeAllAttrs [If true, return all attributes, regardless whether they are in the mapping]
@@ -62,6 +71,9 @@ angular.module('OneApp')
 
 
         /**
+         * @ngdoc method
+         * @name utilityService#attrToJson
+         * @description
          * Converts a SharePoint string representation of a field into the correctly formatted JS version
          * @param value
          * @param objectType
@@ -268,8 +280,13 @@ angular.module('OneApp')
             }
         }
 
-        /** Convert date into a int formatted as yyyymmdd
-         *  We don't need the time portion of comparison so an int makes this easier to evaluate */
+        /**
+         * @ngdoc method
+         * @name utilityService#yyyymmdd
+         * @description
+         * Convert date into a int formatted as yyyymmdd
+         * We don't need the time portion of comparison so an int makes this easier to evaluate
+         */
         function yyyymmdd(date) {
             var yyyy = date.getFullYear().toString();
             var mm = (date.getMonth() + 1).toString();
@@ -279,6 +296,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name utilityService#dateWithinRange
+         * @description
          * Converts dates into yyyymmdd formatted ints and evaluates to determine if the dateToCheck
          * falls within the date range provided
          * @param startDate

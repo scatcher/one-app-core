@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .controller('NavbarCtrl', function ($scope, $state, $location, $stateParams, queueService, userFeedbackModel, userModel, usSpinnerService) {
         $scope.navLocations = [
             {label: 'Projects', link: '#/projects', icon: 'fa-check-square-o', type: "primary"},

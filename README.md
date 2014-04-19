@@ -42,7 +42,7 @@ without the traditional overhead associated with SharePoint.  I began creating t
 There are Primarily this is a  combination of the AngularJS $http service we've extended Marc Anderson's SPServices library to negotiate with SharePoint's SOAP web services.  This allows us to create solutions for SharePoint 2007+;
 
 SharePoint then acts only as a authentication and data storage mechanism and allows us to create a completely unique application (SPA) using AngularJS and SharePoint.
-Common resources shared by all OneApp (mix of SharePoint and AngularJS) instances with a 
+Common resources shared by all spAngular (mix of SharePoint and AngularJS) instances with a
 
 Instead of using Angular's $http service we've extended Marc Anderson's SPServices library to negotiate with SharePoint's SOAP web services.  This allows us to create solutions for SharePoint 2007+;
 

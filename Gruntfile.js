@@ -56,7 +56,7 @@ module.exports = function (grunt) {
                     '<%= config.app %>/modules/**/*.{js,html}',
                     '{.tmp,<%= config.app %>}/scripts/{,*/}*.js',
                     '<%= config.app %>/dev/*.xml',
-                    '<%= config.app %>/bower_components/one-app-core//{,*/}*.{js,html,css}',
+                    '<%= config.app %>/bower_components/sp-angular//{,*/}*.{js,html,css}',
                     '<%= config.app %>/styles/css/main.css',
                     '<%= config.app %>/images/{,*/}*.{png,jpg,jpeg,gif,svg}'
                 ]
@@ -118,7 +118,7 @@ module.exports = function (grunt) {
 //        ngdoc : {
 //            options: {
 //                html5Mode: false,
-//                title: 'OneApp Core Documentation',
+//                title: 'spAngular Core Documentation',
 //                scripts: ['<%= config.app %>/scripts/services/*.js']
 //            },
 //            all: {
@@ -454,6 +454,7 @@ module.exports = function (grunt) {
         var dgeni = require('dgeni');
         var done = this.async();
 
+//        dgeni('docs/docs.config.js')
         dgeni('docs/docs.config.js')
             .generateDocs()
             .then(done);
@@ -479,4 +480,6 @@ module.exports = function (grunt) {
         'test',
         'build'
     ]);
+
+
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .controller('generateOfflineCtrl', function ($scope, $q, dataService, configService, toastr) {
         $scope.state = {
             siteUrl: configService.defaultUrl,

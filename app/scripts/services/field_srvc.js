@@ -1,6 +1,12 @@
 'use strict';
 
-angular.module('OneApp')
+/**
+ * @ngdoc service
+ * @name fieldService
+ * @description
+ * Handles the mapping of the various types of fields used within a SharePoint list
+ */
+angular.module('spAngular')
     .service('fieldService', function (utilityService) {
 
         var getUniqueCounter = function () {
@@ -35,6 +41,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name fieldService#resolveValueForEffectivePermMask
+         * @description
          * Takes the name of a permission mask and returns a permission value which can then be used
          * to generate a permission object using modelService.resolvePermissions(outputfromthis)
          * @param {string} perMask
@@ -67,6 +76,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name fieldService#mockPermMask
+         * @description
          * Defaults to a full mask but allows simulation of each of main permission levels
          * @param {object} [options]
          * @param {string} [options.permissionLevel=FullMask]
@@ -111,6 +123,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name fieldService#Field
+         * @description
          * Decorates field with optional defaults
          * @param obj
          * @returns {Field}
@@ -174,6 +189,9 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name fieldService#getDefaultValueForType
+         * @description
          * Returns the empty value expected for a field type
          * @param fieldType
          * @returns {*}
@@ -187,8 +205,12 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name fieldService#getMockData
+         * @description
          * Can return mock data appropriate for the field type, by default it dynamically generates data but
          * the staticValue param will instead return a hard coded type specific value
+         *
          * @param {string} fieldType
          * @param {object} [options]
          * @param {boolean} [options.staticValue=false]
@@ -204,7 +226,12 @@ angular.module('OneApp')
         }
 
         /**
+         * @ngdoc method
+         * @name fieldService#defaultFields
+         * @description
          * Read only fields that should be included in all lists
+         *
+         * @returns {{internalName: string, objectType: string, mappedName: string, readOnly: boolean}[]}
          */
         var defaultFields = [
             { internalName: 'ID', objectType: 'Counter', mappedName: 'id', readOnly: true},
@@ -216,6 +243,9 @@ angular.module('OneApp')
         ];
 
         /**
+         * @ngdoc method
+         * @name fieldService#extendFieldDefinitions
+         * @description
          * 1. Populates the fields array which uses the Field constructor to combine the default
          * SharePoint fields with those defined in the list definition on the model
          * 2. Creates the list.viewFields XML string that defines the fields to be requested on a query

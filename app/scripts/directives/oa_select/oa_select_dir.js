@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .directive('oaSelect', function () {
         return {
             restrict: 'A',

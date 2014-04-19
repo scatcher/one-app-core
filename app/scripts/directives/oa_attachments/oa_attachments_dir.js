@@ -1,9 +1,9 @@
-angular.module('OneApp')
+angular.module('spAngular')
     .directive('oaAttachments', function ($sce, toastr) {
         return {
             restrict: "A",
             replace: true,
-            templateUrl: 'bower_components/one-app-core/app/scripts/directives/oa_attachments/oa_attachments_tmpl.html',
+            templateUrl: 'bower_components/sp-angular/app/scripts/directives/oa_attachments/oa_attachments_tmpl.html',
             scope: {
                 listItem: "=",      //List item the attachments belong to
                 changeEvent: '='    //Optional - called after an attachment is deleted

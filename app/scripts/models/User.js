@@ -2,7 +2,7 @@
 
 /**Angular will instantiate this singleton by calling "new" on this function the first time it's referenced
  /* State will persist throughout life of session*/
-angular.module('OneApp')
+angular.module('spAngular')
     .service('userModel', function ($q, dataService, configService) {
 
         var model = {};

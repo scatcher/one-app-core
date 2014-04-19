@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .service('configService', function (toastrConfig) {
 
         /** Set the default toast location */
@@ -10,7 +10,7 @@ angular.module('OneApp')
         var offline = window.location.href.indexOf('localhost') > -1;
 
         return {
-            appTitle: 'One App Core',
+            appTitle: 'SP-Angular',
             debugEnabled: true,
             firebaseURL: "The url of your firebase source",
             offline: offline

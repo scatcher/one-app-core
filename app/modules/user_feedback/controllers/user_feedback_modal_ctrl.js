@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('OneApp')
+angular.module('spAngular')
     .controller('userFeedbackModalCtrl', function ($scope, $modalInstance, $q, $timeout, $location, dataService, toastr, userFeedbackModel) {
 
         var defaults = {
