@@ -55,11 +55,13 @@ event is so all subscribers are notified to request an update from SharePoint.
   
 ## Methods
 
-<div id="synchronizeData"></div>
-<h2>
+
+<h4>
   <code>synchronizeData(model, updateQuery)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/sync_srvc.js#L14'>view</a>
+
 
 Constructor to handle notifying models when data is updated
 
@@ -117,6 +119,9 @@ Constructor to handle notifying models when data is updated
 
 * Returns: 
   <code>object</code> sync
+
+
+
 
 
 

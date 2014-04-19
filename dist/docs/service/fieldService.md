@@ -53,11 +53,13 @@ Handles the mapping of the various types of fields used within a SharePoint list
   
 ## Methods
 
-<div id="resolveValueForEffectivePermMask"></div>
-<h2>
+
+<h4>
   <code>resolveValueForEffectivePermMask(perMask)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L43'>view</a>
+
 
 Takes the name of a permission mask and returns a permission value which can then be used
 to generate a permission object using modelService.resolvePermissions(outputfromthis)
@@ -104,11 +106,16 @@ to generate a permission object using modelService.resolvePermissions(outputfrom
 
 
 
-<div id="mockPermMask"></div>
-<h2>
+
+
+
+
+<h4>
   <code>mockPermMask(options, options.permissionLevel)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L78'>view</a>
+
 
 Defaults to a full mask but allows simulation of each of main permission levels
 
@@ -170,11 +177,16 @@ Defaults to a full mask but allows simulation of each of main permission levels
 
 
 
-<div id="Field"></div>
-<h2>
+
+
+
+
+<h4>
   <code>Field(obj)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L125'>view</a>
+
 
 Decorates field with optional defaults
 
@@ -220,11 +232,16 @@ Decorates field with optional defaults
 
 
 
-<div id="getDefaultValueForType"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getDefaultValueForType(fieldType)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L191'>view</a>
+
 
 Returns the empty value expected for a field type
 
@@ -270,11 +287,16 @@ Returns the empty value expected for a field type
 
 
 
-<div id="getMockData"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getMockData(fieldType, options, options.staticValue)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L207'>view</a>
+
 
 Can return mock data appropriate for the field type, by default it dynamically generates data but
 the staticValue param will instead return a hard coded type specific value
@@ -353,11 +375,16 @@ the staticValue param will instead return a hard coded type specific value
 
 
 
-<div id="defaultFields"></div>
-<h2>
+
+
+
+
+<h4>
   <code>defaultFields()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L228'>view</a>
+
 
 Read only fields that should be included in all lists
 
@@ -369,11 +396,16 @@ Read only fields that should be included in all lists
 
 
 
-<div id="extendFieldDefinitions"></div>
-<h2>
+
+
+
+
+<h4>
   <code>extendFieldDefinitions(list, list.customFields, list.fields, list.viewFields)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/field_srvc.js#L245'>view</a>
+
 
 1. Populates the fields array which uses the Field constructor to combine the default
 SharePoint fields with those defined in the list definition on the model
@@ -457,6 +489,9 @@ SharePoint fields with those defined in the list definition on the model
     
   </tbody>
 </table>
+
+
+
 
 
 

@@ -53,11 +53,13 @@ Provides shared utility functionality across the application.
   
 ## Methods
 
-<div id="xmlToJson"></div>
-<h2>
+
+<h4>
   <code>xmlToJson(rows, options.mapping, options.includeAllAttrs, options.removeOws)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L20'>view</a>
+
 
 This function converts an XML node set to JSON
 Modified version of SPServices "SPXmlToJson" function
@@ -156,11 +158,16 @@ Modified version of SPServices "SPXmlToJson" function
 
 
 
-<div id="attrToJson"></div>
-<h2>
+
+
+
+
+<h4>
   <code>attrToJson(value, objectType)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L73'>view</a>
+
 
 Converts a SharePoint string representation of a field into the correctly formatted JS version
 
@@ -222,11 +229,16 @@ Converts a SharePoint string representation of a field into the correctly format
 
 
 
-<div id="yyyymmdd"></div>
-<h2>
+
+
+
+
+<h4>
   <code>yyyymmdd()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L283'>view</a>
+
 
 Convert date into a int formatted as yyyymmdd
 We don't need the time portion of comparison so an int makes this easier to evaluate
@@ -239,11 +251,16 @@ We don't need the time portion of comparison so an int makes this easier to eval
 
 
 
-<div id="dateWithinRange"></div>
-<h2>
+
+
+
+
+<h4>
   <code>dateWithinRange(startDate, endDate, dateToCheck)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/utility_srvc.js#L298'>view</a>
+
 
 Converts dates into yyyymmdd formatted ints and evaluates to determine if the dateToCheck
 falls within the date range provided
@@ -319,6 +336,9 @@ falls within the date range provided
 
 * Returns: 
   <code>boolean</code> 
+
+
+
 
 
 

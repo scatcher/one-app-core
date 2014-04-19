@@ -11,12 +11,12 @@ docType: "function"
 ---
 
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L457'>
+  <a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L559'>
     View Me
   </a>
 </div>
 <div class="improve-docs">
-  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L457'>
+  <a href='http://github.com/scatcher/sp-angular/edit/master/app/scripts/services/model_srvc.js#L559'>
     Edit Me
   </a>
 </div>
@@ -53,11 +53,13 @@ Constructor for creating a list item which inherits CRUD functionality that can 
   
 ## Methods
 
-<div id="getDataService"></div>
-<h2>
+
+<h4>
   <code>getDataService()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L569'>view</a>
+
 
 Allows us to reference when out of scope
 
@@ -72,11 +74,16 @@ Allows us to reference when out of scope
 
 
 
-<div id="saveChanges"></div>
-<h2>
+
+
+
+
+<h4>
   <code>saveChanges(options)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L580'>view</a>
+
 
 Updates record directly from the object
 
@@ -123,11 +130,16 @@ Updates record directly from the object
 
 
 
-<div id="saveFields"></div>
-<h2>
+
+
+
+
+<h4>
   <code>saveFields(fieldArray)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L602'>view</a>
+
 
 Saves a named subset of fields back to SharePoint
 Alternative to saving all fields
@@ -175,11 +187,16 @@ Alternative to saving all fields
 
 
 
-<div id="deleteItem"></div>
-<h2>
+
+
+
+
+<h4>
   <code>deleteItem(options)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L636'>view</a>
+
 
 Deletes record directly from the object and removes record from user cache
 
@@ -226,11 +243,16 @@ Deletes record directly from the object and removes record from user cache
 
 
 
-<div id="validateEntity"></div>
-<h2>
+
+
+
+
+<h4>
   <code>validateEntity(options, options.toast)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L658'>view</a>
+
 
 Helper function that passes the current item to Model.validateEntity
 
@@ -292,11 +314,16 @@ Helper function that passes the current item to Model.validateEntity
 
 
 
-<div id="getAttachmentCollection"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getAttachmentCollection()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L674'>view</a>
+
 
 Requests all attachments for the object
 
@@ -311,11 +338,16 @@ Requests all attachments for the object
 
 
 
-<div id="deleteAttachment"></div>
-<h2>
+
+
+
+
+<h4>
   <code>deleteAttachment(url)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L691'>view</a>
+
 
 Delete an attachment using the attachment url
 
@@ -361,11 +393,16 @@ Delete an attachment using the attachment url
 
 
 
-<div id="resolvePermissions"></div>
-<h2>
+
+
+
+
+<h4>
   <code>resolvePermissions()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L708'>view</a>
+
 
 
 
@@ -380,11 +417,16 @@ Delete an attachment using the attachment url
 
 
 
-<div id="getFieldVersionHistory"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getFieldVersionHistory(fieldNames)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L720'>view</a>
+
 
 Returns the version history for a specific field
 
@@ -427,6 +469,9 @@ Returns the version history for a specific field
 
 * Returns: 
   <code>promise</code> - containing array of changes
+
+
+
 
 
 

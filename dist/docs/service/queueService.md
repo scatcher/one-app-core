@@ -54,11 +54,13 @@ Typical use is to display a loading animation of some sort
   
 ## Methods
 
-<div id="increase"></div>
-<h2>
+
+<h4>
   <code>increase()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/queue_srvc.js#L15'>view</a>
+
 
 Increase the counter by 1.
 
@@ -70,11 +72,16 @@ Increase the counter by 1.
 
 
 
-<div id="reset"></div>
-<h2>
+
+
+
+
+<h4>
   <code>reset()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/queue_srvc.js#L27'>view</a>
+
 
 Decrease the counter by 1.
 
@@ -89,11 +96,16 @@ Decrease the counter by 1.
 
 
 
-<div id="reset"></div>
-<h2>
+
+
+
+
+<h4>
   <code>reset()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/queue_srvc.js#L42'>view</a>
+
 
 Reset counter to 0.
 
@@ -108,11 +120,16 @@ Reset counter to 0.
 
 
 
-<div id="registerObserverCallback"></div>
-<h2>
+
+
+
+
+<h4>
   <code>registerObserverCallback(callback)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/queue_srvc.js#L57'>view</a>
+
 
 Register an observer
 
@@ -146,6 +163,9 @@ Register an observer
     
   </tbody>
 </table>
+
+
+
 
 
 

@@ -187,11 +187,13 @@ application.  Identifies field types and formats accordingly.  Also denotes if a
   
 ## Methods
 
-<div id="getAllListItems"></div>
-<h2>
+
+<h4>
   <code>getAllListItems()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L96'>view</a>
+
 
 Inherited from Model constructor
 Gets all list items in the current list, processes the xml, and adds the data to the model
@@ -207,12 +209,25 @@ Uses new deferred object instead of resolving self.ready
 
 
 
+<h2 id="example">Example</h2><p>Taken from a fictitious projectsModel.js
+         <pre>
+         projectModel.getAllListItems().then(function(entities) {
+             //Do something with all of the returned entities
+             $scope.projects = entities;
+         };
+         </pre></p>
 
-<div id="addNewItem"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>addNewItem(entity, options)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L136'>view</a>
+
 
 Creates a new list item in SharePoint
 
@@ -275,12 +290,29 @@ Creates a new list item in SharePoint
 
 
 
+<h2 id="example">Example</h2><p>{title: &quot;Some Title&quot;, date: new Date()}</p>
+<p>Taken from a fictitious projectsModel.js
+         <pre>
+         projectModel.addNewItem({
+                title: &#39;A Project&#39;,
+                customer: {lookupValue: &#39;My Customer&#39;, lookupId: 123},
+                description: &#39;This is the project description&#39;
+             }).then(function(newEntityFromServer) {
+                 //The local query cache is automatically updated but any other dependent logic can go here
+             };
+         </pre></p>
 
-<div id="registerQuery"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>registerQuery(queryOptions, queryOptions.name)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L169'>view</a>
+
 
 Constructor that allows us create a static query with a reference to the parent model
 
@@ -341,12 +373,74 @@ Constructor that allows us create a static query with a reference to the parent 
 
 
 
+<h2 id="example">Example</h2><p>Could be placed on the projectModel and creates the query but doesn&#39;t call it
+         <pre>
+         projectModel.registerQuery({
+                name: &#39;primary&#39;,
+                query: &#39;&#39; +
+                    &#39;<Query>&#39; +
+                    &#39;   <OrderBy>&#39; +
+                    &#39;       <FieldRef Name="Title" Ascending="TRUE"/>&#39; +
+                    &#39;   </OrderBy>&#39; +
+                    &#39;</Query>&#39;
+            });
+         </pre></p>
+<p>To call the query or check for changes since the last call
+         <pre>
+         projectModel.executeQuery(&#39;primary&#39;).then(function(entities) {
+             //We now have a reference to array of entities stored in the local cache
+             //These inherit from the ListItem prototype as well as the Project prototype on the model
+             $scope.projects = entities;
+         });
+         </pre></p>
+<p>Advanced functionality that would allow us to dynamically create queries for list items with a
+lookup field associated with a specific project id.  Let&#39;s assume this is on the projectTasksModel.</p>
+<pre><code>     &lt;pre&gt;
+        model.queryByProjectId(projectId) {
+            // Unique query name
+            var queryKey = &#39;pid&#39; + projectId;
 
-<div id="getQuery"></div>
-<h2>
+            // Register project query if it doesn&#39;t exist
+            if (!_.isObject(model.queries[queryKey])) {
+                model.registerQuery({
+                    name: queryKey,
+                    query: &#39;&#39; +
+                        &#39;&lt;Query&gt;&#39; +
+                        &#39;   &lt;OrderBy&gt;&#39; +
+                        &#39;       &lt;FieldRef Name=&quot;ID&quot; Ascending=&quot;TRUE&quot;/&gt;&#39; +
+                        &#39;   &lt;/OrderBy&gt;&#39; +
+                        &#39;   &lt;Where&gt;&#39; +
+                        &#39;       &lt;And&gt;&#39; +
+                    // Prevents any records from being returned if user doesn&#39;t have permissions on project
+                        &#39;           &lt;IsNotNull&gt;&#39; +
+                        &#39;               &lt;FieldRef Name=&quot;Project&quot;/&gt;&#39; +
+                        &#39;           &lt;/IsNotNull&gt;&#39; +
+                    // Return all records for the project matching param projectId
+                        &#39;           &lt;Eq&gt;&#39; +
+                        &#39;               &lt;FieldRef Name=&quot;Project&quot; LookupId=&quot;TRUE&quot;/&gt;&#39; +
+                        &#39;               &lt;Value Type=&quot;Lookup&quot;&gt;&#39; + projectId + &#39;&lt;/Value&gt;&#39; +
+                        &#39;           &lt;/Eq&gt;&#39; +
+                        &#39;       &lt;/And&gt;&#39; +
+                        &#39;   &lt;/Where&gt;&#39; +
+                        &#39;&lt;/Query&gt;&#39;
+                });
+            }
+            //Still using execute query but now we have a custom query
+            return model.executeQuery(queryKey);
+        };
+     &lt;/pre&gt;</code></pre>
+
+
+
+
+
+
+<h4>
   <code>getQuery(queryName)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L254'>view</a>
+
 
 Helper function that attempts to locate and return a reference to the requested or catchall query
 
@@ -388,19 +482,36 @@ Helper function that attempts to locate and return a reference to the requested 
 
 
 * Returns: 
-  <code>object</code> query
+  <code>object</code> query - see Query prototype for properties
+
+
+
+<h2 id="example">Example</h2><pre>
+var primaryQuery = projectModel.getQuery();
+</pre>
+--or--
+<pre>
+var primaryQuery = projectModel.getQuery('primary');
+</pre>
+--or--
+<pre>
+var namedQuery = projectModel.getQuery('customQuery');
+</pre>
 
 
 
 
-<div id="getCache"></div>
-<h2>
+
+<h4>
   <code>getCache(queryName)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L290'>view</a>
+
 
 Helper function that return the local cache for a named query if provided, otherwise
-it returns the cache for the primary query for the model
+it returns the cache for the primary query for the model.  Useful if you know the query
+has already been resolved and there's no need to check SharePoint for changes.
 
 
 
@@ -443,14 +554,26 @@ it returns the cache for the primary query for the model
 
 
 
+<h2 id="example">Example</h2><p>var primaryQueryCache = projectModel.getCache();</p>
+<p>--or--</p>
+<p>var primaryQueryCache = projectModel.getCache(&#39;primary&#39;);</p>
+<p>--or--</p>
+<p>var namedQueryCache = projectModel.getCache(&#39;customQuery&#39;);</p>
 
-<div id="executeQuery"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>executeQuery(queryName, options)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L322'>view</a>
 
-Reference to the function which executes a query
+
+The primary method for retrieving data from a query registered on a model.  It returns a promise
+which resolves to the local cache after post processing entities with constructors.
 
 
 
@@ -511,12 +634,24 @@ Reference to the function which executes a query
 
 
 
+<h2 id="example">Example</h2><p>To call the query or check for changes since the last call.
+         projectModel.executeQuery(&#39;MyCustomQuery&#39;).then(function(entities) {
+             //We now have a reference to array of entities stored in the local cache
+             //These inherit from the ListItem prototype as well as the Project prototype on the model
+             $scope.subsetOfProjects = entities;
+         })</p>
 
-<div id="isInitialised"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>isInitialised()</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L349'>view</a>
+
 
 Methods which allows us to easily determine if we've successfully made any queries this session
 
@@ -531,11 +666,16 @@ Methods which allows us to easily determine if we've successfully made any queri
 
 
 
-<div id="searchLocalCache"></div>
-<h2>
+
+
+
+
+<h4>
   <code>searchLocalCache(value, options, options.propertyPath, options.cacheName, options.localCache, options.rebuildIndex)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L360'>view</a>
+
 
 Search functionality that allow for deeply searching an array of objects for the first
 record matching the supplied value.  Additionally it maps indexes to speed up future calls.  It
@@ -666,11 +806,16 @@ rebuildIndex flag is set.
 
 
 
-<div id="createEmptyItem"></div>
-<h2>
+
+
+
+
+<h4>
   <code>createEmptyItem(overrides)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L426'>view</a>
+
 
 Creates an object using the editable fields from the model, all attributes are empty
 
@@ -717,11 +862,16 @@ Creates an object using the editable fields from the model, all attributes are e
 
 
 
-<div id="generateMockData"></div>
-<h2>
+
+
+
+
+<h4>
   <code>generateMockData(options, options.quantity, options.permissionLevel, options.staticValue)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L449'>view</a>
+
 
 Generates n mock records for testing
 
@@ -816,11 +966,16 @@ cause static data to be used instead</p>
 
 
 
-<div id="validateEntity"></div>
-<h2>
+
+
+
+
+<h4>
   <code>validateEntity(entity, options, options.toast)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L486'>view</a>
+
 
 Uses the custom fields defined in an model to ensure each field (required = true) is evaluated
 based on field type
@@ -899,32 +1054,36 @@ based on field type
 
 
 
+
+
+
   
   
 
 
 
 
-<h2 id="example">Example</h2><p>Taken from a fictitious projectsModel.js</p>
-<pre><code>        var model = new modelFactory.Model({
-            factory: Project,
-            list: {
-                guid: &#39;{PROJECT LIST GUID}&#39;,
-                title: &#39;Projects&#39;,
-                customFields: [
-                    { internalName: &#39;Title&#39;, objectType: &#39;Text&#39;, mappedName: &#39;title&#39;, readOnly: false },
-                    { internalName: &#39;Customer&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;customer&#39;, readOnly: false },
-                    { internalName: &#39;ProjectDescription&#39;, objectType: &#39;Text&#39;, mappedName: &#39;projectDescription&#39;, readOnly: false },
-                    { internalName: &#39;Status&#39;, objectType: &#39;Text&#39;, mappedName: &#39;status&#39;, readOnly: false },
-                    { internalName: &#39;TaskManager&#39;, objectType: &#39;User&#39;, mappedName: &#39;taskManager&#39;, readOnly: false },
-                    { internalName: &#39;ProjectGroup&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;group&#39;, readOnly: false },
-                    { internalName: &#39;CostEstimate&#39;, objectType: &#39;Currency&#39;, mappedName: &#39;costEstimate&#39;, readOnly: false },
-                    { internalName: &#39;Active&#39;, objectType: &#39;Boolean&#39;, mappedName: &#39;active&#39;, readOnly: false },
-                    { internalName: &#39;Attachments&#39;, objectType: &#39;Attachments&#39;, mappedName: &#39;attachments&#39;, readOnly: true}
-                ]
-            }
-        });
-     &lt;/code&gt;</code></pre>
+<h2 id="example">Example</h2><p>Taken from a fictitious projectsModel.js
+         <pre>
+         var model = new modelFactory.Model({
+                factory: Project,
+                list: {
+                    guid: &#39;{PROJECT LIST GUID}&#39;,
+                    title: &#39;Projects&#39;,
+                    customFields: [
+                        { internalName: &#39;Title&#39;, objectType: &#39;Text&#39;, mappedName: &#39;title&#39;, readOnly: false },
+                        { internalName: &#39;Customer&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;customer&#39;, readOnly: false },
+                        { internalName: &#39;ProjectDescription&#39;, objectType: &#39;Text&#39;, mappedName: &#39;projectDescription&#39;, readOnly: false },
+                        { internalName: &#39;Status&#39;, objectType: &#39;Text&#39;, mappedName: &#39;status&#39;, readOnly: false },
+                        { internalName: &#39;TaskManager&#39;, objectType: &#39;User&#39;, mappedName: &#39;taskManager&#39;, readOnly: false },
+                        { internalName: &#39;ProjectGroup&#39;, objectType: &#39;Lookup&#39;, mappedName: &#39;group&#39;, readOnly: false },
+                        { internalName: &#39;CostEstimate&#39;, objectType: &#39;Currency&#39;, mappedName: &#39;costEstimate&#39;, readOnly: false },
+                        { internalName: &#39;Active&#39;, objectType: &#39;Boolean&#39;, mappedName: &#39;active&#39;, readOnly: false },
+                        { internalName: &#39;Attachments&#39;, objectType: &#39;Attachments&#39;, mappedName: &#39;attachments&#39;, readOnly: true}
+                    ]
+                }
+            });
+         </pre></p>
 
 
 

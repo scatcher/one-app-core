@@ -53,11 +53,13 @@ The `modelFactory` provides a common base prototype for Model, Query, and List I
   
 ## Methods
 
-<div id="registerChange"></div>
-<h2>
+
+<h4>
   <code>registerChange(model)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L122'>view</a>
+
 
 If online and sync is being used, notify all online users that a change has been made
 
@@ -101,11 +103,16 @@ If online and sync is being used, notify all online users that a change has been
 
 
 
-<div id="resolvePermissions"></div>
-<h2>
+
+
+
+
+<h4>
   <code>resolvePermissions(permissionsMask)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/model_srvc.js#L963'>view</a>
+
 
 Converts permMask into something usable to determine permission level for current user
 
@@ -151,6 +158,11 @@ the rights that can be assigned to a user or site group. This bit mask can have 
   <code>object</code> property for each permission level identifying if current user has rights (true || false)
 link: http://sympmarc.com/2009/02/03/permmask-in-sharepoint-dvwps/
 link: http://spservices.codeplex.com/discussions/208708
+
+
+
+<h2 id="example">Example</h2><p>&#39;0x0000000000000010&#39;</p>
+
 
 
 

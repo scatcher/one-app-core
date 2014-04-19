@@ -57,11 +57,13 @@ For additional information on many of these web service calls, see Marc Anderson
   
 ## Methods
 
-<div id="processListItems"></div>
-<h2>
+
+<h4>
   <code>processListItems(model, responseXML, options, options.factory, options.filter, options.mapping, options.mode, options.target)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L22'>view</a>
+
 
 Post processing of data after returning list items from server
 
@@ -223,13 +225,17 @@ Post processing of data after returning list items from server
 
 
 
-<div id="parseFieldVersionHistoryResponse
-Takes an XML response from SharePoint webservice and returns an array of field versions"></div>
-<h2>
+
+
+
+
+<h4>
   <code>parseFieldVersionHistoryResponse
 Takes an XML response from SharePoint webservice and returns an array of field versions(responseXML, fieldDefinition)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L107'>view</a>
+
 
 
 
@@ -292,11 +298,16 @@ Takes an XML response from SharePoint webservice and returns an array of field v
 
 
 
-<div id="getFieldVersionHistory"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getFieldVersionHistory(payload, fieldDefinition)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L140'>view</a>
+
 
 Returns the version history for a field in a list item
 
@@ -359,11 +370,16 @@ Returns the version history for a field in a list item
 
 
 
-<div id="getCollection"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getCollection(options, options.operation, options.operation, options.operation, options.operation, options.operation, options.operation, options.operation, options.filterNode)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L176'>view</a>
+
 
 Used to handle any of the Get[filterNode]Collection calls to SharePoint
 
@@ -547,12 +563,24 @@ Used to handle any of the Get[filterNode]Collection calls to SharePoint
 
 
 
+<h2 id="example">Example</h2><pre><code class="lang-js"> dataService.getCollection({
+      operation: &quot;GetGroupCollectionFromUser&quot;,
+      userLoginName: $scope.state.selectedUser.LoginName
+ }).then(function (response) {
+      postProcessFunction(response);
+ });</code></pre>
 
-<div id="serviceWrapper"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>serviceWrapper(options)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L303'>view</a>
+
 
 Generic wrapper for any SPServices web service call
 Check http://spservices.codeplex.com/documentation for details on expected parameters for each operation
@@ -601,11 +629,16 @@ Check http://spservices.codeplex.com/documentation for details on expected param
 
 
 
-<div id="getList"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getList(options, options.listName, options.webURL)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L373'>view</a>
+
 
 Returns all list settings for each list on the site
 
@@ -684,11 +717,16 @@ Returns all list settings for each list on the site
 
 
 
-<div id="deleteAttachment"></div>
-<h2>
+
+
+
+
+<h4>
   <code>deleteAttachment(options, options.listItemId, options.url, options.listName)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L415'>view</a>
+
 
 Deletes and attachment on a list item
 
@@ -782,11 +820,16 @@ Deletes and attachment on a list item
 
 
 
-<div id="getView"></div>
-<h2>
+
+
+
+
+<h4>
   <code>getView(options, options.listName, options.viewName, options.webURL)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L460'>view</a>
+
 
 Returns details of a SharePoint list view
 
@@ -881,11 +924,16 @@ Returns details of a SharePoint list view
 
 
 
-<div id="executeQuery"></div>
-<h2>
+
+
+
+
+<h4>
   <code>executeQuery(model, query, query.offlineXML, options, options.deferred, options.target, options.offlineXML)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L510'>view</a>
+
 
 Takes in the model and a query that
 
@@ -1031,11 +1079,16 @@ Takes in the model and a query that
 
 
 
-<div id="removeEntityFromLocalCache"></div>
-<h2>
+
+
+
+
+<h4>
   <code>removeEntityFromLocalCache(entityArray, entityId)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L602'>view</a>
+
 
 Removes an entity from the local cache if it exists
 
@@ -1097,11 +1150,16 @@ Removes an entity from the local cache if it exists
 
 
 
-<div id="retrieveChangeToken"></div>
-<h2>
+
+
+
+
+<h4>
   <code>retrieveChangeToken(responseXML)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L627'>view</a>
+
 
 Returns the change token from the xml response of a GetListItemChangesSinceToken query
 Note: this attribute is only found when using 'GetListItemChangesSinceToken'
@@ -1145,11 +1203,16 @@ Note: this attribute is only found when using 'GetListItemChangesSinceToken'
 
 
 
-<div id="retrievePermMask"></div>
-<h2>
+
+
+
+
+<h4>
   <code>retrievePermMask(responseXML)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L639'>view</a>
+
 
 Returns the text representation of the users permission mask
 Note: this attribute is only found when using 'GetListItemChangesSinceToken'
@@ -1193,11 +1256,16 @@ Note: this attribute is only found when using 'GetListItemChangesSinceToken'
 
 
 
-<div id="processDeletionsSinceToken"></div>
-<h2>
+
+
+
+
+<h4>
   <code>processDeletionsSinceToken(responseXML, entityArray)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L651'>view</a>
+
 
 GetListItemChangesSinceToken returns items that have been added as well as deleted so we need
 to remove the deleted items from the local cache
@@ -1257,11 +1325,16 @@ to remove the deleted items from the local cache
 
 
 
-<div id="stringifySharePointMultiSelect"></div>
-<h2>
+
+
+
+
+<h4>
   <code>stringifySharePointMultiSelect(value, idProperty)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L682'>view</a>
+
 
 Turns an array of, typically {lookupId: someId, lookupValue: someValue}, objects into a string
 of delimited id's that can be passed to SharePoint for a multi select lookup or multi user selection
@@ -1327,11 +1400,16 @@ field
 
 
 
-<div id="createValuePair"></div>
-<h2>
+
+
+
+
+<h4>
   <code>createValuePair(fieldDefinition, value)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L706'>view</a>
+
 
 Uses a field definition from a model to properly format a value for submission to SharePoint
 
@@ -1393,11 +1471,16 @@ Uses a field definition from a model to properly format a value for submission t
 
 
 
-<div id="generateValuePairs"></div>
-<h2>
+
+
+
+
+<h4>
   <code>generateValuePairs(fieldDefinitions, item)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L765'>view</a>
+
 
 Uses provided field definitions to pull value pairs for desired attributes
 
@@ -1461,11 +1544,16 @@ Uses provided field definitions to pull value pairs for desired attributes
 
 
 
-<div id="addUpdateItemModel"></div>
-<h2>
+
+
+
+
+<h4>
   <code>addUpdateItemModel(model, item, options, options.mode, options.buildValuePairs, options.valuePairs)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L785'>view</a>
+
 
 Adds or updates a list item based on if the item passed in contains an id attribute
 
@@ -1594,11 +1682,16 @@ Adds or updates a list item based on if the item passed in contains an id attrib
 
 
 
-<div id="deleteItemModel"></div>
-<h2>
+
+
+
+
+<h4>
   <code>deleteItemModel(model, item, options, options.target)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/data_srvc.js#L897'>view</a>
+
 
 Typically called directly from a list item, removes the list item from SharePoint
 and the local cache
@@ -1692,6 +1785,9 @@ and the local cache
 
 * Returns: 
   <code>object</code> promise
+
+
+
 
 
 

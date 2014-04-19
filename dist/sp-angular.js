@@ -1521,21 +1521,9 @@ angular.module('spAngular').factory('modelFactory', [
          * application.  Identifies field types and formats accordingly.  Also denotes if a field is read only.
          * @constructor
          *
-         *  * @usage
-         *
-         * ```html
-         * <body ng-app="starter">
-         *   <!-- The nav bar that will be updated as we navigate -->
-         *   <ion-nav-bar class="bar-positive nav-title-slide-ios7">
-         *   </ion-nav-bar>
-         *
-         *   <!-- where the initial view template will be rendered -->
-         *   <ion-nav-view></ion-nav-view>
-         * </body>
-         * ```
          * @example Taken from a fictitious projectsModel.js
-
-            var model = new modelFactory.Model({
+         <pre>
+         var model = new modelFactory.Model({
                 factory: Project,
                 list: {
                     guid: '{PROJECT LIST GUID}',
@@ -1553,8 +1541,7 @@ angular.module('spAngular').factory('modelFactory', [
                     ]
                 }
             });
-         </code>
-         *
+         </pre>
          */
     function Model(options) {
       var model = this;
@@ -1584,6 +1571,13 @@ angular.module('spAngular').factory('modelFactory', [
          * Gets all list items in the current list, processes the xml, and adds the data to the model
          * Uses new deferred object instead of resolving self.ready
          * @returns {promise}
+         * @example Taken from a fictitious projectsModel.js
+         <pre>
+         projectModel.getAllListItems().then(function(entities) {
+             //Do something with all of the returned entities
+             $scope.projects = entities;
+         };
+         </pre>
          */
     Model.prototype.getAllListItems = function () {
       var deferred = $q.defer();
@@ -1614,6 +1608,17 @@ angular.module('spAngular').factory('modelFactory', [
          * @param {object} [options] - Pass additional options to the data service.
          * @example {title: "Some Title", date: new Date()}
          * @returns {promise}
+         *
+         * @example Taken from a fictitious projectsModel.js
+         <pre>
+         projectModel.addNewItem({
+                title: 'A Project',
+                customer: {lookupValue: 'My Customer', lookupId: 123},
+                description: 'This is the project description'
+             }).then(function(newEntityFromServer) {
+                 //The local query cache is automatically updated but any other dependent logic can go here
+             };
+         </pre>
          */
     Model.prototype.addNewItem = function (entity, options) {
       var model = this;
@@ -1633,6 +1638,66 @@ angular.module('spAngular').factory('modelFactory', [
          * @param {object} [queryOptions]
          * @param {string} [queryOptions.name=defaultQueryName]
          * @returns {Query}
+         *
+         * @example Could be placed on the projectModel and creates the query but doesn't call it
+         <pre>
+         projectModel.registerQuery({
+                name: 'primary',
+                query: '' +
+                    '<Query>' +
+                    '   <OrderBy>' +
+                    '       <FieldRef Name="Title" Ascending="TRUE"/>' +
+                    '   </OrderBy>' +
+                    '</Query>'
+            });
+         </pre>
+         * @example To call the query or check for changes since the last call
+         <pre>
+         projectModel.executeQuery('primary').then(function(entities) {
+             //We now have a reference to array of entities stored in the local cache
+             //These inherit from the ListItem prototype as well as the Project prototype on the model
+             $scope.projects = entities;
+         });
+         </pre>
+         *
+         * @example Advanced functionality that would allow us to dynamically create queries for list items with a
+         * lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
+         *
+         <pre>
+            model.queryByProjectId(projectId) {
+                // Unique query name
+                var queryKey = 'pid' + projectId;
+
+                // Register project query if it doesn't exist
+                if (!_.isObject(model.queries[queryKey])) {
+                    model.registerQuery({
+                        name: queryKey,
+                        query: '' +
+                            '<Query>' +
+                            '   <OrderBy>' +
+                            '       <FieldRef Name="ID" Ascending="TRUE"/>' +
+                            '   </OrderBy>' +
+                            '   <Where>' +
+                            '       <And>' +
+                        // Prevents any records from being returned if user doesn't have permissions on project
+                            '           <IsNotNull>' +
+                            '               <FieldRef Name="Project"/>' +
+                            '           </IsNotNull>' +
+                        // Return all records for the project matching param projectId
+                            '           <Eq>' +
+                            '               <FieldRef Name="Project" LookupId="TRUE"/>' +
+                            '               <Value Type="Lookup">' + projectId + '</Value>' +
+                            '           </Eq>' +
+                            '       </And>' +
+                            '   </Where>' +
+                            '</Query>'
+                    });
+                }
+                //Still using execute query but now we have a custom query
+                return model.executeQuery(queryKey);
+            };
+         </pre>
+         *
          */
     Model.prototype.registerQuery = function (queryOptions) {
       var model = this;
@@ -1648,7 +1713,20 @@ angular.module('spAngular').factory('modelFactory', [
          * @description
          * Helper function that attempts to locate and return a reference to the requested or catchall query
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
-         * @returns {object} query
+         * @returns {object} query - see Query prototype for properties
+         *
+         * @example
+         * <pre>
+         * var primaryQuery = projectModel.getQuery();
+         *</pre>
+         * --or--
+         *<pre>
+         * var primaryQuery = projectModel.getQuery('primary');
+         *</pre>
+         * --or--
+         *<pre>
+         * var namedQuery = projectModel.getQuery('customQuery');
+         *</pre>
          */
     Model.prototype.getQuery = function (queryName) {
       var model = this, query;
@@ -1669,9 +1747,23 @@ angular.module('spAngular').factory('modelFactory', [
          * @name Model#getCache
          * @description
          * Helper function that return the local cache for a named query if provided, otherwise
-         * it returns the cache for the primary query for the model
+         * it returns the cache for the primary query for the model.  Useful if you know the query
+         * has already been resolved and there's no need to check SharePoint for changes.
+         *
          * @param {string} [queryName]
          * @returns {Array}
+         *
+         * @example
+         * var primaryQueryCache = projectModel.getCache();
+         *
+         * --or--
+         *
+         * var primaryQueryCache = projectModel.getCache('primary');
+         *
+         * --or--
+         *
+         * var namedQueryCache = projectModel.getCache('customQuery');
+         *
          */
     Model.prototype.getCache = function (queryName) {
       var model = this, query, cache;
@@ -1685,10 +1777,20 @@ angular.module('spAngular').factory('modelFactory', [
          * @ngdoc method
          * @name Model#executeQuery
          * @description
-         * Reference to the function which executes a query
+         * The primary method for retrieving data from a query registered on a model.  It returns a promise
+         * which resolves to the local cache after post processing entities with constructors.
+         *
          * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
          * @param {object} [options] - Pass options to the data service.
          * @returns {function}
+         *
+         * @example To call the query or check for changes since the last call.
+         projectModel.executeQuery('MyCustomQuery').then(function(entities) {
+             //We now have a reference to array of entities stored in the local cache
+             //These inherit from the ListItem prototype as well as the Project prototype on the model
+             $scope.subsetOfProjects = entities;
+         })
+         *
          */
     Model.prototype.executeQuery = function (queryName, options) {
       var model = this;

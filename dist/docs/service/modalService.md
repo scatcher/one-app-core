@@ -53,11 +53,13 @@ Extends a modal form to include many standard functions
   
 ## Methods
 
-<div id="modalModelProvider"></div>
-<h2>
+
+<h4>
   <code>modalModelProvider(options, options.templateUrl, options.controller, options.expectedArguments)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/modal_srvc.js#L12'>view</a>
+
 
 Extends a model to allow us to easily attach a modal form that accepts and injects a
 dynamic number of arguments.
@@ -155,12 +157,23 @@ dynamic number of arguments.
 
 
 
+<h2 id="example">Example</h2><p>model.openModal = modalService.modalModelProvider({
+                templateUrl: &#39;modules/comp_request/views/comp_request_modal_view.html&#39;,
+                controller: &#39;compRequestModalCtrl&#39;,
+                expectedArguments: [&#39;request&#39;]
+            });</p>
 
-<div id="getPermissions"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>getPermissions(entity)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/modal_srvc.js#L72'>view</a>
+
 
 Returns an object containing the permission levels for the current user
 
@@ -207,11 +220,16 @@ Returns an object containing the permission levels for the current user
 
 
 
-<div id="initializeState"></div>
-<h2>
+
+
+
+
+<h4>
   <code>initializeState(entity, options)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/modal_srvc.js#L100'>view</a>
+
 
 Creates a state object, populates permissions for curent user, and sets display mode
 
@@ -272,12 +290,22 @@ Creates a state object, populates permissions for curent user, and sets display 
 
 
 
+<h2 id="example">Example</h2><p>$scope.state = modalService.initializeState(request, {
+             dateExceedsBoundary: false,
+             enableApproval: false
+         });</p>
 
-<div id="deleteEntity"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>deleteEntity(entity, state, $modalInstance)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/modal_srvc.js#L137'>view</a>
+
 
 Prompts for confirmation of deletion, then deletes and closes modal
 
@@ -351,12 +379,21 @@ Prompts for confirmation of deletion, then deletes and closes modal
 
 
 
+<h2 id="example">Example</h2><p>$scope.deleteRequest = function () {
+     modalService.deleteEntity($scope.request, $scope.state, $modalInstance);
+ };</p>
 
-<div id="saveEntity"></div>
-<h2>
+
+
+
+
+
+<h4>
   <code>saveEntity(entity, model, state, $modalInstance)</code>
 
-</h2>
+</h4>
+<a href='http://github.com/scatcher/sp-angular/blob/master/app/scripts/services/modal_srvc.js#L165'>view</a>
+
 
 Creates a new record if necessary, otherwise updates the existing record
 
@@ -442,6 +479,13 @@ Creates a new record if necessary, otherwise updates the existing record
 
 
 
+
+
+
+
+<h2 id="example">Example</h2><p>$scope.saveRequest = function () {
+     modalService.saveEntity($scope.request, compRequestsModel, $scope.state, $modalInstance);
+ };</p>
 
 
 
