@@ -23,14 +23,15 @@ module.exports = function (config) {
 
     var versionData = require('./generate-versions')(config);
     config.set('versionData', versionData);
-    config.set('rendering.contentsFolder', 'dist');
+    config.set('rendering.contentsFolder', 'dist/docs');
 //    config.set('rendering.contentsFolder', path.join('docs', versionData.current.folder));
 
     config.set('processing.api-docs', {
-        outputPath: 'api/${docType}/${name}.md',
+        outputPath: '${docType}/${name}.md',
 //        outputPath: 'api/${docType}/${name}/index.md',
         path: 'api/${docType}/${name}/',
         moduleOutputPath: 'api/module/${name}/index.md',
+//        moduleOutputPath: 'api/module/${name}/index.md',
         modulePath: 'api/module/${name}/'
     });
 
