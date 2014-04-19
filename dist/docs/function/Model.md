@@ -209,12 +209,14 @@ Uses new deferred object instead of resolving self.ready
 
 
 
-<h2>Example</h2><p>Taken from a fictitious projectsModel.js
+<h2>Example</h2><code>
+    <p>Taken from a fictitious projectsModel.js
     projectModel.getAllListItems().then(function(entities) {
         //Do something with all of the returned entities
         $scope.projects = entities;
     };</p>
 
+</code>
 
 
 
@@ -288,8 +290,11 @@ Creates a new list item in SharePoint
 
 
 
-<h2>Example</h2><p>{title: &quot;Some Title&quot;, date: new Date()}</p>
-<p>Taken from a fictitious projectsModel.js
+<h2>Example</h2><code>
+    <p>{title: &quot;Some Title&quot;, date: new Date()}</p>
+
+</code><code>
+    <p>Taken from a fictitious projectsModel.js
    projectModel.addNewItem({
           title: &#39;A Project&#39;,
           customer: {lookupValue: &#39;My Customer&#39;, lookupId: 123},
@@ -298,6 +303,7 @@ Creates a new list item in SharePoint
            //The local query cache is automatically updated but any other dependent logic can go here
    };</p>
 
+</code>
 
 
 
@@ -369,7 +375,8 @@ Constructor that allows us create a static query with a reference to the parent 
 
 
 
-<h2>Example</h2><p>Could be placed on the projectModel and creates the query but doesn&#39;t call it</p>
+<h2>Example</h2><code>
+    <p>Could be placed on the projectModel and creates the query but doesn&#39;t call it</p>
 <p>   projectModel.registerQuery({
        name: &#39;primary&#39;,
        query: &#39;&#39; +
@@ -379,13 +386,17 @@ Constructor that allows us create a static query with a reference to the parent 
            &#39;   </OrderBy>&#39; +
            &#39;</Query>&#39;
    });</p>
-<p>To call the query or check for changes since the last call</p>
+
+</code><code>
+    <p>To call the query or check for changes since the last call</p>
 <p>   projectModel.executeQuery(&#39;primary&#39;).then(function(entities) {
        //We now have a reference to array of entities stored in the local cache
        //These inherit from the ListItem prototype as well as the Project prototype on the model
        $scope.projects = entities;
    });</p>
-<p>Advanced functionality that would allow us to dynamically create queries for list items with a
+
+</code><code>
+    <p>Advanced functionality that would allow us to dynamically create queries for list items with a
 lookup field associated with a specific project id.  Let&#39;s assume this is on the projectTasksModel.</p>
 <p>   model.queryByProjectId(projectId) {
        // Unique query name
@@ -419,6 +430,7 @@ lookup field associated with a specific project id.  Let&#39;s assume this is on
    return model.executeQuery(queryKey);</code></pre>
 <p>   };</p>
 
+</code>
 
 
 
@@ -475,17 +487,23 @@ Helper function that attempts to locate and return a reference to the requested 
 
 
 
-<h2>Example</h2><p><pre>
+<h2>Example</h2><code>
+    <p><pre>
 var primaryQuery = projectModel.getQuery();
 </pre>
 :--or--:</p>
-<p><pre>
+
+</code><code>
+    <p><pre>
 var primaryQuery = projectModel.getQuery(&#39;primary&#39;);
 </pre>
 :--or--:</p>
-<pre>
+
+</code><code>
+    <pre>
 var namedQuery = projectModel.getQuery('customQuery');
 </pre>
+</code>
 
 
 
@@ -543,12 +561,14 @@ has already been resolved and there's no need to check SharePoint for changes.
 
 
 
-<h2>Example</h2><p>var primaryQueryCache = projectModel.getCache();</p>
+<h2>Example</h2><code>
+    <p>var primaryQueryCache = projectModel.getCache();</p>
 <p>--or--</p>
 <p>var primaryQueryCache = projectModel.getCache(&#39;primary&#39;);</p>
 <p>--or--</p>
 <p>var namedQueryCache = projectModel.getCache(&#39;customQuery&#39;);</p>
 
+</code>
 
 
 
@@ -623,13 +643,15 @@ which resolves to the local cache after post processing entities with constructo
 
 
 
-<h2>Example</h2><p>To call the query or check for changes since the last call.
+<h2>Example</h2><code>
+    <p>To call the query or check for changes since the last call.
          projectModel.executeQuery(&#39;MyCustomQuery&#39;).then(function(entities) {
              //We now have a reference to array of entities stored in the local cache
              //These inherit from the ListItem prototype as well as the Project prototype on the model
              $scope.subsetOfProjects = entities;
          })</p>
 
+</code>
 
 
 

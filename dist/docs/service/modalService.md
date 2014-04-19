@@ -157,12 +157,14 @@ dynamic number of arguments.
 
 
 
-<h2>Example</h2><p>model.openModal = modalService.modalModelProvider({
+<h2>Example</h2><code>
+    <p>model.openModal = modalService.modalModelProvider({
                 templateUrl: &#39;modules/comp_request/views/comp_request_modal_view.html&#39;,
                 controller: &#39;compRequestModalCtrl&#39;,
                 expectedArguments: [&#39;request&#39;]
             });</p>
 
+</code>
 
 
 
@@ -290,11 +292,13 @@ Creates a state object, populates permissions for curent user, and sets display 
 
 
 
-<h2>Example</h2><p>$scope.state = modalService.initializeState(request, {
+<h2>Example</h2><code>
+    <p>$scope.state = modalService.initializeState(request, {
              dateExceedsBoundary: false,
              enableApproval: false
          });</p>
 
+</code>
 
 
 
@@ -379,10 +383,12 @@ Prompts for confirmation of deletion, then deletes and closes modal
 
 
 
-<h2>Example</h2><p>$scope.deleteRequest = function () {
+<h2>Example</h2><code>
+    <p>$scope.deleteRequest = function () {
      modalService.deleteEntity($scope.request, $scope.state, $modalInstance);
  };</p>
 
+</code>
 
 
 
@@ -483,10 +489,12 @@ Creates a new record if necessary, otherwise updates the existing record
 
 
 
-<h2>Example</h2><p>$scope.saveRequest = function () {
+<h2>Example</h2><code>
+    <p>$scope.saveRequest = function () {
      modalService.saveEntity($scope.request, compRequestsModel, $scope.state, $modalInstance);
  };</p>
 
+</code>
 
 
 

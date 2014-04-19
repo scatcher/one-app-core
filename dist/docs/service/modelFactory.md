@@ -161,8 +161,10 @@ link: http://spservices.codeplex.com/discussions/208708
 
 
 
-<h2>Example</h2><p>&#39;0x0000000000000010&#39;</p>
+<h2>Example</h2><code>
+    <p>&#39;0x0000000000000010&#39;</p>
 
+</code>
 
 
 

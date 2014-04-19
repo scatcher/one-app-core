@@ -563,13 +563,15 @@ Used to handle any of the Get[filterNode]Collection calls to SharePoint
 
 
 
-<h2>Example</h2><pre><code class="lang-js"> dataService.getCollection({
+<h2>Example</h2><code>
+    <pre><code class="lang-js"> dataService.getCollection({
       operation: &quot;GetGroupCollectionFromUser&quot;,
       userLoginName: $scope.state.selectedUser.LoginName
  }).then(function (response) {
       postProcessFunction(response);
  });</code></pre>
 
+</code>
 
 
 
