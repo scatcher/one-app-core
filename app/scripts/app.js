@@ -1,26 +1,26 @@
 'use strict';
 
 angular.module('spAngular', [
-        //Angular Components
-        'ngAnimate',
-        'ngResource',
-        'ngSanitize',
-        'ngAnimate',
+//        //Angular Components
+//        'ngAnimate',
+//        'ngResource',
+//        'ngSanitize',
+//        'ngAnimate',
 
         //Angular UI
         'ui.bootstrap',
-        'ui.calendar',
-        'ui.date',
-        'ui.select2',
-        'ui.highlight',
-        'ui.sortable',
+//        'ui.calendar',
+//        'ui.date',
+//        'ui.select2',
+//        'ui.highlight',
+//        'ui.sortable',
         'ui.router',
 
         //Other Vendor
         'ngTable',
-        'ngCkeditor',
+//        'ngCkeditor',
         'firebase',
-        'googlechart',
+//        'googlechart',
         'angularSpinner',
         'toastr'
     ])

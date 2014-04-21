@@ -1,20 +1,9 @@
 'use strict';
 angular.module('spAngular', [
-  'ngAnimate',
-  'ngResource',
-  'ngSanitize',
-  'ngAnimate',
   'ui.bootstrap',
-  'ui.calendar',
-  'ui.date',
-  'ui.select2',
-  'ui.highlight',
-  'ui.sortable',
   'ui.router',
   'ngTable',
-  'ngCkeditor',
   'firebase',
-  'googlechart',
   'angularSpinner',
   'toastr'
 ]).config([
