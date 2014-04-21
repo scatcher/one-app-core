@@ -131,7 +131,8 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            server: '.tmp'
+            server: '.tmp',
+            docs: '<%= config.dist %>/docs'
         },
 
         htmlmin: {
@@ -166,7 +167,10 @@ module.exports = function (grunt) {
                 separator: ';'
             },
             dist: {
-                src: ['<%= config.services %>/*.js'],
+                src: [
+                    '<%= config.app %>/scripts/app.js',
+                    '<%= config.services %>/*.js'
+                ],
                 dest: '<%= config.dist %>/sp-angular.js'
             }
         },
