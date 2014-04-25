@@ -299,7 +299,7 @@ module.exports = function (grunt) {
         var dgeni = require('dgeni');
         var done = this.async();
 
-        dgeni('docs/docs.config.js')
+        dgeni('docs/dgeni.conf.js')
             .generateDocs()
             .then(done);
     });

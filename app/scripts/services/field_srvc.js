@@ -230,8 +230,6 @@ angular.module('spAngular')
          * @name fieldService#defaultFields
          * @description
          * Read only fields that should be included in all lists
-         *
-         * @returns {{internalName: string, objectType: string, mappedName: string, readOnly: boolean}[]}
          */
         var defaultFields = [
             { internalName: 'ID', objectType: 'Counter', mappedName: 'id', readOnly: true},
@@ -253,7 +251,7 @@ angular.module('spAngular')
          * @param {object} list
          * @param {array} list.customFields
          * @param {array} list.fields
-         * @param {string} list.viewFields
+         * @param {string} list.viewFiSelds
          */
         function extendFieldDefinitions(list) {
             /**

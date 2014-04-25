@@ -55,7 +55,9 @@ angular.module('spAngular')
             /** Use factory, typically on model, to create new object for each returned item */
             _.each(jsObjects, function (item) {
                 /** Allow us to reference the originating query that generated this object */
-                item.getQuery = opts.getQuery;
+                item.getQuery = function() {
+                    return opts.getQuery();
+                };
                 /** Create Reference to the containing array */
                 item.getContainer = function() {
                     return opts.target;

@@ -92,7 +92,9 @@ angular.module('spAngular').service('dataService', [
       /** Use factory, typically on model, to create new object for each returned item */
       _.each(jsObjects, function (item) {
         /** Allow us to reference the originating query that generated this object */
-        item.getQuery = opts.getQuery;
+        item.getQuery = function () {
+          return opts.getQuery();
+        };
         /** Create Reference to the containing array */
         item.getContainer = function () {
           return opts.target;
@@ -1209,8 +1211,6 @@ angular.module('spAngular').service('fieldService', [
          * @name fieldService#defaultFields
          * @description
          * Read only fields that should be included in all lists
-         *
-         * @returns {{internalName: string, objectType: string, mappedName: string, readOnly: boolean}[]}
          */
     var defaultFields = [
         {
@@ -1261,7 +1261,7 @@ angular.module('spAngular').service('fieldService', [
          * @param {object} list
          * @param {array} list.customFields
          * @param {array} list.fields
-         * @param {string} list.viewFields
+         * @param {string} list.viewFiSelds
          */
     function extendFieldDefinitions(list) {
       /**
@@ -2254,6 +2254,7 @@ angular.module('spAngular').factory('modelFactory', [
           listName: model.list.guid,
           negotiatingWithServer: false,
           operation: 'GetListItemChangesSinceToken',
+          cacheXML: false,
           query: '' + '<Query>' + '   <OrderBy>' + '       <FieldRef Name="ID" Ascending="TRUE"/>' + '   </OrderBy>' + '</Query>',
           queryOptions: '' + '<QueryOptions>' + '   <IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' + '   <IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' + '   <IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' + '   <ExpandUserField>FALSE</ExpandUserField>' + '</QueryOptions>',
           viewFields: model.list.viewFields,

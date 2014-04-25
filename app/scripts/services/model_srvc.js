@@ -843,6 +843,8 @@ angular.module('spAngular')
                 /** Every time we run we want to check to update our cached data with
                  * any changes made on the server */
                 operation: 'GetListItemChangesSinceToken',
+                /** Very memory intensive to enable cacheXML which is enabled by default*/
+                cacheXML: false,
                 /** Default query returns list items in ascending ID order */
                 query: '' +
                     '<Query>' +
