@@ -11,12 +11,13 @@
  *  - [http://spservices.codeplex.com/documentation]
  */
 angular.module('spAngular')
-    .service('dataService', function ($q, $timeout, queueService, configService, utilityService, toastr) {
+    .service('dataService', function ($q, $timeout, queueService, configService, utilityService, spAngularConfig, toastr) {
         var dataService = {};
 
         /** Flag to use cached XML files from the app/dev folder */
-        var offline = window.location.href.indexOf('localhost') > -1;
+        var offline = spAngularConfig.offline;
 
+        //TODO Figure out a better way to get this value, shouldn't need to make a blocking call
         var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
 
         /**

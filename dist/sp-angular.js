@@ -22,7 +22,10 @@ angular.module('spAngular', [
 * Basic config for the application (unique for each environment)
 *
 */
-angular.module('spAngular').service('configService', [
+angular.module('spAngular').constant('spAngularConfig', {
+  defaultUrl: $().SPServices.SPGetCurrentSite(),
+  offline: window.location.href.indexOf('localhost') > -1 || window.location.href.indexOf('http://0.') > -1 || window.location.href.indexOf('http://10.') > -1 || window.location.href.indexOf('http://192.') > -1
+}).service('configService', [
   'toastrConfig',
   function (toastrConfig) {
     /** Set the default toast location */
@@ -55,11 +58,13 @@ angular.module('spAngular').service('dataService', [
   'queueService',
   'configService',
   'utilityService',
+  'spAngularConfig',
   'toastr',
-  function ($q, $timeout, queueService, configService, utilityService, toastr) {
+  function ($q, $timeout, queueService, configService, utilityService, spAngularConfig, toastr) {
     var dataService = {};
     /** Flag to use cached XML files from the app/dev folder */
-    var offline = window.location.href.indexOf('localhost') > -1;
+    var offline = spAngularConfig.offline;
+    //TODO Figure out a better way to get this value, shouldn't need to make a blocking call
     var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
     /**
          * @ngdoc method
