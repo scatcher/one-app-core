@@ -10,7 +10,6 @@
 angular.module('spAngular')
     //TODO Move away from the config service and instead use the config constant
     .constant('spAngularConfig', {
-        defaultUrl: $().SPServices.SPGetCurrentSite(),
         offline:
             window.location.href.indexOf('localhost') > -1 ||
             window.location.href.indexOf('http://0.') > -1 ||
@@ -18,18 +17,15 @@ angular.module('spAngular')
             window.location.href.indexOf('http://192.') > -1
 
     })
-    .service('configService', function (toastrConfig) {
+    .service('configService', function (toastrConfig, spAngularConfig) {
 
         /** Set the default toast location */
         toastrConfig.positionClass = 'toast-bottom-right';
-
-        /** Flag to use cached XML files from the app/dev folder */
-        var offline = window.location.href.indexOf('localhost') > -1;
 
         return {
             appTitle: 'SP-Angular',
             debugEnabled: true,
             firebaseURL: "The url of your firebase source",
-            offline: offline
+            offline: spAngularConfig.offline
         }
     });

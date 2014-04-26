@@ -22,21 +22,17 @@ angular.module('spAngular', [
 * Basic config for the application (unique for each environment)
 *
 */
-angular.module('spAngular').constant('spAngularConfig', {
-  defaultUrl: $().SPServices.SPGetCurrentSite(),
-  offline: window.location.href.indexOf('localhost') > -1 || window.location.href.indexOf('http://0.') > -1 || window.location.href.indexOf('http://10.') > -1 || window.location.href.indexOf('http://192.') > -1
-}).service('configService', [
+angular.module('spAngular').constant('spAngularConfig', { offline: window.location.href.indexOf('localhost') > -1 || window.location.href.indexOf('http://0.') > -1 || window.location.href.indexOf('http://10.') > -1 || window.location.href.indexOf('http://192.') > -1 }).service('configService', [
   'toastrConfig',
-  function (toastrConfig) {
+  'spAngularConfig',
+  function (toastrConfig, spAngularConfig) {
     /** Set the default toast location */
     toastrConfig.positionClass = 'toast-bottom-right';
-    /** Flag to use cached XML files from the app/dev folder */
-    var offline = window.location.href.indexOf('localhost') > -1;
     return {
       appTitle: 'SP-Angular',
       debugEnabled: true,
       firebaseURL: 'The url of your firebase source',
-      offline: offline
+      offline: spAngularConfig.offline
     };
   }
 ]);
