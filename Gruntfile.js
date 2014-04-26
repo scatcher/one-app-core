@@ -172,6 +172,16 @@ module.exports = function (grunt) {
                     '<%= config.services %>/*.js'
                 ],
                 dest: '<%= config.dist %>/sp-angular.js'
+            },
+            ieshim: {
+                src: [
+                    '<%= config.app %>/bower_components/explorer-canvas/excanvas.js',
+                    '<%= config.app %>/bower_components/es5-shim/es5-shim.js',
+                    '<%= config.app %>/bower_components/json3/lib/json3.js',
+                    '<%= config.app %>/bower_components/respond/dest/respond.src.js',
+                    '<%= config.app %>/scripts/utility/oa_ie_safe.js'
+                ],
+                dest: '<%= config.dist %>/ie-shim.js'
             }
         },
 
@@ -181,8 +191,6 @@ module.exports = function (grunt) {
             dist: {
                 files: [
                     {
-//                        expand: true,
-//                        cwd: '.tmp/concat/scripts',
                         src: '<%= config.dist %>/sp-angular.js',
                         dest: '<%= config.dist %>/sp-angular.js'
                     }
@@ -194,40 +202,8 @@ module.exports = function (grunt) {
         copy: {
             dist: {
                 files: [
-//                    {
-//                        expand: true,
-//                        dot: true,
-//                        cwd: '<%= config.app %>',
-//                        dest: '<%= config.dist %>',
-//                        src: [
-//                            //HTML
-//                            '*.html',
-//                            'views/{,*/}*.html',
-//                            'modules/**/*.html',
-//                            'scripts/**/*.html',
-//
-//                            //PROJECT SPECIFIC RESOURCES
-//                            '*.{ico,png,txt}',
-//                            'images/{,*/}*.{png,jpg,gif}',
-//
-//                            //CK EDITOR
-//                            'bower_components/ng-ckeditor/libs/ckeditor/*.{js,css}',
-//                            'bower_components/ng-ckeditor/libs/ckeditor/plugins/**',
-//                            'bower_components/ng-ckeditor/libs/ckeditor/skins/**',
-//                            'bower_components/ng-ckeditor/libs/ckeditor/lang/en.js',
-//
-//                            //FONT AWESOME
-//                            'bower_components/font-awesome/css/**',
-//                            'bower_components/font-awesome/fonts/**',
-//
-//                            //ONE APP CORE
-//                            '<%= config.app %>/modules/**/*.html',
-//                            '<%= config.app %>/scripts/**/*.html'
-//                        ]
-//                    },
                     {
                         expand: true,
-//                        cwd: '<%= config.app %>',
                         dest: '<%= config.dist %>',
                         src: [
                             '<%= config.dist %>*.js'
@@ -240,6 +216,11 @@ module.exports = function (grunt) {
             js: {
                 src: ['<%= config.dist %>/sp-angular.js'],
                 dest: '<%= config.dist %>/sp-angular.min.js'
+            },
+            ie: {
+                src: '<%= config.dist %>/ie-shim.js',
+                dest: '<%= config.dist %>/ie-shim.min.js'
+
             }
         }
     });
@@ -276,26 +257,11 @@ module.exports = function (grunt) {
         'clean:dist',
         'concat',
         'ngmin',
-        'uglify',
-        'ngdoc'
+        'uglify'
+//        'ngdoc'
     ]);
-//    grunt.registerTask('build', [
-//        'clean:dist',
-////        'useminPrepare',
-////        'concurrent:dist',
-////        'autoprefixer',
-//        'concat',
-//        'ngmin',
-////        'copy:dist',
-////        'cdnify',
-////        'cssmin',
-//        'uglify'
-////        'rev',
-////        'usemin',
-////        'htmlmin'
-//    ]);
 
-    grunt.registerTask('ngdoc', 'Create ngdocs.', function() {
+    grunt.registerTask('ngdoc', 'Create ngdocs.', function () {
         var dgeni = require('dgeni');
         var done = this.async();
 
