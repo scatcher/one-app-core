@@ -60,6 +60,8 @@ angular.module('spAngular').service('dataService', [
     var dataService = {};
     /** Flag to use cached XML files from the app/dev folder */
     var offline = spAngularConfig.offline;
+    /** Allows us to make code easier to read */
+    var online = !offline;
     //TODO Figure out a better way to get this value, shouldn't need to make a blocking call
     var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
     /**
@@ -116,6 +118,14 @@ angular.module('spAngular').service('dataService', [
       }
       return entities;
     };
+    /**
+         * @description
+         * Maps a cache by entity id.  All provided entities are then either added if they don't already exist
+         * or replaced if they do.
+         * @param {object[]} localCache - The cache for a given query.
+         * @param {object[]} entities - All entities that should be merged into the cache.
+         * @returns {{created: number, updated: number}}
+         */
     function updateLocalCache(localCache, entities) {
       var updateCount = 0, createCount = 0;
       /** Map to only run through target list once and speed up subsequent lookups */
@@ -130,7 +140,6 @@ angular.module('spAngular').service('dataService', [
         } else {
           /** Replace local item with updated value */
           localCache[idMap.indexOf(entity.id)] = entity;
-          //                    angular.copy(entity, localCache[idMap.indexOf(entity.id)]);
           updateCount++;
         }
       });
@@ -765,6 +774,25 @@ angular.module('spAngular').service('dataService', [
       return pairs;
     }
     /**
+         * Propagates a change to all duplicate entities in all queries within a given model.
+         * @param {object} model
+         * @param {object} entity - List item.
+         * @param {object} [exemptQuery] - The query containing the updated item is automatically udpated so we don't
+         * need to process it.
+         */
+    function updateAllCaches(model, entity, exemptQuery) {
+      var queriesUpdated = 0;
+      /** Search through each of the queries and update any occurrence of this entity */
+      _.each(model.queries, function (query) {
+        /** Process all query caches except the one originally used to retrieve entity because
+                 * that is automatically updated by "processListItems". */
+        if (query != exemptQuery) {
+          updateLocalCache(query.cache, [entity]);
+        }
+      });
+      return queriesUpdated;
+    }
+    /**
          * @ngdoc method
          * @name dataService#addUpdateItemModel
          * @description
@@ -773,14 +801,19 @@ angular.module('spAngular').service('dataService', [
          * @param {object} item
          * @param {object} [options]
          * @param {string} [options.mode] - [update, replace, return]
-         * @param {boolean} [options.buildValuePairs] - automatically generate pairs based on fields defined in model
-         * @param {Array} [options.valuePairs] - precomputed value pairs to use instead of generating them
+         * @param {boolean} [options.buildValuePairs] - Automatically generate pairs based on fields defined in model.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query on the model
+         * to ensure entity is updated everywhere.  This is more process intensive so by default we only update the
+         * cached entity in the cache where this entity is currently stored.  Only applicable when updated an entity.
+         * @param {Array} [options.valuePairs] - Precomputed value pairs to use instead of generating them for each field
+         * identified in the model.
          * @returns {object} promise
          */
     var addUpdateItemModel = function (model, item, options) {
       var defaults = {
           mode: 'update',
           buildValuePairs: true,
+          updateAllCaches: false,
           valuePairs: []
         };
       var deferred = $q.defer();
@@ -805,8 +838,27 @@ angular.module('spAngular').service('dataService', [
         /** Creating new list item */
         payload.batchCmd = 'New';
       }
-      /** Logic to simulate expected behavior when working offline */
-      if (offline) {
+      if (online) {
+        /** Make call to lists web service */
+        var webServiceCall = $().SPServices(payload);
+        webServiceCall.then(function () {
+          /** Success */
+          var output = processListItems(model, webServiceCall.responseXML, opts);
+          var updatedEntity = output[0];
+          /** Optionally search through each cache on the model and update any other references to this entity */
+          if (opts.updateAllCaches && _.isNumber(item.id)) {
+            updateAllCaches(model, updatedEntity, item.getQuery(), 'update');
+          }
+          deferred.resolve(updatedEntity);
+        }, function (outcome) {
+          /** In the event of an error, display toast */
+          toastr.error('There was an error getting the requested data from ' + model.list.name);
+          deferred.reject(outcome);
+        }).always(function () {
+          queueService.decrease();
+        });
+      } else {
+        /** Logic to simulate expected behavior when working offline */
         /** Offline mode */
         window.console.log(payload);
         /** Mock data */
@@ -848,20 +900,6 @@ angular.module('spAngular').service('dataService', [
           deferred.resolve(item);
         }
         queueService.decrease();
-      } else {
-        /** Make call to lists web service */
-        var webServiceCall = $().SPServices(payload);
-        webServiceCall.then(function () {
-          /** Success */
-          var output = processListItems(model, webServiceCall.responseXML, opts);
-          deferred.resolve(output[0]);
-        }, function (outcome) {
-          /** In the event of an error, display toast */
-          toastr.error('There was an error getting the requested data from ' + model.list.name);
-          deferred.reject(outcome);
-        }).always(function () {
-          queueService.decrease();
-        });
       }
       return deferred.promise;
     };
@@ -874,12 +912,18 @@ angular.module('spAngular').service('dataService', [
          * @param {object} model - model of the list item
          * @param {object} item - list item
          * @param {object} [options]
-         * @param {Array} [options.target] - optional location to search through and remove the local cached copy
-         * @returns {object} promise
+         * @param {Array} [options.target=item.getContainer()] - Optional location to search through and remove the local cached copy.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query on the model
+         * to ensure entity is removed everywhere.  This is more process intensive so by default we only delete the
+         * cached entity in the cache where this entity is currently stored.
+         * @returns {object} promise - Nothing is return in the promise.
          */
     var deleteItemModel = function (model, item, options) {
       queueService.increase();
-      var defaults = { target: item.getContainer() };
+      var defaults = {
+          target: item.getContainer(),
+          updateAllCaches: false
+        };
       var opts = _.extend({}, defaults, options);
       var payload = {
           operation: 'UpdateListItems',
@@ -889,16 +933,29 @@ angular.module('spAngular').service('dataService', [
           ID: item.id
         };
       var deferred = $q.defer();
-      if (offline) {
-        /** Simulate deletion and remove locally */
-        removeEntityFromLocalCache(opts.target, item.id);
-        queueService.decrease();
-        deferred.resolve(opts.target);
-      } else {
+      function cleanCache() {
+        var deleteCount = 0;
+        if (opts.updateAllCaches) {
+          var model = item.getModel();
+          _.each(model.queries, function (query) {
+            var entityRemoved = removeEntityFromLocalCache(query.cache, item.id);
+            if (entityRemoved) {
+              deleteCount++;
+            }
+          });
+        } else {
+          var entityRemoved = removeEntityFromLocalCache(opts.target, item.id);
+          if (entityRemoved) {
+            deleteCount++;
+          }
+        }
+        return deleteCount;
+      }
+      if (online) {
         var webServiceCall = $().SPServices(payload);
         webServiceCall.then(function () {
           /** Success */
-          removeEntityFromLocalCache(opts.target, item.id);
+          cleanCache();
           queueService.decrease();
           deferred.resolve(opts.target);
         }, function (outcome) {
@@ -907,6 +964,12 @@ angular.module('spAngular').service('dataService', [
           queueService.decrease();
           deferred.reject(outcome);
         });
+      } else {
+        /** Offline debug mode */
+        /** Simulate deletion and remove locally */
+        cleanCache();
+        queueService.decrease();
+        deferred.resolve(opts.target);
       }
       return deferred.promise;
     };
@@ -1502,7 +1565,7 @@ angular.module('spAngular').service('modalService', [
  * @name modelFactory
  * @module Model
  * @description
- * The `modelFactory` provides a common base prototype for Model, Query, and List Item.
+ * The 'modelFactory' provides a common base prototype for Model, Query, and List Item.
  *
  * @function
  */
@@ -2028,7 +2091,10 @@ angular.module('spAngular').factory('modelFactory', [
          * @name ListItem#saveChanges
          * @description
          * Updates record directly from the object
-         * @param {object} [options] - optionally pass params to the dataService
+         * @param {object} [options] - Optionally pass params to the data service.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * updated everywhere.  This is more process intensive so by default we only update the cached entity in the
+         * cache where this entity is currently stored.
          * @returns {promise}
          */
     ListItem.prototype.saveChanges = function (options) {
@@ -2049,9 +2115,13 @@ angular.module('spAngular').factory('modelFactory', [
          * Saves a named subset of fields back to SharePoint
          * Alternative to saving all fields
          * @param {array} fieldArray - array of internal field names that should be saved to SharePoint
+         * @param {object} [options] - Optionally pass params to the data service.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * updated everywhere.  This is more process intensive so by default we only update the cached entity in the
+         * cache where this entity is currently stored.
          * @returns {promise}
          */
-    ListItem.prototype.saveFields = function (fieldArray) {
+    ListItem.prototype.saveFields = function (fieldArray, options) {
       var listItem = this;
       var model = listItem.getModel();
       var deferred = $q.defer();
@@ -2063,11 +2133,15 @@ angular.module('spAngular').factory('modelFactory', [
           definitions.push(match);
         }
       });
+      /** Generate value pairs for specified fields */
       var valuePairs = dataService.generateValuePairs(definitions, listItem);
-      dataService.addUpdateItemModel(model, listItem, {
-        buildValuePairs: false,
-        valuePairs: valuePairs
-      }).then(function (response) {
+      var defaults = {
+          buildValuePairs: false,
+          valuePairs: valuePairs
+        };
+      /** Extend defaults with any provided options */
+      var opts = _.extend({}, defaults, options);
+      dataService.addUpdateItemModel(model, listItem, opts).then(function (response) {
         deferred.resolve(response);
         /** Optionally broadcast change event */
         registerChange(model);
@@ -2078,8 +2152,11 @@ angular.module('spAngular').factory('modelFactory', [
          * @ngdoc method
          * @name ListItem#deleteItem
          * @description
-         * Deletes record directly from the object and removes record from user cache
-         * @param {object} [options] - optionally pass params to the dataService
+         * Deletes record directly from the object and removes record from user cache.
+         * @param {object} [options] - Optionally pass params to the dataService.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * removed everywhere.  This is more process intensive so by default we only remove the cached entity in the
+         * cache where this entity is currently stored.
          * @returns {promise}
          */
     ListItem.prototype.deleteItem = function (options) {

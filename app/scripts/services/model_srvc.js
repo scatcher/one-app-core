@@ -5,7 +5,7 @@
  * @name modelFactory
  * @module Model
  * @description
- * The `modelFactory` provides a common base prototype for Model, Query, and List Item.
+ * The 'modelFactory' provides a common base prototype for Model, Query, and List Item.
  *
  * @function
  */
@@ -579,7 +579,10 @@ angular.module('spAngular')
          * @name ListItem#saveChanges
          * @description
          * Updates record directly from the object
-         * @param {object} [options] - optionally pass params to the dataService
+         * @param {object} [options] - Optionally pass params to the data service.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * updated everywhere.  This is more process intensive so by default we only update the cached entity in the
+         * cache where this entity is currently stored.
          * @returns {promise}
          */
         ListItem.prototype.saveChanges = function (options) {
@@ -603,9 +606,14 @@ angular.module('spAngular')
          * Saves a named subset of fields back to SharePoint
          * Alternative to saving all fields
          * @param {array} fieldArray - array of internal field names that should be saved to SharePoint
+         * @param {object} [options] - Optionally pass params to the data service.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * updated everywhere.  This is more process intensive so by default we only update the cached entity in the
+         * cache where this entity is currently stored.
          * @returns {promise}
          */
-        ListItem.prototype.saveFields = function (fieldArray) {
+        ListItem.prototype.saveFields = function (fieldArray, options) {
+
             var listItem = this;
             var model = listItem.getModel();
             var deferred = $q.defer();
@@ -618,9 +626,15 @@ angular.module('spAngular')
                 }
             });
 
+            /** Generate value pairs for specified fields */
             var valuePairs = dataService.generateValuePairs(definitions, listItem);
 
-            dataService.addUpdateItemModel(model, listItem, {buildValuePairs: false, valuePairs: valuePairs})
+            var defaults = {buildValuePairs: false, valuePairs: valuePairs};
+
+            /** Extend defaults with any provided options */
+            var opts = _.extend({}, defaults, options);
+
+            dataService.addUpdateItemModel(model, listItem, opts)
                 .then(function (response) {
                     deferred.resolve(response);
                     /** Optionally broadcast change event */
@@ -634,8 +648,11 @@ angular.module('spAngular')
          * @ngdoc method
          * @name ListItem#deleteItem
          * @description
-         * Deletes record directly from the object and removes record from user cache
-         * @param {object} [options] - optionally pass params to the dataService
+         * Deletes record directly from the object and removes record from user cache.
+         * @param {object} [options] - Optionally pass params to the dataService.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * removed everywhere.  This is more process intensive so by default we only remove the cached entity in the
+         * cache where this entity is currently stored.
          * @returns {promise}
          */
         ListItem.prototype.deleteItem = function (options) {

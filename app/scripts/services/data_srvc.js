@@ -16,6 +16,8 @@ angular.module('spAngular')
 
         /** Flag to use cached XML files from the app/dev folder */
         var offline = spAngularConfig.offline;
+        /** Allows us to make code easier to read */
+        var online = !offline;
 
         //TODO Figure out a better way to get this value, shouldn't need to make a blocking call
         var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
@@ -56,11 +58,11 @@ angular.module('spAngular')
             /** Use factory, typically on model, to create new object for each returned item */
             _.each(jsObjects, function (item) {
                 /** Allow us to reference the originating query that generated this object */
-                item.getQuery = function() {
+                item.getQuery = function () {
                     return opts.getQuery();
                 };
                 /** Create Reference to the containing array */
-                item.getContainer = function() {
+                item.getContainer = function () {
                     return opts.target;
                 };
                 entities.push(new model.factory(item));
@@ -83,6 +85,14 @@ angular.module('spAngular')
             return entities;
         };
 
+        /**
+         * @description
+         * Maps a cache by entity id.  All provided entities are then either added if they don't already exist
+         * or replaced if they do.
+         * @param {object[]} localCache - The cache for a given query.
+         * @param {object[]} entities - All entities that should be merged into the cache.
+         * @returns {{created: number, updated: number}}
+         */
         function updateLocalCache(localCache, entities) {
             var updateCount = 0,
                 createCount = 0;
@@ -100,7 +110,6 @@ angular.module('spAngular')
                 } else {
                     /** Replace local item with updated value */
                     localCache[idMap.indexOf(entity.id)] = entity;
-//                    angular.copy(entity, localCache[idMap.indexOf(entity.id)]);
                     updateCount++;
                 }
             });
@@ -536,7 +545,7 @@ angular.module('spAngular')
             var opts = _.extend({}, defaults, options);
 
             /** Allow a list item to reference the query which generated it */
-            opts.getQuery = function() {
+            opts.getQuery = function () {
                 return query;
             };
 
@@ -549,7 +558,7 @@ angular.module('spAngular')
                 var offlineData = opts.offlineXML || query.offlineXML || 'dev/' + model.list.title + '.xml';
 
                 /** Only pull down offline xml if this is the first time the query is run */
-                if(query.lastRun) {
+                if (query.lastRun) {
                     /** Query has already been run, resolve reference to existing data */
                     query.lastRun = new Date();
                     queueService.decrease();
@@ -582,7 +591,7 @@ angular.module('spAngular')
 
                         /** Update the user permissions for this list */
                         var effectivePermissionMask = retrievePermMask(responseXML);
-                        if(effectivePermissionMask) {
+                        if (effectivePermissionMask) {
                             model.list.effectivePermMask = effectivePermissionMask;
                         }
 
@@ -786,6 +795,26 @@ angular.module('spAngular')
         }
 
         /**
+         * Propagates a change to all duplicate entities in all queries within a given model.
+         * @param {object} model
+         * @param {object} entity - List item.
+         * @param {object} [exemptQuery] - The query containing the updated item is automatically udpated so we don't
+         * need to process it.
+         */
+        function updateAllCaches(model, entity, exemptQuery) {
+            var queriesUpdated = 0;
+            /** Search through each of the queries and update any occurrence of this entity */
+            _.each(model.queries, function (query) {
+                /** Process all query caches except the one originally used to retrieve entity because
+                 * that is automatically updated by "processListItems". */
+                if (query != exemptQuery) {
+                    updateLocalCache(query.cache, [entity]);
+                }
+            });
+            return queriesUpdated;
+        }
+
+        /**
          * @ngdoc method
          * @name dataService#addUpdateItemModel
          * @description
@@ -794,14 +823,19 @@ angular.module('spAngular')
          * @param {object} item
          * @param {object} [options]
          * @param {string} [options.mode] - [update, replace, return]
-         * @param {boolean} [options.buildValuePairs] - automatically generate pairs based on fields defined in model
-         * @param {Array} [options.valuePairs] - precomputed value pairs to use instead of generating them
+         * @param {boolean} [options.buildValuePairs] - Automatically generate pairs based on fields defined in model.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query on the model
+         * to ensure entity is updated everywhere.  This is more process intensive so by default we only update the
+         * cached entity in the cache where this entity is currently stored.  Only applicable when updated an entity.
+         * @param {Array} [options.valuePairs] - Precomputed value pairs to use instead of generating them for each field
+         * identified in the model.
          * @returns {object} promise
          */
         var addUpdateItemModel = function (model, item, options) {
             var defaults = {
                 mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
                 buildValuePairs: true,
+                updateAllCaches: false,
                 valuePairs: []
             };
             var deferred = $q.defer();
@@ -830,8 +864,29 @@ angular.module('spAngular')
                 payload.batchCmd = 'New';
             }
 
-            /** Logic to simulate expected behavior when working offline */
-            if (offline) {
+            if (online) {
+                /** Make call to lists web service */
+                var webServiceCall = $().SPServices(payload);
+
+                webServiceCall.then(function () {
+                    /** Success */
+                    var output = processListItems(model, webServiceCall.responseXML, opts);
+                    var updatedEntity = output[0];
+
+                    /** Optionally search through each cache on the model and update any other references to this entity */
+                    if (opts.updateAllCaches && _.isNumber(item.id)) {
+                        updateAllCaches(model, updatedEntity, item.getQuery(), 'update');
+                    }
+                    deferred.resolve(updatedEntity);
+                }, function (outcome) {
+                    /** In the event of an error, display toast */
+                    toastr.error('There was an error getting the requested data from ' + model.list.name);
+                    deferred.reject(outcome);
+                }).always(function () {
+                    queueService.decrease();
+                });
+            } else {
+                /** Logic to simulate expected behavior when working offline */
                 /** Offline mode */
                 window.console.log(payload);
 
@@ -854,7 +909,7 @@ angular.module('spAngular')
                     offlineDefaults.created = new Date();
 
                     /** We don't know which query cache to push it to so add it to all */
-                    _.each(model.queries, function(query) {
+                    _.each(model.queries, function (query) {
                         /** Find next logical id to assign */
                         var maxId = 1;
                         _.each(query.cache, function (entity) {
@@ -878,21 +933,6 @@ angular.module('spAngular')
                     deferred.resolve(item);
                 }
                 queueService.decrease();
-            } else {
-                /** Make call to lists web service */
-                var webServiceCall = $().SPServices(payload);
-
-                webServiceCall.then(function () {
-                    /** Success */
-                    var output = processListItems(model, webServiceCall.responseXML, opts);
-                    deferred.resolve(output[0]);
-                }, function (outcome) {
-                    /** In the event of an error, display toast */
-                    toastr.error('There was an error getting the requested data from ' + model.list.name);
-                    deferred.reject(outcome);
-                }).always(function () {
-                    queueService.decrease();
-                });
             }
             return deferred.promise;
         };
@@ -906,14 +946,18 @@ angular.module('spAngular')
          * @param {object} model - model of the list item
          * @param {object} item - list item
          * @param {object} [options]
-         * @param {Array} [options.target] - optional location to search through and remove the local cached copy
-         * @returns {object} promise
+         * @param {Array} [options.target=item.getContainer()] - Optional location to search through and remove the local cached copy.
+         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query on the model
+         * to ensure entity is removed everywhere.  This is more process intensive so by default we only delete the
+         * cached entity in the cache where this entity is currently stored.
+         * @returns {object} promise - Nothing is return in the promise.
          */
         var deleteItemModel = function (model, item, options) {
             queueService.increase();
 
             var defaults = {
-                target: item.getContainer()
+                target: item.getContainer(),
+                updateAllCaches: false
             };
             var opts = _.extend({}, defaults, options);
 
@@ -927,17 +971,31 @@ angular.module('spAngular')
 
             var deferred = $q.defer();
 
-            if (offline) {
-                /** Simulate deletion and remove locally */
-                removeEntityFromLocalCache(opts.target, item.id);
-                queueService.decrease();
-                deferred.resolve(opts.target);
-            } else {
+            function cleanCache() {
+                var deleteCount = 0;
+                if (opts.updateAllCaches) {
+                    var model = item.getModel();
+                    _.each(model.queries, function (query) {
+                        var entityRemoved = removeEntityFromLocalCache(query.cache, item.id);
+                        if (entityRemoved) {
+                            deleteCount++;
+                        }
+                    });
+                } else {
+                    var entityRemoved = removeEntityFromLocalCache(opts.target, item.id);
+                    if (entityRemoved) {
+                        deleteCount++;
+                    }
+                }
+                return deleteCount;
+            }
+
+            if (online) {
                 var webServiceCall = $().SPServices(payload);
 
                 webServiceCall.then(function () {
                     /** Success */
-                    removeEntityFromLocalCache(opts.target, item.id);
+                    cleanCache();
                     queueService.decrease();
                     deferred.resolve(opts.target);
                 }, function (outcome) {
@@ -946,7 +1004,14 @@ angular.module('spAngular')
                     queueService.decrease();
                     deferred.reject(outcome);
                 });
+            } else {
+                /** Offline debug mode */
+                /** Simulate deletion and remove locally */
+                cleanCache();
+                queueService.decrease();
+                deferred.resolve(opts.target);
             }
+
             return deferred.promise;
         };
 
