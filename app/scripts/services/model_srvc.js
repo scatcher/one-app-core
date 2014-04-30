@@ -424,8 +424,11 @@ angular.module('spAngular')
          * @ngdoc method
          * @name Model#createEmptyItem
          * @description
-         * Creates an object using the editable fields from the model, all attributes are empty
-         * @param {object} [overrides] - Optionally extend the new item with specific values.
+         * Creates an object using the editable fields from the model, all attributes are empty based on the field
+         * type unless an overrides object is passed in.  The overrides object extends the defaults.  A benefit to this
+         * approach is the returned object inherits from the ListItem prototype so we have the ability to call
+         * entity.saveChanges instead of calling the model.addNewItem(entity).
+         * @param {object} [overrides] - Optionally extend the new empty item with specific values.
          * @returns {object}
          */
         Model.prototype.createEmptyItem = function (overrides) {
