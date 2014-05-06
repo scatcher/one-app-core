@@ -1,0 +1,61 @@
+{
+  "name": "sp-angular",
+  "version": "0.0.1",
+  "homepage": "https://github.com/scatcher/sp-angular",
+  "authors": [
+    "Scott <github@scotthatcher.com>"
+  ],
+  "appPath": "app",
+  "distPath": "dist",
+  "description": "Shared components of spAngular.",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "~1.2",
+    "angular-animate": "~1.2",
+    "angular-bootstrap": "latest",
+    "angular-cookies": "~1.2",
+    "angular-google-chart": "git://github.com/scatcher/angular-google-chart.git#master",
+    "angular-resource": "~1.2",
+    "angular-route": "~1.2",
+    "angular-sanitize": "~1.2",
+    "angular-spinner": "latest",
+    "angular-toastr": "latest",
+    "angular-touch": "~1.2",
+    "angular-ui-calendar": "latest",
+    "angular-ui-date": "latest",
+    "angular-ui-router": "latest",
+    "angular-ui-select2": "latest",
+    "angular-ui-sortable": "angular1.2",
+    "angular-ui-utils": "latest",
+    "angularfire": "~0.6",
+    "bootstrap": "~3",
+    "chancejs": "https://github.com/victorquinn/chancejs.git",
+    "es5-shim": "~2.3.0",
+    "explorer-canvas": "git://github.com/arv/ExplorerCanvas.git",
+    "firebase-bower": "https://github.com/firebase/firebase-bower.git",
+    "font-awesome": "~4",
+    "fullcalendar": "latest",
+    "jquery": "~1.11",
+    "jquery-ui": "latest",
+    "jquery-ui-bootstrap": "https://github.com/jquery-ui-bootstrap/jquery-ui-bootstrap.git#masterbs3",
+    "jquery.easy-pie-chart": "https://github.com/scatcher/easy-pie-chart.git#e15292d37d69d1645ae10276a5cb0d9200acc28a",
+    "json3": "~3",
+    "lodash": "latest",
+    "lodash-deep": "latest",
+    "moment": "latest",
+    "ng-ckeditor": "latest",
+    "ng-table": "master",
+    "ng-table-export": "latest",
+    "respond": "latest",
+    "select2": "latest",
+    "SPServices": "https://github.com/scatcher/SPServices.git#master"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "resolutions": {
+    "jquery": "~1.11"
+  }
+}

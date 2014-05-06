@@ -1,0 +1,13 @@
+{
+  "name": "SPServices",
+  "homepage": "https://github.com/scatcher/SPServices",
+  "_release": "77b66eddcc",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "77b66eddcc30dc3faacdcfe17c0d199dae7f952c"
+  },
+  "_source": "https://github.com/scatcher/SPServices.git",
+  "_target": "master",
+  "_originalSource": "https://github.com/scatcher/SPServices.git"
+}

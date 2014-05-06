@@ -1,0 +1,38 @@
+{
+  "name": "lodash-deep",
+  "main": "lodash-deep.js",
+  "version": "1.1.0",
+  "homepage": "https://github.com/marklagendijk/lodash-deep",
+  "authors": [
+    "Mark Lagendijk <mark@lagendijk.info>"
+  ],
+  "description": "Lodash mixins for (deep) object accessing / manipulation.",
+  "keywords": [
+    "lodash",
+    "mixin",
+    "mixins",
+    "deep",
+    "object",
+    "walking"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": ">=2.4.1"
+  },
+  "_release": "1.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.0",
+    "commit": "62aafc3aee081bd3b525954b7dc3a320c0aaf066"
+  },
+  "_source": "git://github.com/marklagendijk/lodash-deep.git",
+  "_target": "*",
+  "_originalSource": "lodash-deep"
+}

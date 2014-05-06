@@ -1,0 +1,367 @@
+/* Metro Colors */
+/* left side */
+/* right side */
+/* the color that flashes when you click on the first nav element */
+/* the plus icon that appears on the parent nav when expanding and collapsing */
+/* these values will only address the first parent in the entire nav */
+.collapsible-sidebar {
+  /*
+ * ***************************************************
+ * Left nav sidebar that can collapse
+ * ***************************************************
+ */
+  /*
+   * LEFT PANEL
+   */
+  /*
+   * Main Content PANEL
+   */
+  /*
+   * RIBBON
+   */
+  /*
+   * NAV
+   * Menu CSS is learnt from: http://experiments.wemakesites.net/css3-treeview.html
+   */
+  /* All levels */
+  /* All levels */
+  /* All levels */
+  /* All levels */
+  /* All levels */
+  /* All levels */
+  /* Second level */
+  /* Third Level */
+  /* All levels */
+  /* All levels */
+  /* All levels */
+  /* All levels */
+  /* First level: A, Second level: LI Open */
+  /* First level: Icon */
+  /* First level icon */
+  /* Second level switched to relative */
+  /* Second level: UL */
+  /* Second level: UL LI */
+  /* Third level: UL LI */
+  /* Second level and onwards > */
+  /* Second and Third level line color */
+  /* Second Level: UL */
+  /* Third Level: UL */
+  /* Third Level: LI */
+  /* Second Level: A */
+  /* Second Level: A:hover */
+  /* Third Level: A */
+  /* Third Level: A:hover */
+  /* Fourth Level: A */
+  /* Fifth Level: A */
+  /* Sixth Level: A */
+  /* Second level: B */
+  /* Second level: LI:hover B */
+}
+.collapsible-sidebar aside {
+  display: block;
+  overflow: hidden;
+  background: #3a3633;
+  background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgPHN0b3Agb2Zmc2V0PSI5NyUiIHN0b3AtY29sb3I9IiMzYTM2MzMiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMmEyNzI1IiBzdG9wLW9wYWNpdHk9IjEiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+Cjwvc3ZnPg==");
+  background: -moz-linear-gradient(left, #3a3633 93%, #2a2725 100%);
+  background: -webkit-gradient(linear, left top, right top, color-stop(93%, #3a3633), color-stop(100%, #2a2725));
+  background: -webkit-linear-gradient(left, #3a3633 93%, #2a2725 100%);
+  background: -o-linear-gradient(left, #3a3633 93%, #2a2725 100%);
+  background: -ms-linear-gradient(left, #3a3633 93%, #2a2725 100%);
+  background: linear-gradient(to right, #3a3633 93%, #2a2725 100%);
+  min-height: 100%;
+}
+.collapsible-sidebar .left-panel {
+  position: absolute;
+  top: 49px;
+  left: 0px;
+  z-index: 1002;
+}
+.collapsible-sidebar .main-panel {
+  display: block;
+  margin-left: 220px;
+  padding: 0;
+  min-height: 500px;
+}
+.collapsible-sidebar .ribbon {
+  min-height: 40px;
+  background: #474544;
+  padding: 0 13px;
+  position: relative;
+}
+.collapsible-sidebar .ribbon .breadcrumb {
+  display: inline-block;
+  margin: 0;
+  padding: 11px 34px 11px 0 !important;
+  background: none;
+  vertical-align: top;
+}
+.collapsible-sidebar .ribbon .breadcrumb a,
+.collapsible-sidebar .ribbon .breadcrumb {
+  color: #BBB !important;
+  text-decoration: none !Important;
+}
+.collapsible-sidebar .ribbon .breadcrumb > .active,
+.collapsible-sidebar .ribbon .breadcrumb li:last-child {
+  color: #E4E4E4;
+}
+.collapsible-sidebar .fixed-ribbon .ribbon {
+  position: fixed;
+  right: 0;
+  left: 220px;
+  top: 49px;
+  z-index: 999;
+}
+.collapsible-sidebar .container.fixed-ribbon .ribbon {
+  width: 944px;
+  left: 590px;
+}
+.collapsible-sidebar .fixed-ribbon #content {
+  padding-top: 50px;
+}
+.collapsible-sidebar .minified.fixed-ribbon .ribbon {
+  left: 45px;
+}
+.collapsible-sidebar .hidden-menu.fixed-ribbon .ribbon {
+  left: 10px;
+}
+.collapsible-sidebar .fixed-navigation .left-panel {
+  position: fixed;
+  z-index: 998;
+}
+.collapsible-sidebar nav ul li a:active {
+  background: #616161 !important;
+}
+.collapsible-sidebar nav ul {
+  width: 100%;
+  padding: 40px 28px 25px 0;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 0.5em;
+  list-style: none;
+  position: relative;
+}
+.collapsible-sidebar nav ul .active > a {
+  color: #fff !important;
+  position: relative;
+}
+.collapsible-sidebar nav ul li.active > a:before {
+  content: "\f0d9";
+  font-family: FontAwesome;
+  display: block;
+  height: 27px;
+  line-height: normal;
+  width: 27px;
+  position: absolute;
+  right: -21px;
+  font-size: 20px;
+  color: #eeeeee;
+}
+.collapsible-sidebar nav ul li.active.open > a:before {
+  content: "";
+}
+.collapsible-sidebar nav > ul > li:last-child.open {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.collapsible-sidebar nav ul li {
+  overflow: hidden;
+}
+.collapsible-sidebar nav ul li a {
+  line-height: normal;
+  font-size: 14px;
+  padding: 10px 10px 10px 11px;
+  color: #a8a8a8;
+  display: block;
+  font-weight: normal;
+  text-decoration: none !important;
+  position: relative;
+}
+.collapsible-sidebar nav > ul > li > ul > li > a {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.collapsible-sidebar nav > ul > li > ul > li > ul > li > a {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.collapsible-sidebar nav ul li a:focus {
+  color: #c9c9c9;
+}
+.collapsible-sidebar nav ul li a:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+.collapsible-sidebar nav ul b {
+  float: right;
+  font-size: 14px;
+  margin-top: -1px;
+}
+.collapsible-sidebar nav ul span.menu-item-parent {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+.collapsible-sidebar nav ul li.open > a,
+.collapsible-sidebar nav ul li.open > a b {
+  color: #fff !important;
+}
+.collapsible-sidebar nav > ul > li > a b {
+  position: absolute !important;
+  right: 10px;
+  top: 10px;
+}
+.collapsible-sidebar nav > ul > li > a > i {
+  /*font-size: 121%; fa-lg overrides this so..  */
+  margin-right: 5px;
+  width: 15px;
+  display: inline-block;
+  text-align: center;
+  position: relative;
+}
+.collapsible-sidebar nav > ul > li > a > i > em {
+  font-size: 9px;
+  display: block;
+  padding: 2px;
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  text-decoration: none;
+  font-style: normal;
+  background: #ED1C24;
+  color: #ffffff;
+  min-width: 13px;
+  border-radius: 50%;
+  max-height: 13px;
+  line-height: 8px;
+  font-weight: bold;
+  vertical-align: baseline;
+  white-space: nowrap;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.collapsible-sidebar nav ul li li {
+  border-bottom: none;
+  position: relative;
+}
+.collapsible-sidebar nav > ul > li > ul::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  left: 23px;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid #7A7A7A;
+}
+.collapsible-sidebar nav > ul ul li::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 8px;
+  left: 23px;
+  top: 16px;
+  border-top: 1px solid #7A7A7A;
+  z-index: 1;
+}
+.collapsible-sidebar nav > ul ul ul li::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 18px;
+  left: 10px;
+  top: 17px;
+  border-top: 1px solid transparent;
+}
+.collapsible-sidebar nav > ul ul li a i {
+  font-size: 14px !important;
+  width: 18px !important;
+  text-align: center !important;
+}
+.collapsible-sidebar nav > ul > li:hover > ul::before,
+.collapsible-sidebar nav > ul > li:hover > ul > li::before {
+  border-color: #ACACAC !important;
+}
+.collapsible-sidebar nav ul ul {
+  margin: 0;
+  padding: 0;
+  display: none;
+  background: rgba(69, 69, 69, 0.6);
+}
+.collapsible-sidebar nav ul ul {
+  padding: 7px 0;
+}
+.collapsible-sidebar nav ul ul ul {
+  background: transparent;
+  padding: 0;
+}
+.collapsible-sidebar nav ul ul li {
+  margin: 0;
+  padding: 0;
+}
+.collapsible-sidebar nav ul ul li > a {
+  padding-left: 42px;
+  font-size: 14px;
+  font-weight: normal;
+  outline: 0;
+}
+.collapsible-sidebar nav ul ul li > a:hover {
+  background-color: rgba(69, 69, 69, 0.8);
+  color: #ffffff;
+}
+.collapsible-sidebar nav ul ul ul li a {
+  color: #bfbfbf;
+  padding: 8px 10px 8px 70px;
+  font-size: 14px;
+}
+.collapsible-sidebar nav ul ul ul li a:hover {
+  background-color: #4C4F53;
+  color: #ffffff;
+}
+.collapsible-sidebar nav ul ul ul ul li a {
+  padding-left: 90px;
+}
+.collapsible-sidebar nav ul ul ul ul ul li a {
+  padding-left: 110px;
+}
+.collapsible-sidebar nav ul ul ul ul ul ul li a {
+  padding-left: 130px;
+}
+.collapsible-sidebar nav ul ul b {
+  color: #B3B3B3;
+}
+.collapsible-sidebar nav ul ul > li:hover b {
+  color: #D5D9E2;
+}
+.collapsible-sidebar aside.left-panel {
+  position: fixed;
+  top: 49px;
+  left: 0;
+  z-index: 1002;
+  height: 100%;
+  background-color: #3A3633;
+}
+.collapsible-sidebar aside.left-panel.full-nav {
+  width: 160px;
+}
+.collapsible-sidebar aside.left-panel.mini-nav {
+  width: 45px;
+}
+.collapsible-sidebar .main-panel {
+  padding: 8px;
+  min-height: 500px;
+}
+.collapsible-sidebar .main-panel.mini-nav {
+  margin-left: 45px;
+}
+.collapsible-sidebar .main-panel.full-nav {
+  margin-left: 160px;
+}
+.collapsible-sidebar nav ul li a {
+  line-height: normal;
+  font-size: 14px;
+  padding: 10px 10px 10px 11px;
+  color: #a8a8a8;
+  display: block;
+  font-weight: 400;
+  text-decoration: none !important;
+}

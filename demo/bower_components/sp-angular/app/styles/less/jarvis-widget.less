@@ -1,0 +1,690 @@
+@import "variables.less";
+@import "mixins.less";
+
+article.sortable-grid {
+  min-height: 30px;
+}
+
+.jarviswidget {
+  margin: 0 0 30px 0;
+  position: relative;
+  .border-radius(0px);
+  padding: 0;
+  & > header {
+    height: 34px;
+    padding: 0;
+    line-height: 40px;
+    color: @gray-dark;
+    border: 1px solid #C2C2C2;
+    background: #fafafa;
+    & > .widget-icon {
+      display: block;
+      width: 30px;
+      height: 32px;
+      position: relative;
+      float: left;
+      font-size: 111%;
+      line-height: 32px;
+      text-align: center;
+      margin-right: -10px;
+    }
+    h2 {
+      height: 100%;
+      width: auto;
+      display: inline-block;
+      font-size: 14px;
+      position: relative;
+      margin: 0;
+      line-height: 34px;
+      font-weight: normal;
+      letter-spacing: 0px;
+    }
+    & > h2 {
+      margin-left: 10px;
+      float: left;
+    }
+    & > :first-child.widget-icon {
+      margin-left: 0;
+    }
+    .jarviswidget-icon {
+      width: 16px;
+      height: 16px;
+      float: left;
+      margin: 12px 10px 0 0;
+      display: block;
+      zoom: 1;
+      z-index: 4000;
+    }
+  }
+  & > div {
+    float: left;
+    width: 100%;
+    position: relative;
+    font-size: 13px;
+    .border-radius(0px);
+    margin: 0;
+    border-width: 1px 1px 2px 1px;
+    border-style: solid;
+    border-top: none;
+    border-right-color: @gray-mid-light !important;
+    border-bottom-color: @gray-mid-light !important;
+    border-left-color: @gray-mid-light !important;
+    padding: 13px 13px 0px;
+    overflow: @widgetContentOverflow;
+    background-color: @white !important;
+  }
+  .widget-body {
+    min-height: 100px;
+    position: relative;
+    padding-bottom: 13px;
+  }
+  .widget-body.widget-hide-overflow {
+    overflow: hidden;
+  }
+  header {
+    .nav-tabs {
+      border-bottom-color: transparent;
+      & > li {
+        & > a {
+          .border-radius(0px);
+          border: none;
+          padding: 7px 15px 6px;
+        }
+      }
+    }
+    .nav-pills {
+      margin: 3px;
+      & > li {
+        & > a {
+          padding: 3px 5px 4px;
+        }
+      }
+    }
+  }
+  header:first-child {
+    .nav-tabs {
+      float: left;
+      li {
+        padding-left: 0;
+        a {
+          color: @gray-dark;
+        }
+      }
+    }
+    .nav-tabs.pull-right {
+      li:last-child {
+        a {
+          margin-right: 0px !important;
+          border-right: none !important;
+        }
+      }
+    }
+  }
+}
+
+.widget-content-padding {
+  padding: 20px;
+  .well {
+    margin-bottom: 0px;
+  }
+}
+
+.ui-sortable {
+  .jarviswidget-sortable {
+    & > header {
+      cursor: move;
+      .border-radius(0px);
+      line-height: normal;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+      -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+      -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+    }
+  }
+  .jarviswidget-sortable.jarviswidget-collapsed {
+    & > header {
+      .border-radius(0px);
+    }
+  }
+}
+
+.jarviswidget-ctrls {
+  width: auto;
+  float: right;
+  padding: 0;
+  margin: 0;
+  .button-icon {
+    min-width: 30px;
+    height: 32px;
+    float: left;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    border-left: 1px solid rgba(0, 0, 0, 0.09);
+  }
+  .button-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  a {
+    text-decoration: none;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    line-height: 32px;
+    padding: 0;
+    margin: 0;
+    color: @gray-dark;
+  }
+}
+
+.jarviswidget-loader {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  float: right;
+  background-repeat: no-repeat;
+  background-position: center center;
+  display: none;
+  text-align: center;
+  line-height: 32px;
+  font-size: 111%;
+}
+
+.widget-toolbar.no-border {
+  border-left: none;
+}
+
+.widget-body.no-padding {
+  margin: -13px -13px 0px;
+  .alert {
+    margin: 0 0 10px;
+    padding: 10px;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    border-width: 0px 0px 1px !important;
+    .border-radius(0px) !important;
+  }
+}
+
+.jarviswidget.well.transparent {
+  .widget-body.no-padding {
+    margin: 0px !important;
+  }
+}
+
+.widget-body {
+  & > table {
+    margin-bottom: 0;
+  }
+}
+
+.widget-body.no-padding .cke_chrome, .no-padding .md-editor {
+  border: none;
+}
+
+.widget-toolbar {
+  display: inline-block;
+  float: right;
+  width: auto;
+  height: 32px;
+  line-height: 32px;
+  position: relative;
+  border-left: 1px solid rgba(0, 0, 0, 0.09);
+  cursor: pointer;
+  padding: 0 8px;
+  text-align: center;
+  & > .smart-form {
+    margin-top: 2px;
+    .toggle:last-child {
+      font-size: 12px;
+      line-height: 29px;
+    }
+  }
+  & > .color-box {
+    margin-top: 7px;
+    width: 18px;
+    height: 18px;
+    outline: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  .dropdown-menu.color-select {
+    right: -1px;
+  }
+  & > :first-child {
+    text-align: left;
+  }
+  .btn-group {
+    margin-top: -3px;
+  }
+  & > .btn {
+    margin-top: -3px;
+    font-size: 12px !important;
+    padding: 1px 8px !important;
+  }
+  & > .label {
+    vertical-align: middle;
+    margin-top: -3px;
+    display: inline-block;
+    text-align: center;
+    font-size: 12px;
+    padding: 4px 7px;
+  }
+  & > .badge {
+    padding: 5px 5px;
+    font-size: 14px;
+    .border-radius(50%);
+    font-weight: normal;
+    min-width: 24px;
+    text-align: center !important;
+  }
+  .progress {
+    width: 130px;
+    margin: 7px 0 0 0;
+    height: 18px !important;
+    font-size: 12px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0), 0 0 0 1px #D1D1D1 inset;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0), 0 0 0 1px #D1D1D1 inset;
+    -moz-box-shadow: 0 1px 0 transparent, 0 0 0 1px #D1D1D1 inset;
+  }
+  .progress-bar {
+    font-size: 12px;
+  }
+  .pagination {
+    margin: 4px 0;
+    & > li {
+      & > a {
+        padding: 2px 7px;
+      }
+    }
+  }
+  .widget-text-input {
+    max-width: 220px;
+  }
+  input[type='text'] {
+    height: 28px !important;
+    margin-top: 2px;
+  }
+}
+
+.widget-toolbar & > .smart-form .radio input + i, .widget-toolbar & > .smart-form .checkbox input + i, .widget-toolbar & > .smart-form .toggle input + i {
+  border-width: 1px;
+  border-color: #C7C7C7 !important;
+  margin-top: 1px;
+  box-shadow: 0 1px 1px @white, 0 1px 1px #858585 inset;
+  -webkit-box-shadow: 0 1px 1px @white, 0 1px 1px #858585 inset;
+  -moz-box-shadow: 0 1px 1px @white, 0 1px 1px #858585 inset;
+}
+
+.jarviswidget.well {
+  margin: 0 0 30px 0;
+  & > div {
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+  }
+  header {
+    display: none;
+  }
+}
+
+.widget-footer {
+  display: block;
+  min-height: 32px;
+  vertical-align: middle;
+  position: relative;
+  background-color: #F8F7F7;
+  padding: 5px;
+  border-top: 1px solid #E4E4E4;
+  text-align: right;
+  margin: 0px -13px -13px;
+}
+
+.no-padding {
+  .widget-footer {
+    margin: 0;
+  }
+  .jarviswidget-editbox {
+    margin: 0 0 10px;
+  }
+}
+
+.widget-footer.smart-form {
+  & > label {
+    margin-top: 4px;
+    display: block;
+  }
+}
+
+.jarviswidget-editbox {
+  display: none;
+  padding: 10px;
+  border-bottom: 1px solid #B1B1B1;
+  background-color: @white;
+  margin: -13px -13px 13px;
+}
+
+.jarviswidget-timestamp {
+  font-size: 12px;
+  color: #868686;
+  font-style: italic;
+  margin: 10px 0 0;
+}
+
+.jarviswidget-placeholder {
+  .border-radius(0px);
+  margin-bottom: 28px;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -khtml-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  background-color: #FFC;
+  border: 1px dashed #A7A7A7;
+}
+
+body.nooverflow {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+#jarviswidget-fullscreen-mode {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  .jarviswidget {
+    margin: 0;
+    .border-radius(0px);
+    & > div {
+      overflow-y: scroll;
+      .border-radius(0px);
+    }
+  }
+  & > div {
+    & > header {
+      cursor: default;
+    }
+  }
+}
+
+.widget-body-toolbar, .smart-form.widget-body-toolbar {
+  display: block;
+  padding: 8px 10px;
+  margin: -13px -13px 13px;
+  min-height: 42px;
+  border-bottom: 1px solid @gray-mid-light;
+  background: #fafafa;
+}
+
+.no-padding.widget-body-toolbar, .no-padding .widget-body-toolbar, .no-padding .smart-form.widget-body-toolbar {
+  display: block;
+  margin: 0px;
+}
+
+.widget-body-toolbar.smart-form .inline-group, .smart-form .widget-body-toolbar .inline-group {
+  float: left;
+  margin-top: 4px;
+}
+
+.widget-body-toolbar {
+  .btn {
+    vertical-align: middle;
+  }
+  .btn-xs {
+    margin-top: 5px;
+  }
+}
+
+.widget-body-ajax-loading::before {
+  content: url('@{base-url}/ajax-loader.gif');
+  padding-top: 18%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: @white;
+  display: block;
+  background: rgba(255, 255, 255, 0.4);
+  height: 100%;
+  z-index: 1;
+  width: 100%;
+  position: absolute;
+}
+
+.widget-body-ajax-loading:hover {
+  cursor: wait !important;
+}
+
+.jarviswidget-remove-colors {
+  color: @gray-dark !important;
+  padding: 0 !important;
+  background: none !important;
+}
+
+//.jarviswidget-theme-constructor(@colorPallete);
+
+.jarviswidget-color-blueStandard {
+  .jarviswidget-variant(@blueStandard);
+}
+
+.jarviswidget-color-blueSky {
+  .jarviswidget-variant(@blueSky);
+}
+
+.jarviswidget-color-blue {
+  .jarviswidget-variant(@blue);
+}
+
+.jarviswidget-color-blueLight {
+  .jarviswidget-variant(@blueLight, #2b363c, #92A2A8);
+}
+
+.jarviswidget-color-blueDark {
+  .jarviswidget-variant(@blueDark);
+}
+
+.jarviswidget-color-green {
+  .jarviswidget-variant(@green, @white,#638167);
+}
+
+.jarviswidget-color-greenLight {
+  .jarviswidget-variant(@greenLight, @white, #638167);
+}
+
+.jarviswidget-color-greenDark {
+  .jarviswidget-variant(@greenDark, @white, #638167);
+}
+
+.jarviswidget-color-greenBright {
+  .jarviswidget-variant(@greenBright);
+}
+
+.jarviswidget-color-red {
+  .jarviswidget-variant(@red);
+}
+
+.jarviswidget-color-yellow {
+  .jarviswidget-variant(@yellow);
+}
+
+.jarviswidget-color-orange {
+  .jarviswidget-variant(@orange);
+}
+
+.jarviswidget-color-orangeDark {
+  .jarviswidget-variant(@orangeDark);
+}
+
+.jarviswidget-color-pink {
+  .jarviswidget-variant(@pink);
+}
+
+.jarviswidget-color-pinkDark {
+  .jarviswidget-variant(@pinkDark);
+}
+
+.jarviswidget-color-purple {
+  .jarviswidget-variant(@purple);
+}
+
+.jarviswidget-color-darken {
+  .jarviswidget-variant(@darken);
+}
+
+.jarviswidget-color-lighten {
+  .jarviswidget-variant(@lighten);
+}
+
+.jarviswidget-color-white {
+  .jarviswidget-variant(@white, #838383, #C8C8C8);
+}
+
+.jarviswidget-color-greyDark {
+  .jarviswidget-variant(@greyDark);
+}
+
+.jarviswidget-color-magenta {
+  .jarviswidget-variant(@magenta);
+}
+
+.jarviswidget-color-teal {
+  .jarviswidget-variant(@teal);
+}
+
+.jarviswidget-color-tealLight {
+  .jarviswidget-variant(@tealLight);
+}
+
+.jarviswidget-color-redLight {
+  .jarviswidget-variant(@redLight);
+}
+
+.jarviswidget-color-redBright {
+  .jarviswidget-variant(@redBright);
+}
+
+/** Metro Colors */
+.jarviswidget-color-metroPurple {
+  .jarviswidget-variant(@metroPurple);
+}
+.jarviswidget-color-metroMagenta {
+  .jarviswidget-variant(@metroMagenta);
+}
+.jarviswidget-color-metroTeal {
+  .jarviswidget-variant(@metroTeal);
+}
+.jarviswidget-color-metroLime {
+  .jarviswidget-variant(@metroLime);
+}
+.jarviswidget-color-metroBrown {
+  .jarviswidget-variant(@metroBrown);
+}
+.jarviswidget-color-metroPink {
+  .jarviswidget-variant(@metroPink);
+}
+.jarviswidget-color-metroOrange {
+  .jarviswidget-variant(@metroOrange);
+}
+.jarviswidget-color-metroBlue {
+  .jarviswidget-variant(@metroBlue);
+}
+.jarviswidget-color-metroRed {
+  .jarviswidget-variant(@metroRed);
+}
+.jarviswidget-color-metroGreen {
+  .jarviswidget-variant(@metroGreen);
+}
+
+
+.color-select {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  min-width: 166px;
+  max-width: 156px;
+  right: -3px;
+  li {
+    display: block;
+    margin: 2px;
+    float: left;
+    span:hover {
+      border: 3px solid rgba(0, 0, 0, .2);
+    }
+  }
+}
+
+.color-select li span, .color-box {
+  display: block;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: @gray-dark;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, .1);
+  cursor: pointer;
+}
+
+.color-box {
+  position: relative;
+  vertical-align: middle;
+  border: 1px solid rgba(255, 255, 255, .3) !important;
+  outline: 1px solid rgba(0, 0, 0, .1);
+  background: rgba(255, 255, 255, .3) !important;
+}
+
+.color-box:hover, .open .color-box {
+  outline: 1px solid rgba(0, 0, 0, .1) !important;
+}
+
+.color-box:hover {
+  -webkit-transform: scale(1.07);
+  -moz-transform: scale(1.07);
+}
+
+.color-box:active {
+  top: 1px;
+  left: 1px;
+}
+
+.widget-toolbar & > .color-box:hover, .widget-toolbar & > .color-box:active, .widget-toolbar & > .color-box:focus {
+  outline: 1px solid rgba(0, 0, 0, 0.25) !important;
+}
+
+.jarviswidget:before, .jarviswidget:after, .jarviswidget & > div:before, .jarviswidget & > div:after, .inner-spacer:before, .inner-spacer:after, .jarviswidget-editbox:before, .jarviswidget-editbox:after, .clearfix:before, .clearfix:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+  visibility: hidden;
+}
+
+.jarviswidget:after, .jarviswidget & > div:after, .inner-spacer:after, .jarviswidget-editbox:after, .clearfix:after {
+  clear: both;
+}
+
+.jarviswidget, .jarviswidget & > div, .inner-spacer:after, .jarviswidget-editbox, .clearfix {
+  zoom: 1;
+}
+
+.jarviswidget header .nav-tabs & > li.active & > a, .jarviswidget header .nav-tabs & > li.active & > a:hover, .jarviswidget header .nav-tabs & > li.active & > a:focus {
+  color: #555;
+  background-color: @white;
+  border: 1px solid #C2C2C2;
+  border-bottom-color: transparent;
+  border-top: none;
+  cursor: default;
+}
+
+.widget-toolbar .smart-form label.checkbox, .widget-toolbar .smart-form label.radio {
+  line-height: 29px;
+}
+
+.widget-toolbar.smart-form .icon-append, .widget-toolbar.smart-form .icon-prepend, .widget-toolbar .smart-form .icon-append, .widget-toolbar .smart-form .icon-prepend {
+  top: 3px !important;
+}
