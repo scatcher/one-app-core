@@ -18,16 +18,18 @@ angular.module('spAngular')
         });
 
         /**
-         * @ngdoc method
-         * @name utilityService#xmlToJson
+         * @ngdoc function
+         * @name utilityService.xmlToJson
          * @description
-         * This function converts an XML node set to JSON
-         * Modified version of SPServices "SPXmlToJson" function
-         * @param rows ["z:rows"]
-         * @param options.mapping [columnName: mappedName: "mappedName", objectType: "objectType"]
-         * @param options.includeAllAttrs [If true, return all attributes, regardless whether they are in the mapping]
-         * @param options.removeOws [Specifically for GetListItems, if true, the leading ows_ will be stripped off the field name]
-         * @returns {Array}
+         * Converts an XML node set to Javascript object array. This is a modified version of the SPServices
+         * "SPXmlToJson" function.
+         * @param {array} rows ["z:rows"] XML rows that need to be parsed.
+         * @param {object[]} options.mapping [columnName: "mappedName", objectType: "objectType"]
+         * @param {boolean} [options.includeAllAttrs=false] If true, return all attributes, regardless whether
+         * they are in the mapping.
+         * @param {boolean} [options.removeOws=true] Specifically for GetListItems, if true, the leading ows_ will
+         * be stripped off the field name.
+         * @returns {Array} An array of JavaScript objects.
          */
         var xmlToJson = function (rows, options) {
 
@@ -66,18 +68,33 @@ angular.module('spAngular')
 
             // Return the JSON object
             return jsonObject;
-
-        }; // End $.fn.SPServices.SPXmlToJson
-
+        };
 
         /**
-         * @ngdoc method
-         * @name utilityService#attrToJson
+         * @ngdoc function
+         * @name utilityService.attrToJson
          * @description
-         * Converts a SharePoint string representation of a field into the correctly formatted JS version
-         * @param value
-         * @param objectType
-         * @returns {*}
+         * Converts a SharePoint string representation of a field into the correctly formatted JavaScript version
+         * based on object type.
+         * @param {string} value SharePoint string.
+         * @param {string} [objectType='Text'] The type based on field definition.
+         * Options:[
+         *  DateTime,
+         *  Lookup,
+         *  User,
+         *  LookupMulti,
+         *  UserMulti,
+         *  Boolean,
+         *  Integer,
+         *  Counter,
+         *  MultiChoice,
+         *  Currency,
+         *  Number,
+         *  Calc,
+         *  JSON,
+         *  Text [Default]
+         * ]
+         * @returns {*} The formatted JavaScript value based on field type.
          */
         function attrToJson(value, objectType) {
 
@@ -281,8 +298,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name utilityService#yyyymmdd
+         * @ngdoc function
+         * @name utilityService.yyyymmdd
          * @description
          * Convert date into a int formatted as yyyymmdd
          * We don't need the time portion of comparison so an int makes this easier to evaluate
@@ -296,15 +313,15 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name utilityService#dateWithinRange
+         * @ngdoc function
+         * @name utilityService.dateWithinRange
          * @description
          * Converts dates into yyyymmdd formatted ints and evaluates to determine if the dateToCheck
          * falls within the date range provided
-         * @param startDate
-         * @param endDate
-         * @param [dateToCheck] - defaults to the current date
-         * @returns {boolean}
+         * @param {Date} startDate Starting date.
+         * @param {Date} endDate Ending date.
+         * @param {Date} [dateToCheck=new Date()] Defaults to the current date.
+         * @returns {boolean} Does the date fall within the range?
          */
         function dateWithinRange(startDate, endDate, dateToCheck) {
             /** Ensure both a start and end date are provided **/

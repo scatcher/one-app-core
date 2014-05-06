@@ -132,7 +132,7 @@ module.exports = function (grunt) {
                 ]
             },
             server: '.tmp',
-            docs: '<%= config.dist %>/docs'
+            docs: 'docs'
         },
 
         htmlmin: {
@@ -222,6 +222,29 @@ module.exports = function (grunt) {
                 dest: '<%= config.dist %>/ie-shim.min.js'
 
             }
+        },
+        ngdocs: {
+            options: {
+                dest: 'docs',
+                scripts: [
+                    '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js',
+                    '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js'
+                ],
+                html5Mode: false,
+//                startPage: '/api',
+                title: 'SP-Angular Docs'
+            },
+            api: [
+                '<%= config.services %>/modal_srvc.js',
+                '<%= config.services %>/model_srvc.js',
+                '<%= config.services %>/data_srvc.js',
+                '<%= config.services %>/queue_srvc.js',
+                '<%= config.services %>/utility_srvc.js'
+            ]
+//            model: {
+//                src: ['<%= config.services %>/model_srvc.js'],
+//                title: 'Model Service'
+//            }
         }
     });
 
@@ -257,23 +280,13 @@ module.exports = function (grunt) {
         'clean:dist',
         'concat',
         'ngmin',
-        'uglify'
-//        'ngdoc'
+        'uglify',
+        'doc'
     ]);
-
-    grunt.registerTask('ngdoc', 'Create ngdocs.', function () {
-        var dgeni = require('dgeni');
-        var done = this.async();
-
-        dgeni('docs/dgeni.conf.js')
-            .generateDocs()
-            .then(done);
-    });
-
 
     grunt.registerTask('doc', [
         'clean:docs',
-        'ngdoc'
+        'ngdocs'
     ]);
 
     grunt.registerTask('default', [

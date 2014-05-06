@@ -41,8 +41,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name fieldService#resolveValueForEffectivePermMask
+         * @ngdoc function
+         * @name fieldService.resolveValueForEffectivePermMask
          * @description
          * Takes the name of a permission mask and returns a permission value which can then be used
          * to generate a permission object using modelService.resolvePermissions(outputfromthis)
@@ -76,8 +76,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name fieldService#mockPermMask
+         * @ngdoc function
+         * @name fieldService.mockPermMask
          * @description
          * Defaults to a full mask but allows simulation of each of main permission levels
          * @param {object} [options]
@@ -123,8 +123,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name fieldService#Field
+         * @ngdoc function
+         * @name fieldService.Field
          * @description
          * Decorates field with optional defaults
          * @param obj
@@ -180,7 +180,7 @@ angular.module('spAngular')
         };
 
         /**
-         * Returns a an object defining a specific field type
+         * Returns an object defining a specific field type
          * @param {string} fieldType
          * @returns {object} fieldTypeDefinition
          */
@@ -189,8 +189,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name fieldService#getDefaultValueForType
+         * @ngdoc function
+         * @name fieldService.getDefaultValueForType
          * @description
          * Returns the empty value expected for a field type
          * @param fieldType
@@ -205,8 +205,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name fieldService#getMockData
+         * @ngdoc function
+         * @name fieldService.getMockData
          * @description
          * Can return mock data appropriate for the field type, by default it dynamically generates data but
          * the staticValue param will instead return a hard coded type specific value
@@ -226,8 +226,8 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name fieldService#defaultFields
+         * @ngdoc function
+         * @name fieldService.defaultFields
          * @description
          * Read only fields that should be included in all lists
          */
@@ -241,8 +241,8 @@ angular.module('spAngular')
         ];
 
         /**
-         * @ngdoc method
-         * @name fieldService#extendFieldDefinitions
+         * @ngdoc function
+         * @name fieldService.extendFieldDefinitions
          * @description
          * 1. Populates the fields array which uses the Field constructor to combine the default
          * SharePoint fields with those defined in the list definition on the model

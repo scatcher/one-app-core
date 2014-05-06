@@ -1,5 +1,5 @@
 angular.module('spAngular')
-    .directive('oaComments', function ($sce, $timeout, commentsModel, configService, toastr) {
+    .directive('oaComments', function ($sce, $timeout, commentsModel, spAngularConfig, toastr) {
         return {
             restrict: "A",
             replace: true,
@@ -94,7 +94,7 @@ angular.module('spAngular')
                     toastr.info("Checking for new comments");
                     scope.listItem.fetchComments().then(function (comments) {
                         $timeout(function () {
-                            if (configService.offline && !scope.listItem.comments) {
+                            if (spAngularConfig.offline && !scope.listItem.comments) {
                                 //Just return first comment
                                 scope.comments = comments[0];
                             } else if (comments.length > 0) {

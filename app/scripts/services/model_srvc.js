@@ -24,7 +24,6 @@ angular.module('spAngular')
         /**
          * @ngdoc function
          * @name Model
-         * @module Model
          * @description
          * Model Constructor
          * Provides the Following
@@ -34,7 +33,7 @@ angular.module('spAngular')
          * - builds "model.list" with constructor
          * - adds "getAllListItems" function
          * - adds "addNewItem" function
-         * @param {object} options
+         * @param {object} options Object containing optional params.
          * @param {object} [options.factory=StandardListItem] - Constructor function for individual list items.
          * @param {object} options.list - Definition of the list in SharePoint; This object will
          * be passed to the list constructor to extend further
@@ -46,25 +45,27 @@ angular.module('spAngular')
          * @constructor
          *
          * @example
-         * //Taken from a fictitious projectsModel.js
-         * var model = new modelFactory.Model({
-         *        factory: Project,
-         *        list: {
-         *            guid: '{PROJECT LIST GUID}',
-         *            title: 'Projects',
-         *            customFields: [
-         *                { internalName: 'Title', objectType: 'Text', mappedName: 'title', readOnly: false },
-         *                { internalName: 'Customer', objectType: 'Lookup', mappedName: 'customer', readOnly: false },
-         *                { internalName: 'ProjectDescription', objectType: 'Text', mappedName: 'projectDescription', readOnly: false },
-         *                { internalName: 'Status', objectType: 'Text', mappedName: 'status', readOnly: false },
-         *                { internalName: 'TaskManager', objectType: 'User', mappedName: 'taskManager', readOnly: false },
-         *                { internalName: 'ProjectGroup', objectType: 'Lookup', mappedName: 'group', readOnly: false },
-         *                { internalName: 'CostEstimate', objectType: 'Currency', mappedName: 'costEstimate', readOnly: false },
-         *                { internalName: 'Active', objectType: 'Boolean', mappedName: 'active', readOnly: false },
-         *                { internalName: 'Attachments', objectType: 'Attachments', mappedName: 'attachments', readOnly: true}
-         *            ]
-         *        }
-         *    });
+         <pre>
+          //Taken from a fictitious projectsModel.js
+          var model = new modelFactory.Model({
+                 factory: Project,
+                 list: {
+                     guid: '{PROJECT LIST GUID}',
+                     title: 'Projects',
+                     customFields: [
+                         { internalName: 'Title', objectType: 'Text', mappedName: 'title', readOnly: false },
+                         { internalName: 'Customer', objectType: 'Lookup', mappedName: 'customer', readOnly: false },
+                         { internalName: 'ProjectDescription', objectType: 'Text', mappedName: 'projectDescription', readOnly: false },
+                         { internalName: 'Status', objectType: 'Text', mappedName: 'status', readOnly: false },
+                         { internalName: 'TaskManager', objectType: 'User', mappedName: 'taskManager', readOnly: false },
+                         { internalName: 'ProjectGroup', objectType: 'Lookup', mappedName: 'group', readOnly: false },
+                         { internalName: 'CostEstimate', objectType: 'Currency', mappedName: 'costEstimate', readOnly: false },
+                         { internalName: 'Active', objectType: 'Boolean', mappedName: 'active', readOnly: false },
+                         { internalName: 'Attachments', objectType: 'Attachments', mappedName: 'attachments', readOnly: true}
+                     ]
+                 }
+             });
+         </pre>
          */
         function Model(options) {
             var model = this;
@@ -93,19 +94,21 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name Model#getAllListItems
-         * @module Model
+         * @ngdoc function
+         * @name Model.getAllListItems
+         * @module modelFactoryModel
          * @description
          * Inherited from Model constructor
-         * Gets all list items in the current list, processes the xml, and adds the data to the model
-         * Uses new deferred object instead of resolving self.ready
-         * @returns {promise}
-         * @example Taken from a fictitious projectsModel.js
-         *     projectModel.getAllListItems().then(function(entities) {
-         *         //Do something with all of the returned entities
-         *         $scope.projects = entities;
-         *     };
+         * Gets all list items in the current list, processes the xml, and caches the data in model.
+         * @returns {object} Promise returning all list items when resolved.
+         * @example
+         <pre>
+          //Taken from a fictitious projectsModel.js
+              projectModel.getAllListItems().then(function(entities) {
+                  //Do something with all of the returned entities
+                  $scope.projects = entities;
+              };
+         </pre>
          */
         Model.prototype.getAllListItems = function () {
             var deferred = $q.defer();
@@ -117,37 +120,28 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name modelFactory#registerChange
+         * @ngdoc function
+         * @name Model.addNewItem
+         * @module Model
          * @description
-         * If online and sync is being used, notify all online users that a change has been made
-         * @param {object} model event
-         */
-        function registerChange(model) {
-            if (!configService.offline && model.sync && _.isFunction(model.sync.registerChange)) {
-                /** Register change after successful update */
-                model.sync.registerChange();
-            }
-        }
-
-        /**
-         * @ngdoc method
-         * @name Model#addNewItem
-         * @description
-         * Creates a new list item in SharePoint
-         * @param {object} entity - Contains attribute to use in the creation of the new list item
+         * Using the definition of a list stored in a model, create a new list item in SharePoint.
+         * @param {object} entity An object that will be converted into key/value pairs based on the field definitions
+         * defined in the model.
          * @param {object} [options] - Pass additional options to the data service.
-         * @returns {promise}
+         * @returns {object} A promise which when resolved will returned the newly created list item from there server.
+         * This allows us to update the view with a valid new object that contains a unique list item id.
          *
          * @example
-         * //Taken from a fictitious projectsModel.js
-         *    projectModel.addNewItem({
-         *           title: 'A Project',
-         *           customer: {lookupValue: 'My Customer', lookupId: 123},
-         *           description: 'This is the project description'
-         *        }).then(function(newEntityFromServer) {
-         *            //The local query cache is automatically updated but any other dependent logic can go here
-         *    };
+         <pre>
+          //Taken from a fictitious projectsModel.js
+             projectModel.addNewItem({
+                    title: 'A Project',
+                    customer: {lookupValue: 'My Customer', lookupId: 123},
+                    description: 'This is the project description'
+                 }).then(function(newEntityFromServer) {
+                     //The local query cache is automatically updated but any other dependent logic can go here
+             };
+         </pre>
          */
         Model.prototype.addNewItem = function (entity, options) {
             var model = this;
@@ -162,71 +156,77 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#registerQuery
+         * @ngdoc function
+         * @name Model.registerQuery
+         * @module Model
          * @description
          * Constructor that allows us create a static query with a reference to the parent model
-         * @param {object} [queryOptions]
-         * @param {string} [queryOptions.name=defaultQueryName]
-         * @returns {Query}
+         * @param {object} [queryOptions] Optional options to pass through to the dataService.
+         * @param {string} [queryOptions.name=defaultQueryName] Optional name of the new query (recommended but will
+         * default to 'Primary' if not specified)
+         * @returns {object} Query Returns a new query object.
          *
          * @example
-         * //Could be placed on the projectModel and creates the query but doesn't call it
-         *
-         *    projectModel.registerQuery({
-         *        name: 'primary',
-         *        query: '' +
-         *            '<Query>' +
-         *            '   <OrderBy>' +
-         *            '       <FieldRef Name="Title" Ascending="TRUE"/>' +
-         *            '   </OrderBy>' +
-         *            '</Query>'
-         *    });
+         <pre>
+         //Could be placed on the projectModel and creates the query but doesn't call it
+         projectModel.registerQuery({
+             name: 'primary',
+             query: '' +
+                 '<Query>' +
+                 '   <OrderBy>' +
+                 '       <FieldRef Name="Title" Ascending="TRUE"/>' +
+                 '   </OrderBy>' +
+                 '</Query>'
+         });
+         </pre>
+
          * @example
-         * //To call the query or check for changes since the last call
-         *
-         *    projectModel.executeQuery('primary').then(function(entities) {
-         *        //We now have a reference to array of entities stored in the local cache
-         *        //These inherit from the ListItem prototype as well as the Project prototype on the model
-         *        $scope.projects = entities;
-         *    });
+         <pre>
+         //To call the query or check for changes since the last call
+         projectModel.executeQuery('primary').then(function(entities) {
+             //We now have a reference to array of entities stored in the local cache
+             //These inherit from the ListItem prototype as well as the Project prototype on the model
+             $scope.projects = entities;
+         });
+         </pre>
+
          * @example
-         * //Advanced functionality that would allow us to dynamically create queries for list items with a
-         * //lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
-         *
-         *    model.queryByProjectId(projectId) {
-         *        // Unique query name
-         *        var queryKey = 'pid' + projectId;
-         *
-         *        // Register project query if it doesn't exist
-         *        if (!_.isObject(model.queries[queryKey])) {
-         *            model.registerQuery({
-         *                name: queryKey,
-         *                query: '' +
-         *                    '<Query>' +
-         *                    '   <OrderBy>' +
-         *                    '       <FieldRef Name="ID" Ascending="TRUE"/>' +
-         *                    '   </OrderBy>' +
-         *                    '   <Where>' +
-         *                    '       <And>' +
-         *                // Prevents any records from being returned if user doesn't have permissions on project
-         *                    '           <IsNotNull>' +
-         *                    '               <FieldRef Name="Project"/>' +
-         *                    '           </IsNotNull>' +
-         *                // Return all records for the project matching param projectId
-         *                    '           <Eq>' +
-         *                    '               <FieldRef Name="Project" LookupId="TRUE"/>' +
-         *                    '               <Value Type="Lookup">' + projectId + '</Value>' +
-         *                    '           </Eq>' +
-         *                    '       </And>' +
-         *                    '   </Where>' +
-         *                    '</Query>'
-         *            });
-         *        }
-         *        //Still using execute query but now we have a custom query
-         *        return model.executeQuery(queryKey);
-         *    };
-         *
+         <pre>
+         //Advanced functionality that would allow us to dynamically create queries for list items with a
+         //lookup field associated with a specific project id.  Let's assume this is on the projectTasksModel.
+         model.queryByProjectId(projectId) {
+             // Unique query name
+             var queryKey = 'pid' + projectId;
+
+             // Register project query if it doesn't exist
+             if (!_.isObject(model.queries[queryKey])) {
+                 model.registerQuery({
+                     name: queryKey,
+                     query: '' +
+                         '<Query>' +
+                         '   <OrderBy>' +
+                         '       <FieldRef Name="ID" Ascending="TRUE"/>' +
+                         '   </OrderBy>' +
+                         '   <Where>' +
+                         '       <And>' +
+                     // Prevents any records from being returned if user doesn't have permissions on project
+                         '           <IsNotNull>' +
+                         '               <FieldRef Name="Project"/>' +
+                         '           </IsNotNull>' +
+                     // Return all records for the project matching param projectId
+                         '           <Eq>' +
+                         '               <FieldRef Name="Project" LookupId="TRUE"/>' +
+                         '               <Value Type="Lookup">' + projectId + '</Value>' +
+                         '           </Eq>' +
+                         '       </And>' +
+                         '   </Where>' +
+                         '</Query>'
+                 });
+             }
+             //Still using execute query but now we have a custom query
+             return model.executeQuery(queryKey);
+         };
+         </pre>
          */
         Model.prototype.registerQuery = function (queryOptions) {
             var model = this;
@@ -245,27 +245,28 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#getQuery
+         * @ngdoc function
+         * @name Model.getQuery
+         * @module Model
          * @description
-         * Helper function that attempts to locate and return a reference to the requested or catchall query
-         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
-         * @returns {object} query - see Query prototype for properties
+         * Helper function that attempts to locate and return a reference to the requested or catchall query.
+         * @param {string} [queryName=defaultQueryName] A unique key to identify this query.
+         * @returns {object} See Query prototype for additional details on what a Query looks like.
          *
          * @example
-         * <pre>
-         * var primaryQuery = projectModel.getQuery();
-         * </pre>
-         * --or--
+          <pre>
+          var primaryQuery = projectModel.getQuery();
+          </pre>
+
          * @example
-         * <pre>
-         * var primaryQuery = projectModel.getQuery('primary');
-         * </pre>
-         * --or--
+          <pre>
+          var primaryQuery = projectModel.getQuery('primary');
+          </pre>
+
          * @example
-         * <pre>
-         * var namedQuery = projectModel.getQuery('customQuery');
-         * </pre>
+          <pre>
+          var namedQuery = projectModel.getQuery('customQuery');
+          </pre>
          */
         Model.prototype.getQuery = function (queryName) {
             var model = this, query;
@@ -283,29 +284,31 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#getCache
+         * @ngdoc function
+         * @name Model.getCache
+         * @module Model
          * @description
          * Helper function that return the local cache for a named query if provided, otherwise
          * it returns the cache for the primary query for the model.  Useful if you know the query
          * has already been resolved and there's no need to check SharePoint for changes.
          *
-         * @param {string} [queryName]
-         * @returns {Array}
+         * @param {string} [queryName=defaultQueryName] A unique key to identify this query.
+         * @returns {Array} Returns the contents of the current cache for a named query.
          *
          * @example
-         * var primaryQueryCache = projectModel.getCache();
-         *
-         *
-         * --or--
+         <pre>
+            var primaryQueryCache = projectModel.getCache();
+         </pre>
+
          * @example
-         * var primaryQueryCache = projectModel.getCache('primary');
-         *
-         *
-         * --or--
+         <pre>
+            var primaryQueryCache = projectModel.getCache('primary');
+         </pre>
+
          * @example
-         * var namedQueryCache = projectModel.getCache('customQuery');
-         *
+         <pre>
+            var namedQueryCache = projectModel.getCache('customQuery');
+         </pre>
          */
         Model.prototype.getCache = function (queryName) {
             var model = this, query, cache;
@@ -317,23 +320,26 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#executeQuery
+         * @ngdoc function
+         * @name Model.executeQuery
+         * @module Model
          * @description
          * The primary method for retrieving data from a query registered on a model.  It returns a promise
          * which resolves to the local cache after post processing entities with constructors.
          *
-         * @param {string} [queryName=defaultQueryName] - A unique key to identify this query
-         * @param {object} [options] - Pass options to the data service.
-         * @returns {function}
+         * @param {string} [queryName=defaultQueryName] A unique key to identify this query
+         * @param {object} [options] Pass options to the data service.
+         * @returns {object} Promise that when resolves returns an array of list items which inherit from ListItem and
+         * optionally go through a defined constructor on the model.
          *
          * @example To call the query or check for changes since the last call.
-         * projectModel.executeQuery('MyCustomQuery').then(function(entities) {
-         *     //We now have a reference to array of entities stored in the local cache
-         *     //These inherit from the ListItem prototype as well as the Project prototype on the model
-         *     $scope.subsetOfProjects = entities;
-         * })
-         *
+         <pre>
+          projectModel.executeQuery('MyCustomQuery').then(function(entities) {
+              //We now have a reference to array of entities stored in the local cache
+              //These inherit from the ListItem prototype as well as the Project prototype on the model
+              $scope.subsetOfProjects = entities;
+          });
+         </pre>
          */
         Model.prototype.executeQuery = function (queryName, options) {
             var model = this;
@@ -344,31 +350,38 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#isInitialised
+         * @ngdoc function
+         * @name Model.isInitialised
+         * @module Model
          * @description
-         * Methods which allows us to easily determine if we've successfully made any queries this session
-         * @returns {boolean}
+         * Methods which allows us to easily determine if we've successfully made any queries this session.
+         * @returns {boolean} Returns evaluation.
          */
         Model.prototype.isInitialised = function () {
             return _.isDate(this.lastServerUpdate);
         };
 
         /**
-         * @ngdoc method
-         * @name Model#searchLocalCache
+         * @ngdoc function
+         * @name Model.searchLocalCache
+         * @module Model
          * @description
          * Search functionality that allow for deeply searching an array of objects for the first
          * record matching the supplied value.  Additionally it maps indexes to speed up future calls.  It
          * currently rebuilds the mapping when the length of items in the local cache has changed or when the
          * rebuildIndex flag is set.
          *
-         * @param value - The value or array of values to compare against
-         * @param {object} [options]
-         * @param {string} [options.propertyPath] - The dot separated propertyPath.
-         * @param {object} [options.cacheName] - Required if using a data source other than primary cache.
-         * @param {object} [options.localCache] - Array of objects to search (Default model.getCache()).
-         * @param {boolean} [options.rebuildIndex] - Set to ignore previous index and rebuild
+         * @param {*} value The value or array of values to compare against.
+         * @param {object} [options] Object containing optional parameters.
+         * @param {string} [options.propertyPath] The dot separated propertyPath.
+         <pre>
+         'project.lookupId'
+         </pre>
+         * @param {object} [options.cacheName] Required if using a data source other than primary cache.
+         * @param {object} [options.localCache=model.getCache()] Array of objects to search (Default model.getCache()).
+         * @param {boolean} [options.rebuildIndex=false] Ignore previous index and rebuild.
+         *
+         * @returns {(object|object[])} Either the object(s) that you're searching for or undefined if not found.
          */
         Model.prototype.searchLocalCache = function (value, options) {
             var model = this;
@@ -421,15 +434,17 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#createEmptyItem
+         * @ngdoc function
+         * @name Model.createEmptyItem
+         * @module Model
          * @description
          * Creates an object using the editable fields from the model, all attributes are empty based on the field
          * type unless an overrides object is passed in.  The overrides object extends the defaults.  A benefit to this
          * approach is the returned object inherits from the ListItem prototype so we have the ability to call
          * entity.saveChanges instead of calling the model.addNewItem(entity).
+         *
          * @param {object} [overrides] - Optionally extend the new empty item with specific values.
-         * @returns {object}
+         * @returns {object} Newly created list item.
          */
         Model.prototype.createEmptyItem = function (overrides) {
             var model = this;
@@ -447,16 +462,18 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#generateMockData
+         * @ngdoc function
+         * @name Model.generateMockData
+         * @module Model
          * @description
-         * Generates n mock records for testing
+         * Generates 'n' mock records for testing using the field types defined in the model to provide something to visualize.
          *
-         * @param {object} [options]
-         * @param {number} [options.quantity=10] - The requested number of mock records
-         * @param {string} [options.permissionLevel=FullMask] - Sets the mask on the mock records to simulate desired level
-         * @param {boolean} [options.staticValue=false] - by default all mock data is dynamically created but if set, this will
-         * cause static data to be used instead
+         * @param {object} [options] Object containing optional parameters.
+         * @param {number} [options.quantity=10] The requested number of mock records to return.
+         * @param {string} [options.permissionLevel=FullMask] Sets the mask on the mock records to simulate desired
+         * permission level.
+         * @param {boolean} [options.staticValue=false] By default all mock data is dynamically created but if set,
+         * this will cause static data to be used instead.
          */
         Model.prototype.generateMockData = function (options) {
             var mockData = [],
@@ -484,16 +501,17 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Model#validateEntity
+         * @ngdoc function
+         * @name Model.validateEntity
+         * @module Model
          * @description
          * Uses the custom fields defined in an model to ensure each field (required = true) is evaluated
          * based on field type
          *
-         * @param {object} entity
-         * @param {object} [options]
-         * @param {boolean} [options.toast=true] - Should toasts be generated to alert the user of issues
-         * @returns {boolean}
+         * @param {object} entity SharePoint list item.
+         * @param {object} [options] Object containing optional parameters.
+         * @param {boolean} [options.toast=true] Should toasts be generated to alert the user of issues.
+         * @returns {boolean} Evaluation of validity.
          */
         Model.prototype.validateEntity = function (entity, options) {
             var valid = true,
@@ -559,34 +577,37 @@ angular.module('spAngular')
         /**
          * @ngdoc function
          * @name ListItem
+         * @module ListItem
          * @description
-         * Constructor for creating a list item which inherits CRUD functionality that can be called directly from obj
+         * Base prototype which all list items inherit CRUD functionality that can be called directly from obj.
          * @constructor
          */
         function ListItem() {
         }
 
         /**
-         * @ngdoc method
-         * @name ListItem#getDataService
+         * @ngdoc function
+         * @name ListItem.getDataService
+         * @module ListItem
          * @description
          * Allows us to reference when out of scope
-         * @returns {object}
+         * @returns {object} Reference to the dataService in the event that it's out of scope.
          */
         ListItem.prototype.getDataService = function () {
             return dataService;
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#saveChanges
+         * @ngdoc function
+         * @name ListItem.saveChanges
+         * @module ListItem
          * @description
          * Updates record directly from the object
-         * @param {object} [options] - Optionally pass params to the data service.
-         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * @param {object} [options] Optionally pass params to the data service.
+         * @param {boolean} [options.updateAllCaches=false] Search through the cache for each query to ensure entity is
          * updated everywhere.  This is more process intensive so by default we only update the cached entity in the
          * cache where this entity is currently stored.
-         * @returns {promise}
+         * @returns {object} Promise which resolved with the updated list item from the server.
          */
         ListItem.prototype.saveChanges = function (options) {
             var listItem = this;
@@ -603,17 +624,39 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#saveFields
+         * @ngdoc function
+         * @name ListItem.saveFields
+         * @module ListItem
          * @description
          * Saves a named subset of fields back to SharePoint
          * Alternative to saving all fields
-         * @param {array} fieldArray - array of internal field names that should be saved to SharePoint
-         * @param {object} [options] - Optionally pass params to the data service.
-         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * @param {array} fieldArray Array of internal field names that should be saved to SharePoint.
+         <pre>
+         //Create an array to store all promises.
+         var queue = [],
+            progressCounter = 0;
+
+         //We're only updating a single field on each entity so it's much faster to use ListItem.saveFields() so we
+         //don't need to push the entire object back to the server.
+         _.each(selectedItems, function (entity) {
+            entity.title = title + ': Now Updated!';
+            var request = entity.saveFields('title').then(function() {
+                progressCounter++;
+            }
+            queue.push(request);
+          });
+
+         $q.all(queue).then(function() {
+             //All items have now been processed so we can do something...but the view is automatically updated so we
+             //don't need to bother if there's no other required business logic.
+         }
+
+         </pre>
+         * @param {object} [options] Optionally pass params to the data service.
+         * @param {boolean} [options.updateAllCaches=false] Search through the cache for each query to ensure entity is
          * updated everywhere.  This is more process intensive so by default we only update the cached entity in the
          * cache where this entity is currently stored.
-         * @returns {promise}
+         * @returns {object} Promise which resolves with the updated list item from the server.
          */
         ListItem.prototype.saveFields = function (fieldArray, options) {
 
@@ -648,15 +691,16 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#deleteItem
+         * @ngdoc function
+         * @name ListItem.deleteItem
+         * @module ListItem
          * @description
          * Deletes record directly from the object and removes record from user cache.
-         * @param {object} [options] - Optionally pass params to the dataService.
-         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query to ensure entity is
+         * @param {object} [options] Optionally pass params to the dataService.
+         * @param {boolean} [options.updateAllCaches=false] Iterate over each of the query cache's and ensure the entity is
          * removed everywhere.  This is more process intensive so by default we only remove the cached entity in the
          * cache where this entity is currently stored.
-         * @returns {promise}
+         * @returns {object} Promise which really only lets us know the request is complete.
          */
         ListItem.prototype.deleteItem = function (options) {
             var listItem = this;
@@ -673,14 +717,14 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#validateEntity
+         * @ngdoc function
+         * @name ListItem.validateEntity
+         * @module ListItem
          * @description
          * Helper function that passes the current item to Model.validateEntity
-         *
-         * @param {object} [options]
-         * @param {boolean} [options.toast=true]
-         * @returns {boolean}
+         * @param {object} [options] Optionally pass params to the dataService.
+         * @param {boolean} [options.toast=true] Set to false to prevent toastr messages from being displayed.
+         * @returns {boolean} Evaluation of validity.
          */
         ListItem.prototype.validateEntity = function (options) {
             var listItem = this,
@@ -689,11 +733,12 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#getAttachmentCollection
+         * @ngdoc function
+         * @name ListItem.getAttachmentCollection
+         * @module ListItem
          * @description
-         * Requests all attachments for the object
-         * @returns {promise} - resolves with attachment collection
+         * Requests all attachments for a given list item.
+         * @returns {object} Promise which resolves with all attachments for a list item.
          */
         ListItem.prototype.getAttachmentCollection = function () {
             return dataService.getCollection({
@@ -706,12 +751,13 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#deleteAttachment
+         * @ngdoc function
+         * @name ListItem.deleteAttachment
+         * @module ListItem
          * @description
-         * Delete an attachment using the attachment url
-         * @param {string} url
-         * @returns {promise} - containing updated attachment collection
+         * Delete an attachment from a list item.
+         * @param {string} url Requires the URL for the attachment we want to delete.
+         * @returns {object} Promise which resolves with the updated attachment collection.
          */
         ListItem.prototype.deleteAttachment = function (url) {
             var listItem = this;
@@ -723,11 +769,16 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name ListItem#resolvePermissions
+         * @ngdoc function
+         * @name ListItem.resolvePermissions
+         * @module ListItem
          * @description
-         *
-         * @returns {Object} Contains properties for each permission level evaluated for current user(true | false)
+         * See modelFactory.resolvePermissions for details on what we expect to have returned.
+         * @returns {Object} Contains properties for each permission level evaluated for current user.
+         * @example
+         <pre>
+            var permissionObject = myGenericListItem.resolvePermissions();
+         </pre>
          */
         ListItem.prototype.resolvePermissions = function () {
             return resolvePermissions(this.permMask);
@@ -735,12 +786,23 @@ angular.module('spAngular')
 
 
         /**
-         * @ngdoc method
-         * @name ListItem#getFieldVersionHistory
+         * @ngdoc function
+         * @name ListItem.getFieldVersionHistory
+         * @module ListItem
          * @description
-         * Returns the version history for a specific field
-         * @param {string[]} fieldNames the js mapped name of the fields (ex: [title])
-         * @returns {promise} - containing array of changes
+         * Takes an array of field names, finds the version history for field, and returns a snapshot of the object at each
+         * version.  If no fields are provided, we look at the field definitions in the model and pull all non-readonly
+         * fields.  The only way to do this that I've been able to get working is to get the version history for each
+         * field independently and then build the history by combining the server responses for each requests into a
+         * snapshot of the object.
+         * @param {string[]} [fieldNames] An array of field names that we're interested in.
+         <pre>
+         myGenericListItem.getFieldVersionHistory(['title', 'project'])
+            .then(function(versionHistory) {
+                //We now have an array of versions of the list item
+            };
+         </pre>
+         * @returns {object} promise - containing array of changes
          */
         ListItem.prototype.getFieldVersionHistory = function (fieldNames) {
             var deferred = $q.defer();
@@ -814,10 +876,24 @@ angular.module('spAngular')
          * @ngdoc function
          * @name List
          * @description
-         * List Object Constructor
-         * @param obj.guid
-         * @param obj.title
-         * @param [obj.customFields]
+         * List Object Constructor.  This is handled automatically when creating a new model so there shouldn't be
+         * any reason to manually call.
+         * @param {object} obj Initialization parameters.
+         * @param {string} obj.guid Unique SharePoint GUID for the list we'll be basing the model on
+         * ex:'{4D74831A-42B2-4558-A67F-B0B5ADBC0EAC}'
+         * @param {string} obj.title Maps to the offline XML file in dev folder (no spaces)
+         * ex: 'ProjectsList' so the offline XML file would be located at dev/ProjectsList.xml
+         * @param {object[]} [obj.customFields] Mapping of SharePoint field names to the internal names we'll be using
+         * in our application.  Also contains field type, readonly attribute, and any other non-standard settings.
+         <pre>
+             [
+                 { internalName: "Title", objectType: "Text", mappedName: "lastName", readOnly:false },
+                 { internalName: "FirstName", objectType: "Text", mappedName: "firstName", readOnly:false },
+                 { internalName: "Organization", objectType: "Lookup", mappedName: "organization", readOnly:false },
+                 { internalName: "Account", objectType: "User", mappedName: "account", readOnly:false },
+                 { internalName: "Details", objectType: "Text", mappedName: "details", readOnly:false }
+             ]
+         </pre>
          * @constructor
          */
         function List(obj) {
@@ -843,10 +919,50 @@ angular.module('spAngular')
          * @ngdoc function
          * @name Query
          * @description
-         * Decorates query optional attributes
-         * @param {object} queryOptions
-         * @param {object} model
+         * Primary constructor that all queries inherit from.
+         * @param {object} queryOptions Initialization parameters.
+         * @param {string} [queryOptions.operation=GetListItemChangesSinceToken] Optionally use 'GetListItems' to
+         * receive a more efficient response, just don't have the ability to check for changes since the last time
+         * the query was called.
+         * @param {boolean} [queryOptions.cacheXML=true] Set to false if you want a fresh request.
+         * @param {string} [queryOptions.query=Ordered ascending by ID] CAML query passed to SharePoint to control
+         * the data SharePoint returns.
+         * @param {string} [queryOptions.queryOptions] SharePoint options.
+         <pre>
+         //Default
+         queryOptions: '' +
+         '<QueryOptions>' +
+         '   <IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns>' +
+         '   <IncludeAttachmentUrls>TRUE</IncludeAttachmentUrls>' +
+         '   <IncludeAttachmentVersion>FALSE</IncludeAttachmentVersion>' +
+         '   <ExpandUserField>FALSE</ExpandUserField>' +
+         '</QueryOptions>',
+         </pre>
+         * @param {object} model Reference to the parent model for the query.  Allows us to reference when out of
+         * scope.
          * @constructor
+         *
+         * @example
+         <pre>
+        // Query to retrieve the most recent 25 modifications
+        model.registerQuery({
+            name: 'recentChanges',
+            CAMLRowLimit: 25,
+            query: '' +
+                '<Query>' +
+                '   <OrderBy>' +
+                '       <FieldRef Name="Modified" Ascending="FALSE"/>' +
+                '   </OrderBy>' +
+                    // Prevents any records from being returned if user
+                    // doesn't have permissions on project
+                '   <Where>' +
+                '       <IsNotNull>' +
+                '           <FieldRef Name="Project"/>' +
+                '       </IsNotNull>' +
+                '   </Where>' +
+                '</Query>'
+        });
+        </pre>
          */
         function Query(queryOptions, model) {
             var query = this;
@@ -907,13 +1023,15 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name Query#execute
+         * @ngdoc function
+         * @name Query.execute
+         * @module Query
          * @description
-         * Query SharePoint, pull down all initial records on first call
-         * Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken")
-         * @param [options] - Any options that should be passed to dataService.executeQuery
-         * @returns {function} - Array of list item objects
+         * Query SharePoint, pull down all initial records on first call along with list definition if using
+         * "GetListItemChangesSinceToken".  Note: this is  substantially larger than "GetListItems" on first call.
+         * Subsequent calls pulls down changes (Assuming operation: "GetListItemChangesSinceToken").
+         * @param {object} [options] Any options that should be passed to dataService.executeQuery.
+         * @returns {object[]} Array of list item objects.
          */
         Query.prototype.execute = function (options) {
             var query = this;
@@ -960,13 +1078,14 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name Query#searchLocalCache
+         * @ngdoc function
+         * @name Query.searchLocalCache
+         * @module Query
          * @description
-         * Simple wrapper that by default sets the search location to the local query cache
-         * @param {*} value
-         * @param {object} [options] - Options to pass to Model.prototype.searchLocalCache
-         * @returns {object}
+         * Simple wrapper that by default sets the search location to the local query cache.
+         * @param {*} value Value to evaluate against.
+         * @param {object} [options] Options to pass to Model.prototype.searchLocalCache.
+         * @returns {object|object[]} Either the object(s) that you're searching for or undefined if not found.
          */
         Query.prototype.searchLocalCache = function (value, options) {
             var query = this;
@@ -979,17 +1098,40 @@ angular.module('spAngular')
             return model.searchLocalCache(value, opts);
         };
 
+
         /**
-         * @ngdoc method
-         * @name modelFactory#resolvePermissions
+         * @ngdoc function
+         * @name modelFactory.registerChange
          * @description
-         * Converts permMask into something usable to determine permission level for current user
-         * @param {string} permissionsMask - The WSS Rights Mask is an 8-byte, unsigned integer that specifies
+         * If online and sync is being used, notify all online users that a change has been made.
+         * //Todo Break this functionality into FireBase module that can be used if desired.
+         * @param {object} model event
+         */
+        function registerChange(model) {
+            if (!configService.offline && model.sync && _.isFunction(model.sync.registerChange)) {
+                /** Register change after successful update */
+                model.sync.registerChange();
+            }
+        }
+
+        /**
+         * @ngdoc function
+         * @name modelFactory.resolvePermissions
+         * @description
+         * Converts permMask into something usable to determine permission level for current user.  Typically used
+         * directly from a list item.  See ListItem.resolvePermissions.
+         <pre>
+         someListItem.resolvePermissions('0x0000000000000010');
+         </pre>
+         * @param {string} permissionsMask The WSS Rights Mask is an 8-byte, unsigned integer that specifies
          * the rights that can be assigned to a user or site group. This bit mask can have zero or more flags set.
-         * @example '0x0000000000000010'
+         * @example
+         <pre>
+         modelFactory.resolvePermissions('0x0000000000000010');
+         </pre>
          * @returns {object} property for each permission level identifying if current user has rights (true || false)
-         * link: http://sympmarc.com/2009/02/03/permmask-in-sharepoint-dvwps/
-         * link: http://spservices.codeplex.com/discussions/208708
+         * @link: http://sympmarc.com/2009/02/03/permmask-in-sharepoint-dvwps/
+         * @link: http://spservices.codeplex.com/discussions/208708
          */
         function resolvePermissions(permissionsMask) {
             var permissionSet = {};

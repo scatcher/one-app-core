@@ -7,8 +7,7 @@
  * Handles all interaction with SharePoint web services
  *
  * For additional information on many of these web service calls, see Marc Anderson's SPServices documentation
- *
- *  - [http://spservices.codeplex.com/documentation]
+ *  http://spservices.codeplex.com/documentation
  */
 angular.module('spAngular')
     .service('dataService', function ($q, $timeout, queueService, configService, utilityService, spAngularConfig, toastr) {
@@ -23,18 +22,19 @@ angular.module('spAngular')
         var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
 
         /**
-         * @ngdoc method
-         * @name dataService#processListItems
+         * @ngdoc function
+         * @name dataService.processListItems
          * @description
          * Post processing of data after returning list items from server
-         * @param {object} model - reference to allow updating of model
-         * @param {xml} responseXML - Resolved promise from web service call
-         * @param {object} [options]
-         * @param {function} [options.factory] - Constructor Function
-         * @param {string} [options.filter] - Optional : XML filter
-         * @param {Array} [options.mapping] - Field definitions
-         * @param {string} [options.mode] - Options for what to do with local list data array in store [replace, update, return]
-         * @param {Array} [options.target] - Optionally pass in array to update
+         * @param {object} model Reference to allow updating of model.
+         * @param {xml} responseXML Resolved promise from SPServices web service call.
+         * @param {object} [options] Optional configuration object.
+         * @param {function} [options.factory=model.factory] Constructor function typically stored on the model.
+         * @param {string} [options.filter='z:row'] XML filter string used to find the elements to iterate over.
+         * @param {Array} [options.mapping=model.list.mapping] Field definitions, typeically stored on the model.
+         * @param {string} [options.mode='update'] Options for what to do with local list data array in
+         * store ['replace', 'update', 'return']
+         * @param {Array} [options.target=model.getCache()] Optionally pass in array to update after processing.
          */
         var processListItems = function (model, responseXML, options) {
             queueService.decrease();
@@ -86,12 +86,14 @@ angular.module('spAngular')
         };
 
         /**
+         * @ngdoc function
+         * @name dataService.updateLocalCache
          * @description
          * Maps a cache by entity id.  All provided entities are then either added if they don't already exist
          * or replaced if they do.
-         * @param {object[]} localCache - The cache for a given query.
-         * @param {object[]} entities - All entities that should be merged into the cache.
-         * @returns {{created: number, updated: number}}
+         * @param {object[]} localCache The cache for a given query.
+         * @param {object[]} entities All entities that should be merged into the cache.
+         * @returns {object} {created: number, updated: number}
          */
         function updateLocalCache(localCache, entities) {
             var updateCount = 0,
@@ -117,12 +119,15 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#parseFieldVersionHistoryResponse
-         * Takes an XML response from SharePoint webservice and returns an array of field versions
-         * @param {xml} responseXML
-         * @param {object} fieldDefinition - defined in model for the list
-         * @returns {Array}
+         * @ngdoc function
+         * @name dataService.parseFieldVersionHistoryResponse
+         * @description
+         * Takes an XML response from SharePoint webservice and returns an array of field versions.
+         *
+         * @param {xml} responseXML Returned XML from web service call.
+         * @param {object} fieldDefinition Field definition from the model.
+         *
+         * @returns {Array} Array objects containing the various version of a field for each change.
          */
         function parseFieldVersionHistoryResponse(responseXML, fieldDefinition) {
             var versions = [];
@@ -150,23 +155,26 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#getFieldVersionHistory
+         * @ngdoc function
+         * @name dataService.getFieldVersionHistory
          * @description
-         * Returns the version history for a field in a list item
-         * @param {object} payload
-         * @param {object} fieldDefinition - field definition object from the model
-         * @returns {promise} - Array of list item changes for the specified field
+         * Returns the version history for a field in a list item.
+         * @param {object} payload Configuration object passed to SPServices.
+         <pre>
+         var payload = {
+                operation: 'GetVersionCollection',
+                webURL: configService.defaultUrl,
+                strlistID: model.list.guid,
+                strlistItemID: listItem.id,
+                strFieldName: fieldDefinition.internalName
+            };
+         </pre>
+         * @param {object} fieldDefinition Field definition object from the model.
+         * @returns {object[]} Promise which resolves with an array of list item changes for the specified field.
          */
         var getFieldVersionHistory = function (payload, fieldDefinition) {
             var deferred = $q.defer();
-            if (offline) {
-                /** Simulate async response if offline */
-                $timeout(function () {
-                    /** Resolve with an empty array */
-                    deferred.resolve([]);
-                });
-            } else {
+            if(online) {
                 /** SPServices returns a promise */
                 var webServiceCall = $().SPServices(payload);
 
@@ -180,14 +188,19 @@ angular.module('spAngular')
                     toastr.error('Failed to fetch version history.');
                     deferred.reject(outcome);
                 });
+            } else {
+                /** Simulate async response if offline */
+                $timeout(function () {
+                    /** Resolve with an empty array */
+                    deferred.resolve([]);
+                });
             }
-
             return deferred.promise;
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#getCollection
+         * @ngdoc function
+         * @name dataService.getCollection
          * @description
          * Used to handle any of the Get[filterNode]Collection calls to SharePoint
          *
@@ -203,17 +216,18 @@ angular.module('spAngular')
          *         if not provided it's extracted from the name of the operation
          *         ex: Get[User]CollectionFromSite, "User" is used as the filterNode
          *
-         * @returns {promise} when resolved will contain an array of the requested collection
+         * @returns {object[]} Promise which when resolved will contain an array of objects representing the
+         * requested collection.
          *
          * @example
-         * ```js
-         *  dataService.getCollection({
-         *       operation: "GetGroupCollectionFromUser",
-         *       userLoginName: $scope.state.selectedUser.LoginName
-         *  }).then(function (response) {
-         *       postProcessFunction(response);
-         *  });
-         * ```
+         <pre>
+           dataService.getCollection({
+                operation: "GetGroupCollectionFromUser",
+                userLoginName: $scope.state.selectedUser.LoginName
+                }).then(function (response) {
+                    postProcessFunction(response);
+               });
+         </pre>
          */
         var getCollection = function (options) {
             queueService.increase();
@@ -313,17 +327,25 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#serviceWrapper
+         * @ngdoc function
+         * @name dataService.serviceWrapper
          * @description
-         * Generic wrapper for any SPServices web service call
-         * Check http://spservices.codeplex.com/documentation for details on expected parameters for each operation
+         * Generic wrapper for any SPServices web service call.  The big benefit to this function is it allows us
+         * to continue to use the $q promise model throughout the application instead of using the promise
+         * implementation used in SPServices so we have a more consistent experience.
+         * Check http://spservices.codeplex.com/documentation for details on expected parameters for each operation.
          *
-         * @param {object} options - payload params
-         * @returns {promise}
+         * @param {object} options Payload params that is directly passed to SPServices.
+         * @param {string} [options.webURL=defaultUrl] XML filter string used to find the elements to iterate over.
+         * @param {string} [options.filterNode] XML filter string used to find the elements to iterate over.
+         * This is typically 'z:row' for list items.
+         * @returns {object} Returns a promise which when resolved either returns clean objects parsed by the value
+         * in options.filterNode or the raw XML response if a options.filterNode
+         *
          *      If options.filterNode is provided, returns XML parsed by node name
          *      Otherwise returns the server response
          */
+        //TODO: Make this the primary function which interacts with SPServices and makes web service call.  No need having this logic duplicated.
         var serviceWrapper = function (options) {
             var defaults = {
                 webURL: defaultUrl
@@ -345,22 +367,7 @@ angular.module('spAngular')
                 }
             };
 
-            if (offline) {
-                /** Debugging offline */
-                var offlineData = 'dev/' + opts.operation + '.xml';
-
-                /** Get offline data */
-                $.ajax(offlineData).then(
-                    function (offlineData) {
-                        queueService.decrease();
-                        /** Pass back the group array */
-                        deferred.resolve(processXML(offlineData));
-                    }, function (outcome) {
-                        toastr.error('You need to have a dev/' + opts.operation + '.xml in order to get the group collection in offline mode.');
-                        deferred.reject(outcome);
-                        queueService.decrease();
-                    });
-            } else {
+            if(online) {
                 /** Add in webURL to speed up call, set to default if not specified */
                 var payload = {};
 
@@ -378,25 +385,42 @@ angular.module('spAngular')
                     queueService.decrease();
                     deferred.reject(outcome);
                 });
+            } else {
+                /** Debugging offline */
+                var offlineData = 'dev/' + opts.operation + '.xml';
+
+                /** Get offline data */
+                $.ajax(offlineData).then(
+                    function (offlineData) {
+                        queueService.decrease();
+                        /** Pass back the group array */
+                        deferred.resolve(processXML(offlineData));
+                    }, function (outcome) {
+                        toastr.error('You need to have a dev/' + opts.operation + '.xml in order to get the group collection in offline mode.');
+                        deferred.reject(outcome);
+                        queueService.decrease();
+                    });
             }
+
             return deferred.promise;
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#getList
+         * @ngdoc function
+         * @name dataService.getList
          * @description
          * Returns all list settings for each list on the site
-         * @param options
-         * @param {string} options.listName
-         * @param {string} [options.webURL] - returns info for specified site (optional)
-         * @returns {object} promise
+         * @param {object} options Configuration parameters.
+         * @param {string} options.listName GUID of the list.
+         * @param {string} [options.webURL] Can override the default web url if desired.
+         * @returns {object[]} Promise which resolves with an array of field definitions for the list.
          */
         var getList = function (options) {
             var opts = _.extend({}, options);
             queueService.increase();
             var deferred = $q.defer();
 
+            //TODO: Use serviceWrapper
             var webServiceCall = $().SPServices({
                 operation: 'GetList',
                 listName: opts.listName
@@ -425,21 +449,41 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#deleteAttachment
+         * @ngdoc function
+         * @name dataService.deleteAttachment
          * @description
-         * Deletes and attachment on a list item
-         * @param {object} options
-         * @param {string} options.listItemId
-         * @param {string} options.url
-         * @param {string} options.listName
-         * @returns {promise}
+         * Deletes and attachment on a list item.  Most commonly used by ListItem.deleteAttachment which is shown
+         * in the example.
+         *
+         * @param {object} options Configuration parameters.
+         * @param {string} options.listItemId ID of the list item with the attachment.
+         * @param {string} options.url Requires the URL for the attachment we want to delete.
+         * @param {string} options.listName Best option is the GUID of the list.
+         <pre>'{37388A98-534C-4A28-BFFA-22429276897B}'</pre>
+         *
+         * @returns {object} Promise which resolves with the updated attachment collection.
+         *
+         * @example
+         <pre>
+         ListItem.prototype.deleteAttachment = function (url) {
+            var listItem = this;
+            return dataService.deleteAttachment({
+                listItemId: listItem.id,
+                url: url,
+                listName: listItem.getModel().list.guid
+            });
+         };
+         </pre>
          */
         var deleteAttachment = function (options) {
-            var opts = _.extend({}, options);
+            var defaults = {
+                operation: 'DeleteAttachment'
+            };
+            var opts = _.extend({}, defaults, options);
             queueService.increase();
             var deferred = $q.defer();
 
+            //TODO: Use serviceWrapper
             var webServiceCall = $().SPServices({
                 operation: 'DeleteAttachment',
                 listItemID: opts.listItemId,
@@ -470,14 +514,15 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#getView
+         * @ngdoc function
+         * @name dataService.getView
          * @description
          * Returns details of a SharePoint list view
-         * @param {object} options
-         * @param {string} options.listName
-         * @param {string} [options.viewName] ***Formatted as a GUID ex: '{37388A98-534C-4A28-BFFA-22429276897B}'
-         * @param {string} [options.webURL]
+         * @param {object} options Configuration parameters.
+         * @param {string} options.listName GUID of the list.
+         * @param {string} [options.viewName] Formatted as a GUID, if not provided
+         <pre>'{37388A98-534C-4A28-BFFA-22429276897B}'</pre>
+         * @param {string} [options.webURL] Can override the default web url if desired.
          * @returns {object} promise
          */
         var getView = function (options) {
@@ -496,6 +541,7 @@ angular.module('spAngular')
                 payload.viewName = opts.viewName;
             }
 
+            //TODO: Use serviceWrapper
             var webServiceCall = $().SPServices(payload);
 
             webServiceCall.then(function () {
@@ -520,18 +566,17 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#executeQuery
+         * @ngdoc function
+         * @name dataService.executeQuery
          * @description
-         * Takes in the model and a query that
-         * @param {object} model
-         * @param {object} query
-         * @param {string} [query.offlineXML] - Allow an offline file to spe specified when a query is created
-         * @param {object} [options]
-         * @param {object} [options.deferred] - A reference to a deferred object
-         * @param {Array} [options.target] - The target destination for returned entities
-         * @param {string} [options.offlineXML] - Alternate location to XML data file
-         * @returns {object} promise - Returns reference to model
+         * Primary method of retrieving list items from SharePoint.  Look at Query and Model for specifics.
+         * @param {object} model Reference to the model where the Query resides.
+         * @param {object} query Reference to the Query making the call.
+         * @param {object} [options] Optional configuration parameters.
+         * @param {Array} [options.target=model.getCache()] The target destination for returned entities
+         * @param {string} [options.offlineXML='dev/' + model.list.title + '.xml'] Optionally include the location of
+         * a custom offline XML file specifically for this query.
+         * @returns {object[]} - Array of list item objects.
          */
         var executeQuery = function (model, query, options) {
 
@@ -552,34 +597,7 @@ angular.module('spAngular')
             /** Trigger processing animation */
             queueService.increase();
 
-            /** Simulate an web service call if working offline */
-            if (offline) {
-                /** Optionally set alternate offline XML location but default to value in model */
-                var offlineData = opts.offlineXML || query.offlineXML || 'dev/' + model.list.title + '.xml';
-
-                /** Only pull down offline xml if this is the first time the query is run */
-                if (query.lastRun) {
-                    /** Query has already been run, resolve reference to existing data */
-                    query.lastRun = new Date();
-                    queueService.decrease();
-                    deferred.resolve(query.cache);
-                } else {
-                    /** First run for query
-                     *  Get offline data stored in the app/dev folder
-                     */
-                    $.ajax(offlineData).then(function (responseXML) {
-                        var entities = processListItems(model, responseXML, opts);
-                        /** Set date time to allow for time based updates */
-                        query.lastRun = new Date();
-                        queueService.decrease();
-                        deferred.resolve(entities);
-                    }, function () {
-                        var mockData = model.generateMockData();
-                        deferred.resolve(mockData);
-                        toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
-                    });
-                }
-            } else {
+            if(online) {
                 var webServiceCall = $().SPServices(query);
                 webServiceCall.then(function () {
                     var responseXML = webServiceCall.responseXML;
@@ -606,19 +624,47 @@ angular.module('spAngular')
                     queueService.decrease();
                     deferred.resolve(changes);
                 });
+            } else {
+                /** Simulate an web service call if working offline */
+                /** Optionally set alternate offline XML location but default to value in model */
+                var offlineData = opts.offlineXML || query.offlineXML || 'dev/' + model.list.title + '.xml';
+
+                /** Only pull down offline xml if this is the first time the query is run */
+                if (query.lastRun) {
+                    /** Query has already been run, resolve reference to existing data */
+                    query.lastRun = new Date();
+                    queueService.decrease();
+                    deferred.resolve(query.cache);
+                } else {
+                    /** First run for query
+                     *  Get offline data stored in the app/dev folder
+                     */
+                    $.ajax(offlineData).then(function (responseXML) {
+                        var entities = processListItems(model, responseXML, opts);
+                        /** Set date time to allow for time based updates */
+                        query.lastRun = new Date();
+                        queueService.decrease();
+                        deferred.resolve(entities);
+                    }, function () {
+                        var mockData = model.generateMockData();
+                        deferred.resolve(mockData);
+                        toastr.error('There was a problem locating the "dev/' + model.list.title + '.xml"');
+                    });
+                }
+
             }
 
             return deferred.promise;
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#removeEntityFromLocalCache
+         * @ngdoc function
+         * @name dataService.removeEntityFromLocalCache
          * @description
-         * Removes an entity from the local cache if it exists
-         * @param {Array} entityArray
-         * @param {Number} entityId
-         * @returns {boolean}
+         * Searches for an entity based on list item ID and removes it from the cached array if it exists.
+         * @param {Array} entityArray Cached array of list items for a query.
+         * @param {Number} entityId The ID to evaluate against to determine if there is a match.
+         * @returns {boolean} Returns true if a list item was successfully found and removed.
          */
         function removeEntityFromLocalCache(entityArray, entityId) {
             var successfullyDeleted = false;
@@ -637,37 +683,37 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#retrieveChangeToken
+         * @ngdoc function
+         * @name dataService.retrieveChangeToken
          * @description
          * Returns the change token from the xml response of a GetListItemChangesSinceToken query
          * Note: this attribute is only found when using 'GetListItemChangesSinceToken'
-         * @param {xml} responseXML
+         * @param {xml} responseXML XML response from the server.
          */
         function retrieveChangeToken(responseXML) {
             return $(responseXML).find('Changes').attr('LastChangeToken');
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#retrievePermMask
+         * @ngdoc function
+         * @name dataService.retrievePermMask
          * @description
          * Returns the text representation of the users permission mask
          * Note: this attribute is only found when using 'GetListItemChangesSinceToken'
-         * @param {xml} responseXML
+         * @param {xml} responseXML XML response from the server.
          */
         function retrievePermMask(responseXML) {
             return $(responseXML).find('listitems').attr('EffectivePermMask');
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#processDeletionsSinceToken
+         * @ngdoc function
+         * @name dataService.processDeletionsSinceToken
          * @description
          * GetListItemChangesSinceToken returns items that have been added as well as deleted so we need
-         * to remove the deleted items from the local cache
-         * @param {xml} responseXML
-         * @param {Array} entityArray
+         * to remove the deleted items from the local cache.
+         * @param {xml} responseXML XML response from the server.
+         * @param {Array} entityArray Cached array of list items for a query.
          */
         function processDeletionsSinceToken(responseXML, entityArray) {
             var deleteCount = 0;
@@ -692,22 +738,24 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#stringifySharePointMultiSelect
+         * @ngdoc function
+         * @name dataService.stringifySharePointMultiSelect
          * @description
          * Turns an array of, typically {lookupId: someId, lookupValue: someValue}, objects into a string
          * of delimited id's that can be passed to SharePoint for a multi select lookup or multi user selection
-         * field
-         * @param {object[]} value - Array of objects
-         * @param {string} idProperty - ID attribute
-         * @returns {string}
+         * field.  SharePoint doesn't need the lookup values so we only need to pass the ID's back.
+         *
+         * @param {object[]} multiSelectValue Array of {lookupId: #, lookupValue: 'Some Value'} objects.
+         * @param {string} [idProperty='lookupId'] Property name where we'll find the ID value on each of the objects.
+         * @returns {string} Need to format string of id's in following format [ID0];#;#[ID1];#;#[ID1]
          */
-        function stringifySharePointMultiSelect(value, idProperty) {
+        function stringifySharePointMultiSelect(multiSelectValue, idProperty) {
             var stringifiedValues = '';
-            _.each(value, function (lookupObject, iteration) {
+            var idProp = idProperty || 'lookupId';
+            _.each(multiSelectValue, function (lookupObject, iteration) {
                 /** Need to format string of id's in following format [ID0];#;#[ID1];#;#[ID1] */
-                stringifiedValues += lookupObject[idProperty];
-                if (iteration < value.length) {
+                stringifiedValues += lookupObject[idProp];
+                if (iteration < multiSelectValue.length) {
                     stringifiedValues += ';#;#';
                 }
             });
@@ -716,13 +764,16 @@ angular.module('spAngular')
 
 
         /**
-         * @ngdoc method
-         * @name dataService#createValuePair
+         * @ngdoc function
+         * @name dataService.createValuePair
          * @description
-         * Uses a field definition from a model to properly format a value for submission to SharePoint
-         * @param {object} fieldDefinition
-         * @param {*} value
-         * @returns {Array} - [fieldName, fieldValue]
+         * Uses a field definition from a model to properly format a value for submission to SharePoint.  Typically
+         * used prior to saving a list item, we iterate over each of the non-readonly properties defined in the model
+         * for a list item and convert those value into value pairs that we can then hand off to SPServices.
+         * @param {object} fieldDefinition The field definition, typically defined in the model.
+         <pre>{ internalName: "Title", objectType: "Text", mappedName: "lastName", readOnly:false }</pre>
+         * @param {*} value Current field value.
+         * @returns {Array} [fieldName, fieldValue]
          */
         var createValuePair = function (fieldDefinition, value) {
             var valuePair = [];
@@ -775,13 +826,15 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#generateValuePairs
+         * @ngdoc function
+         * @name dataService.generateValuePairs
          * @description
-         * Uses provided field definitions to pull value pairs for desired attributes
-         * @param {Array} fieldDefinitions - definitions from the model
-         * @param {object} item - list item
-         * @returns {Array}
+         * Typically used to iterate over the non-readonly field definitions stored in a model and convert a
+         * given list item entity into value pairs that we can pass to SPServices for saving.
+         * @param {Array} fieldDefinitions Definitions from the model.
+         * @param {object} item list item that we'll attempt to iterate over to find the properties that we need to
+         * save it to SharePoint.
+         * @returns {Array[]} Value pairs of all non-readonly fields. [[fieldName, fieldValue]]
          */
         function generateValuePairs(fieldDefinitions, item) {
             var pairs = [];
@@ -795,11 +848,16 @@ angular.module('spAngular')
         }
 
         /**
-         * Propagates a change to all duplicate entities in all queries within a given model.
-         * @param {object} model
-         * @param {object} entity - List item.
-         * @param {object} [exemptQuery] - The query containing the updated item is automatically udpated so we don't
+         * @ngdoc function
+         * @name dataService.updateAllCaches
+         * @description
+         * Propagates a change to all duplicate entities in all cached queries within a given model.
+         * @param {object} model Reference to the entities model.
+         * @param {object} entity JavaScript object representing the SharePoint list item.
+         * @param {object} [exemptQuery] - The query containing the updated item is automatically updated so we don't
          * need to process it.
+         *
+         * @returns {number} The number of queries where the entity was found and updated.
          */
         function updateAllCaches(model, entity, exemptQuery) {
             var queriesUpdated = 0;
@@ -815,23 +873,24 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name dataService#addUpdateItemModel
+         * @ngdoc function
+         * @name dataService.addUpdateItemModel
          * @description
-         * Adds or updates a list item based on if the item passed in contains an id attribute
-         * @param {object} model
-         * @param {object} item
-         * @param {object} [options]
-         * @param {string} [options.mode] - [update, replace, return]
-         * @param {boolean} [options.buildValuePairs] - Automatically generate pairs based on fields defined in model.
-         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query on the model
-         * to ensure entity is updated everywhere.  This is more process intensive so by default we only update the
-         * cached entity in the cache where this entity is currently stored.  Only applicable when updated an entity.
-         * @param {Array} [options.valuePairs] - Precomputed value pairs to use instead of generating them for each field
-         * identified in the model.
-         * @returns {object} promise
+         * Adds or updates a list item based on if the item passed in contains an id attribute.
+         * @param {object} model Reference to the entities model.
+         * @param {object} entity JavaScript object representing the SharePoint list item.
+         * @param {object} [options] Optional configuration params.
+         * @param {string} [options.mode='update'] [update, replace, return]
+         * @param {boolean} [options.buildValuePairs=true] Automatically generate pairs based on fields defined in model.
+         * @param {boolean} [options.updateAllCaches=false] Search through the cache for each query on the model and
+         * update all instances of this entity to ensure entity is updated everywhere.  This is more process intensive
+         * so by default we only update the cached entity in the cache where this entity is currently stored.  Note: Only
+         * applicable when updating an entity.
+         * @param {Array[]} [options.valuePairs] Precomputed value pairs to use instead of generating them for each
+         * field identified in the model.
+         * @returns {object} Promise which resolves with the newly updated item.
          */
-        var addUpdateItemModel = function (model, item, options) {
+        var addUpdateItemModel = function (model, entity, options) {
             var defaults = {
                 mode: 'update',  //Options for what to do with local list data array in store [replace, update, return]
                 buildValuePairs: true,
@@ -846,7 +905,7 @@ angular.module('spAngular')
 
             if (opts.buildValuePairs === true) {
                 var editableFields = _.where(model.list.fields, {readOnly: false});
-                opts.valuePairs = generateValuePairs(editableFields, item);
+                opts.valuePairs = generateValuePairs(editableFields, entity);
             }
             var payload = {
                 operation: 'UpdateListItems',
@@ -855,10 +914,10 @@ angular.module('spAngular')
                 valuepairs: opts.valuePairs
             };
 
-            if ((_.isObject(item) && _.isNumber(item.id))) {
+            if ((_.isObject(entity) && _.isNumber(entity.id))) {
                 /** Updating existing list item */
                 payload.batchCmd = 'Update';
-                payload.ID = item.id;
+                payload.ID = entity.id;
             } else {
                 /** Creating new list item */
                 payload.batchCmd = 'New';
@@ -874,8 +933,8 @@ angular.module('spAngular')
                     var updatedEntity = output[0];
 
                     /** Optionally search through each cache on the model and update any other references to this entity */
-                    if (opts.updateAllCaches && _.isNumber(item.id)) {
-                        updateAllCaches(model, updatedEntity, item.getQuery(), 'update');
+                    if (opts.updateAllCaches && _.isNumber(entity.id)) {
+                        updateAllCaches(model, updatedEntity, entity.getQuery(), 'update');
                     }
                     deferred.resolve(updatedEntity);
                 }, function (outcome) {
@@ -899,7 +958,7 @@ angular.module('spAngular')
                     }
                 };
 
-                if (!item.id) {
+                if (!entity.id) {
                     var newItem;
                     /** Include standard mock fields for new item */
                     offlineDefaults.author = {
@@ -919,9 +978,9 @@ angular.module('spAngular')
                         });
                         offlineDefaults.id = maxId + 1;
                         /** Add default attributes */
-                        _.extend(item, offlineDefaults);
+                        _.extend(entity, offlineDefaults);
                         /** Use factory to build new object */
-                        newItem = new model.factory(item);
+                        newItem = new model.factory(entity);
                         query.cache.push(newItem);
                     });
 
@@ -929,8 +988,8 @@ angular.module('spAngular')
                     deferred.resolve(newItem);
                 } else {
                     /** Update existing record in local cache*/
-                    _.extend(item, offlineDefaults);
-                    deferred.resolve(item);
+                    _.extend(entity, offlineDefaults);
+                    deferred.resolve(entity);
                 }
                 queueService.decrease();
             }
@@ -938,25 +997,26 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name dataService#deleteItemModel
+         * @ngdoc function
+         * @name dataService.deleteItemModel
          * @description
          * Typically called directly from a list item, removes the list item from SharePoint
-         * and the local cache
-         * @param {object} model - model of the list item
-         * @param {object} item - list item
-         * @param {object} [options]
-         * @param {Array} [options.target=item.getContainer()] - Optional location to search through and remove the local cached copy.
-         * @param {boolean} [options.updateAllCaches=false] - Search through the cache for each query on the model
+         * and the local cache.
+         * @param {object} model Reference to the entities model.
+         * @param {object} entity JavaScript object representing the SharePoint list item.
+         * @param {object} [options] Optional configuration params.
+         * @param {Array} [options.target=item.getContainer()] Optional location to search through and remove the
+         * local cached copy.
+         * @param {boolean} [options.updateAllCaches=false] Search through the cache for each query on the model
          * to ensure entity is removed everywhere.  This is more process intensive so by default we only delete the
          * cached entity in the cache where this entity is currently stored.
-         * @returns {object} promise - Nothing is return in the promise.
+         * @returns {object} Promise which resolves when the operation is complete.  Nothing of importance is returned.
          */
-        var deleteItemModel = function (model, item, options) {
+        var deleteItemModel = function (model, entity, options) {
             queueService.increase();
 
             var defaults = {
-                target: item.getContainer(),
+                target: entity.getContainer(),
                 updateAllCaches: false
             };
             var opts = _.extend({}, defaults, options);
@@ -966,7 +1026,7 @@ angular.module('spAngular')
                 webURL: model.list.webURL,
                 listName: model.list.guid,
                 batchCmd: 'Delete',
-                ID: item.id
+                ID: entity.id
             };
 
             var deferred = $q.defer();
@@ -974,15 +1034,15 @@ angular.module('spAngular')
             function cleanCache() {
                 var deleteCount = 0;
                 if (opts.updateAllCaches) {
-                    var model = item.getModel();
+                    var model = entity.getModel();
                     _.each(model.queries, function (query) {
-                        var entityRemoved = removeEntityFromLocalCache(query.cache, item.id);
+                        var entityRemoved = removeEntityFromLocalCache(query.cache, entity.id);
                         if (entityRemoved) {
                             deleteCount++;
                         }
                     });
                 } else {
-                    var entityRemoved = removeEntityFromLocalCache(opts.target, item.id);
+                    var entityRemoved = removeEntityFromLocalCache(opts.target, entity.id);
                     if (entityRemoved) {
                         deleteCount++;
                     }

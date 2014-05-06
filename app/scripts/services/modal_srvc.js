@@ -10,23 +10,25 @@ angular.module('spAngular')
     .service('modalService', function ($modal, toastr) {
 
         /**
-         * @ngdoc method
-         * @name modalService#modalModelProvider
+         * @ngdoc function
+         * @name modalService.modalModelProvider
          * @description
          * Extends a model to allow us to easily attach a modal form that accepts and injects a
          * dynamic number of arguments.
-         * @param {object} options - Configuration object.
-         * @param {string} options.templateUrl - Reference to the modal view.
-         * @param {string} options.controller - Name of the modal controller.
-         * @param {string[]} [options.expectedArguments] - First argument name should be the item being edited.
-         * @returns {openModal}
+         * @param {object} options Configuration object.
+         * @param {string} options.templateUrl Reference to the modal view.
+         * @param {string} options.controller Name of the modal controller.
+         * @param {string[]} [options.expectedArguments] First argument name should be the item being edited.
+         * @returns {promise} openModal
          *
          * @example
+         <pre>
             model.openModal = modalService.modalModelProvider({
                 templateUrl: 'modules/comp_request/views/comp_request_modal_view.html',
                 controller: 'compRequestModalCtrl',
                 expectedArguments: ['request']
             });
+         </pre>
          */
         function modalModelProvider(options) {
             return function openModal() {
@@ -70,12 +72,12 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name modalService#getPermissions
+         * @ngdoc function
+         * @name modalService.getPermissions
          * @description
          * Returns an object containing the permission levels for the current user
-         * @param {object} entity - list item
-         * @returns {{userCanEdit: boolean, userCanDelete: boolean, userCanApprove: boolean, fullControl: boolean}}
+         * @param {object} entity JavaScript object representing the SharePoint list item.
+         * @returns {object} {userCanEdit: boolean, userCanDelete: boolean, userCanApprove: boolean, fullControl: boolean}
          */
         function getPermissions(entity) {
             var userPermissions = {
@@ -98,19 +100,22 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name modalService#initializeState
+         * @ngdoc function
+         * @name modalService.initializeState
          * @description
-         * Creates a state object, populates permissions for curent user, and sets display mode
-         * @param entity
-         * @param [options]
-         * @returns {Object}
+         * Creates a state object, populates permissions for current user, and sets display mode
+         *
+         * @param {object} entity JavaScript object representing the SharePoint list item.
+         * @param {object} [options] Optional state params.
+         * @returns {object} Returns the extended state.
          *
          * @example
+         <pre>
          $scope.state = modalService.initializeState(request, {
              dateExceedsBoundary: false,
              enableApproval: false
          });
+         </pre>
          */
         function initializeState(entity, options) {
             var state = {
@@ -135,18 +140,21 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name modalService#deleteEntity
+         * @ngdoc function
+         * @name modalService.deleteEntity
          * @description
          * Prompts for confirmation of deletion, then deletes and closes modal
-         * @param {object} entity
-         * @param {object} state
-         * @param {object} $modalInstance
+         * @param {object} entity JavaScript object representing the SharePoint list item.
+         * @param {object} state Controllers state object.
+         * @param {object} $modalInstance Reference to the modal instance for the modal dialog.
          *
          * @example
-         *  $scope.deleteRequest = function () {
-         *      modalService.deleteEntity($scope.request, $scope.state, $modalInstance);
-         *  };
+         *
+         <pre>
+           $scope.deleteRequest = function () {
+               modalService.deleteEntity($scope.request, $scope.state, $modalInstance);
+           };
+         </pre>
          */
         function deleteEntity(entity, state, $modalInstance) {
             var confirmation = window.confirm('Are you sure you want to delete this record?');
@@ -163,14 +171,14 @@ angular.module('spAngular')
         }
 
         /**
-         * @ngdoc method
-         * @name modalService#saveEntity
+         * @ngdoc function
+         * @name modalService.saveEntity
          * @description
          * Creates a new record if necessary, otherwise updates the existing record
-         * @param {object} entity
-         * @param {object} model
-         * @param {object} state
-         * @param {object} $modalInstance
+         * @param {object} entity List item.
+         * @param {object} model Reference to the model for the list item.
+         * @param {object} state Depricated....
+         * @param {object} $modalInstance Reference to the modal instance for the modal dialog.
          *
          * @example
          *  $scope.saveRequest = function () {

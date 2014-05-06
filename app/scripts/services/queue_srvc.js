@@ -13,8 +13,8 @@ angular.module('spAngular')
         var counter = 0;
 
         /**
-         * @ngdoc method
-         * @name queueService#increase
+         * @ngdoc function
+         * @name queueService.increase
          * @description
          * Increase the counter by 1.
          */
@@ -25,11 +25,11 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name queueService#reset
+         * @ngdoc function
+         * @name queueService.reset
          * @description
          * Decrease the counter by 1.
-         * @returns {number}
+         * @returns {number} Current count after decrementing.
          */
         var decrease = function () {
             if (counter > 0) {
@@ -40,11 +40,11 @@ angular.module('spAngular')
         };
 
         /**
-         * @ngdoc method
-         * @name queueService#reset
+         * @ngdoc function
+         * @name queueService.reset
          * @description
          * Reset counter to 0.
-         * @returns {number}
+         * @returns {number} Current count after incrementing.
          */
         var reset = function () {
             counter = 0;
@@ -55,11 +55,11 @@ angular.module('spAngular')
         var observerCallbacks = [];
 
         /**
-         * @ngdoc method
-         * @name queueService#registerObserverCallback
+         * @ngdoc function
+         * @name queueService.registerObserverCallback
          * @description
          * Register an observer
-         * @param callback
+         * @param {function} callback Function to call when a change is made.
          */
         var registerObserverCallback = function (callback) {
             observerCallbacks.push(callback);

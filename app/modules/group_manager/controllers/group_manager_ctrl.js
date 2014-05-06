@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('spAngular')
-    .controller('groupManagerCtrl', function ($scope, $q, $timeout, $filter, ngTableParams, configService, dataService, toastr) {
+    .controller('groupManagerCtrl', function ($scope, $q, $timeout, $filter, ngTableParams, spAngularConfig, dataService, toastr) {
         $scope.availableOptions = [];
         $scope.assignedOptions = [];
 
@@ -160,7 +160,7 @@ angular.module('spAngular')
                     _.each(groupsArray, function (group) {
                         var deferred = $q.defer();
 
-                        if (configService.offline) {
+                        if (spAngularConfig.offline) {
                             //Simulate an async call
                             $timeout(function () {
                                 //Push option to look like they've been assigned
@@ -193,7 +193,7 @@ angular.module('spAngular')
                     toastr.success(operation === 'AddUserToGroup' ?
                         'User successfully added' :
                         'User successfully removed');
-                    if (!configService.offline) {
+                    if (!spAngularConfig.offline) {
                         //Retrieve updated value from the server
                         if ($scope.state.activeTab === 'Users') {
                             $scope.updateAvailableUsers($scope.users.filter);
