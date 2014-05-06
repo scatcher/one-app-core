@@ -83,7 +83,7 @@ angular.module('spAngular').service('dataService', [
     /** Allows us to make code easier to read */
     var online = !offline;
     //TODO Figure out a better way to get this value, shouldn't need to make a blocking call
-    var defaultUrl = configService.defaultUrl || $().SPServices.SPGetCurrentSite();
+    var defaultUrl = configService.defaultUrl || online ? $().SPServices.SPGetCurrentSite() : '';
     /**
          * @ngdoc function
          * @name dataService.processListItems
