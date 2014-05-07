@@ -6,9 +6,6 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-var shelljs = require('shelljs');
-
-
 module.exports = function (grunt) {
 
     // Load grunt tasks automatically
@@ -23,15 +20,16 @@ module.exports = function (grunt) {
         // Project settings
         config: {
             // configurable paths
-            app: require('./bower.json').appPath || 'app',
+            src: require('./bower.json').appPath || 'src',
+            demo: 'demo',
             dist: require('./bower.json').distPath || 'dist',
-            services: 'app/scripts/services'
+            services: 'src/scripts/services'
         },
 
         // Watches files for changes and runs tasks based on the changed files
         watch: {
             js: {
-                files: ['{.tmp,<%= config.app %>}/scripts/{,*/}*.js'],
+                files: ['{.tmp,<%= config.src %>, }/scripts/{,*/}*.js'],
                 tasks: ['newer:jshint:all'],
                 options: {
                     livereload: true
@@ -42,7 +40,7 @@ module.exports = function (grunt) {
                 tasks: ['newer:jshint:test', 'karma']
             },
             styles: {
-                files: ['<%= config.app %>/styles/{,*/}*.css'],
+                files: ['<%= config.src %>/styles/{,*/}*.css'],
                 tasks: ['newer:copy:styles', 'autoprefixer']
             },
             gruntfile: {
@@ -53,13 +51,26 @@ module.exports = function (grunt) {
                     livereload: '<%= connect.options.livereload %>'
                 },
                 files: [
-                    '<%= config.app %>/{,*/}*.html',
-                    '<%= config.app %>/modules/**/*.{js,html}',
-                    '{.tmp,<%= config.app %>}/scripts/{,*/}*.js',
-                    '<%= config.app %>/dev/*.xml',
-                    '<%= config.app %>/bower_components/sp-angular//{,*/}*.{js,html,css}',
-                    '<%= config.app %>/styles/css/main.css',
-                    '<%= config.app %>/images/{,*/}*.{png,jpg,jpeg,gif,svg}'
+                    '<%= config.demo %>/*.{js,html}',
+                    '<%= config.dist %>/*.{js,html}',
+                    '{<%= config.demo %>,<%= config.src %>}/{modules,scripts,views}/{,*/}*.{js,html}',
+                    '<%= config.src %>/dev/*.xml'
+                ]
+            }
+        },
+        // Add vendor prefixed styles
+        autoprefixer: {
+            options: {
+                browsers: ['last 1 version']
+            },
+            dist: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '.tmp/styles/',
+                        src: '{,*/}*.css',
+                        dest: '.tmp/styles/'
+                    }
                 ]
             }
         },
@@ -77,7 +88,7 @@ module.exports = function (grunt) {
                     open: true,
                     base: [
                         '.tmp',
-                        '<%= config.app %>'
+                        '<%= config.src %>'
                     ]
                 }
             },
@@ -87,7 +98,7 @@ module.exports = function (grunt) {
                     base: [
                         '.tmp',
                         'test',
-                        '<%= config.app %>'
+                        '<%= config.src %>'
                     ]
                 }
             },
@@ -106,7 +117,7 @@ module.exports = function (grunt) {
             },
             all: [
                 'Gruntfile.js',
-                '<%= config.app %>/scripts/{,*/}*.js'
+                '<%= config.src %>/scripts/{,*/}*.js'
             ],
             test: {
                 options: {
@@ -132,7 +143,7 @@ module.exports = function (grunt) {
                 ]
             },
             server: '.tmp',
-            docs: '<%= config.dist %>/docs'
+            docs: 'docs'
         },
 
         htmlmin: {
@@ -162,26 +173,44 @@ module.exports = function (grunt) {
             }
         },
 
+
+        ngtemplates: {
+            app: {
+                options: {
+                    module: 'spAngular'
+                },
+                src: 'src/scripts/directives/**/*.html',
+                dest:'<%= config.dist %>/sp-angular-directives.js'
+            }
+        },
+
         concat: {
             options: {
                 separator: ';'
             },
             dist: {
                 src: [
-                    '<%= config.app %>/scripts/app.js',
+                    '<%= config.src %>/scripts/app.js',
                     '<%= config.services %>/*.js'
                 ],
                 dest: '<%= config.dist %>/sp-angular.js'
             },
             ieshim: {
                 src: [
-                    '<%= config.app %>/bower_components/explorer-canvas/excanvas.js',
-                    '<%= config.app %>/bower_components/es5-shim/es5-shim.js',
-                    '<%= config.app %>/bower_components/json3/lib/json3.js',
-                    '<%= config.app %>/bower_components/respond/dest/respond.src.js',
-                    '<%= config.app %>/scripts/utility/oa_ie_safe.js'
+                    '<%= config.demo %>/bower_components/explorer-canvas/excanvas.js',
+                    '<%= config.demo %>/bower_components/es5-shim/es5-shim.js',
+                    '<%= config.demo %>/bower_components/json3/lib/json3.js',
+                    '<%= config.demo %>/bower_components/respond/dest/respond.src.js',
+                    '<%= config.src %>/scripts/utility/oa_ie_safe.js'
                 ],
                 dest: '<%= config.dist %>/ie-shim.js'
+            },
+            directives: {
+                src: [
+                    'src/scripts/directives/**/*.js',
+                    '<%= config.dist %>/sp-angular-directives.js'
+                ],
+                dest: '<%= config.dist %>/sp-angular-directives.js'
             }
         },
 
@@ -206,11 +235,36 @@ module.exports = function (grunt) {
                         expand: true,
                         dest: '<%= config.dist %>',
                         src: [
-                            '<%= config.dist %>*.js'
+                            //HTML
+                            '*.html',
+                            'views/{,*/}*.html',
+                            'modules/**/*.html',
+                            'scripts/**/*.html',
+
+                            //PROJECT SPECIFIC RESOURCES
+                            '*.{ico,png,txt}',
+                            'images/{,*/}*.{png,jpg,gif}',
+
+                            //FONT AWESOME
+                            'bower_components/font-awesome/css/**',
+                            'bower_components/font-awesome/fonts/**',
+
+                            //jQuery UI Bootstrap Images
+                            'bower_components/jquery-ui-bootstrap/css/custom-theme/images/**',
+
+                            //Glyph Icons
+                            'bower_components/bootstrap/fonts/**'
                         ]
                     }
                 ]
+            },
+            styles: {
+                expand: true,
+                cwd: '<%= config.demo %>/styles',
+                dest: '.tmp/styles/',
+                src: '{,*/}*.css'
             }
+
         },
         uglify: {
             js: {
@@ -221,7 +275,48 @@ module.exports = function (grunt) {
                 src: '<%= config.dist %>/ie-shim.js',
                 dest: '<%= config.dist %>/ie-shim.min.js'
 
+            },
+            directives: {
+                src: '<%= config.dist %>/sp-angular-directives.js',
+                dest: '<%= config.dist %>/sp-angular-directives.min.js'
             }
+        },
+        // Run some tasks in parallel to speed up the build process
+        concurrent: {
+            server: [
+                'copy:styles'
+            ],
+            test: [
+                'copy:styles'
+            ],
+            dist: [
+                'copy:styles',
+                'svgmin'
+            ]
+        },
+
+        ngdocs: {
+            options: {
+                dest: 'docs',
+                scripts: [
+                    '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js',
+                    '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js'
+                ],
+                html5Mode: false,
+//                startPage: '/api',
+                title: 'SP-Angular Docs'
+            },
+            api: [
+                '<%= config.services %>/modal_srvc.js',
+                '<%= config.services %>/model_srvc.js',
+                '<%= config.services %>/data_srvc.js',
+                '<%= config.services %>/queue_srvc.js',
+                '<%= config.services %>/utility_srvc.js'
+            ]
+//            model: {
+//                src: ['<%= config.services %>/model_srvc.js'],
+//                title: 'Model Service'
+//            }
         }
     });
 
@@ -240,9 +335,9 @@ module.exports = function (grunt) {
         ]);
     });
 
-    grunt.registerTask('server', function () {
+    grunt.registerTask('server', function (target) {
         grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-        grunt.task.run(['serve']);
+        grunt.task.run(['serve:' + target]);
     });
 
     grunt.registerTask('test', [
@@ -255,25 +350,16 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
+        'ngtemplates',
         'concat',
         'ngmin',
-        'uglify'
-//        'ngdoc'
+        'uglify',
+        'doc'
     ]);
-
-    grunt.registerTask('ngdoc', 'Create ngdocs.', function () {
-        var dgeni = require('dgeni');
-        var done = this.async();
-
-        dgeni('docs/dgeni.conf.js')
-            .generateDocs()
-            .then(done);
-    });
-
 
     grunt.registerTask('doc', [
         'clean:docs',
-        'ngdoc'
+        'ngdocs'
     ]);
 
     grunt.registerTask('default', [
@@ -281,6 +367,4 @@ module.exports = function (grunt) {
         'test',
         'build'
     ]);
-
-
 };

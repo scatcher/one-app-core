@@ -20,7 +20,7 @@ module.exports = function (grunt) {
         // Project settings
         config: {
             // configurable paths
-            src: require('./bower.json').appPath || 'src',
+            src: 'src',
             demo: 'demo',
             dist: require('./bower.json').distPath || 'dist',
             services: 'src/scripts/services'

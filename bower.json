@@ -36,8 +36,5 @@
     "**/.*",
     "node_modules",
     "bower_components"
-  ],
-  "resolutions": {
-    "jquery": "~1.10.2"
-  }
+  ]
 }
