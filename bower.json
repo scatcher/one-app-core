@@ -30,7 +30,7 @@
     "json3": "~3",
     "lodash": "latest",
     "lodash-deep": "latest",
-    "sp-angular": "git://github.com/scatcher/sp-angular.git#51856cf2309ec16c862bb49e31185e6efa96e798"
+    "sp-angular": "git://github.com/scatcher/sp-angular.git#0.1.3"
   },
   "ignore": [
     "**/.*",
