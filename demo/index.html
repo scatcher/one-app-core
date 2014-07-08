@@ -1,0 +1,133 @@
+<!doctype html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>spAngularCore</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+
+    <!-- build:css styles/css/vendor.css -->
+    <!-- bower:css -->
+
+    <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.css">
+    <link rel="stylesheet" href="styles/css/bower.css">
+
+    <!-- endbower -->
+    <!-- endbuild -->
+
+
+
+    <!-- build:css styles/css/main.css -->
+
+    <!-- Widgets -->
+    <link rel="stylesheet" href="styles/css/jarvis-widget.css">
+
+    <!-- Helper Classes -->
+    <link rel="stylesheet" href="styles/css/utility.css">
+
+    <!-- Application Specific -->
+    <link rel="stylesheet" href="styles/css/main.css">
+    <link rel="stylesheet" href="styles/css/overrides.css">
+
+    <!-- endbuild -->
+
+    <!--[if lt IE 9]>
+    <script src="../dist/ie-shim.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body ng-app="spAngularDemo" id="ng-app">
+
+<div ng-include="'modules/navbar/views/navbar_view.html'"></div>
+
+<!-- Add your site or application content here -->
+<div class="application-content">
+    <div ui-view>
+        <div class="splash">
+            <div class="message">
+                One APP Core Demo
+            </div>
+            <img src="styles/images/Preloader.gif" alt="Preloader">
+        </div>
+    </div>
+</div>
+
+<!-- CDN Resources -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+<!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>-->
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+<!--Angular Modules-->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-resource.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-sanitize.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.min.js"></script>
+
+
+<!-- build:js scripts/vendor.js -->
+
+<!--JS Plugins/Utils -->
+<script src="bower_components/SPServices/jquery.SPServices.js"></script>
+<script src="bower_components/moment/moment.js"></script>
+<script src="bower_components/lodash/dist/lodash.js"></script>
+<script src="bower_components/lodash-deep/lodash-deep.js"></script>
+<script src="bower_components/firebase-bower/firebase.js"></script>
+<script src="bower_components/spin.js/spin.js"></script>
+<script src="bower_components/chancejs/chance.js"></script>
+
+<!--Angular UI-->
+<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+
+<!--3rd Party Angular Modules-->
+<script src="bower_components/ng-table/ng-table.js"></script>
+<script src="bower_components/angular-toastr/dist/angular-toastr.js"></script>
+<script src="bower_components/angularfire/angularfire.js"></script>
+<script src="bower_components/angular-spinner/angular-spinner.js"></script>
+<!-- endbuild -->
+
+
+<!-- build:js scripts/scripts.js -->
+
+<!-- PRIMARY JS FILE -->
+<script src="scripts/app.js"></script>
+
+<!-- SP-Angular -->
+<script src="bower_components/sp-angular/dist/sp-angular.js"></script>
+<script src="bower_components/sp-angular/dist/sp-angular-directives.js"></script>
+
+<!-- MODELS -->
+<script src="scripts/models/User.js"></script>
+<script src="scripts/models/BannerText.js"></script>
+<script src="scripts/models/UserFeedback.js"></script>
+
+<!-- DIRECTIVES -->
+<!--<script src="scripts/directives/oa_select/oa_select_dir.js"></script>-->
+<!--<script src="scripts/directives/oa_attachments/oa_attachments_dir.js"></script>-->
+<!--<script src="scripts/directives/oa_comments/oa_comments_dir.js"></script>-->
+
+<!-- CONTROLLERS -->
+<script src="modules/main/controllers/main_ctrl.js"></script>
+<script src="modules/navbar/controllers/navbar_ctrl.js"></script>
+<!--<script src="modules/generate_offline_data/generate_offline_ctrl.js"></script>-->
+
+<!-- Support -->
+<!--<script src="modules/group_manager/group_manager_ctrl.js"></script>-->
+
+<!-- endbuild -->
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+@import "variables.less";
+
+.border-radius (@radius: 0px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -khtml-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.box-shadow (@string) {
+  -webkit-box-shadow: @string;
+  -moz-box-shadow:    @string;
+  box-shadow:         @string;
+}
+
+.opacity (@opacity: 0.5) {
+  -webkit-opacity: 	@opacity;
+  -moz-opacity: 		@opacity;
+  opacity: 		@opacity;
+}
+
+.jarviswidget-variant ( @heading-bg-color; @heading-text-color: #FFF; @heading-border-color: @heading-bg-color; @tab-hover-color: darken(@heading-bg-color, 10%)) {
+  & > header {
+    background: @heading-bg-color;
+    color: @heading-text-color;
+    border-color: @heading-border-color !important;
+
+    //Ensure any tabs placed in the header match the theme
+    .nav-tabs {
+      > li {
+        a {
+          color: @heading-text-color !important;
+        }
+        &.active {
+          > a {
+            color: @heading-bg-color !important;
+          }
+        }
+        &:hover {
+          > a {
+            color: @tab-hover-color !important;
+          }
+        }
+      }
+    }
+
+    .button-icon {
+      color: @heading-text-color;
+    }
+  }
+}
+
+// ............................................................
+// .Loop through each color variable in the provided array and create
+// .txt-color-@color {
+//    color: @color !important;
+//  }
+.text-color-constructor(@colorArray, @i: 1) when (@i <= length(@colorArray)) {
+  //Variable name
+  @name: e(extract(@colorArray, @i));
+  //Create the css
+  .txt-color-@{name} {
+    color: @@name !important;
+  }
+  //Loop
+  .text-color-constructor(@colorArray, (@i + 1));
+}
+
+// ............................................................
+// .Loop through each color variable in the provided array and create
+// .bg-color-@color {
+//    background-color: @color !important;
+//  }
+.background-color-constructor(@colorArray, @i: 1) when (@i <= length(@colorArray)) {
+  //Variable name
+  @name: e(extract(@colorArray, @i));
+  //Create the css
+  .bg-color-@{name} {
+    background-color: @@name !important;
+  }
+  //Loop
+  .background-color-constructor(@colorArray, (@i + 1));
+}
+
+.jarviswidget-theme-constructor(@colorArray, @i: 1) when (@i < length(@colorArray)) {
+  //Variable name
+  @name: e(extract(@colorArray, @i));
+  //Use the variant mixin to create the class
+  .jarviswidget-color-@{name} {
+    .jarviswidget-variant(@@name);
+  }
+  //Loop
+  .jarviswidget-theme-constructor(@colorArray, (@i + 1));
+}
