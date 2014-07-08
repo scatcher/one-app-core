@@ -109,6 +109,9 @@
 .txt-color-metroBlue {
   color: #1ba1e2 !important;
 }
+.txt-color-metroGreen {
+  color: #339933 !important;
+}
 .txt-color-metroRed {
   color: #e51400 !important;
 }
@@ -210,6 +213,9 @@
 }
 .bg-color-metroBlue {
   background-color: #1ba1e2 !important;
+}
+.bg-color-metroGreen {
+  background-color: #339933 !important;
 }
 .bg-color-metroRed {
   background-color: #e51400 !important;
